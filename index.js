@@ -41,30 +41,37 @@ const upload = multer({ storage, limits: { fileSize: 500 * 1024 * 1024 } });
 // ==================== DATABASE ====================
 const DATA_FILE = './falaki_db.json';
 
+// THE AUTO-HEALER: Fixes missing fields to prevent Internal Server Errors
 function getData() {
+    let data = {};
     try {
         if (fs.existsSync(DATA_FILE)) {
             const content = fs.readFileSync(DATA_FILE, 'utf8');
-            if(content.trim()) return JSON.parse(content);
+            if(content.trim()) data = JSON.parse(content);
         }
     } catch (e) { console.error("Error reading database", e); }
-    const defaults = {
-        adminAuth: { user: 'admin216', hash: bcrypt.hashSync('admin1234', 10) },
-        contact: { email: 'abdullahharuna216@gmail.com', phone: '+2348080335353' },
-        users: [],
-        posts: [],
-        audios: [],
-        stats: { totalScans: 0 },
-        aboutContent: "FALAKI is an advanced Neural Ramlu and Spiritual Archives platform. We bridge the ancient, profound mathematical systems of Hisab al-Jummal (Abjad) and Ilm al-Raml with modern biometric web technologies. This platform was created to provide deep spiritual insights, historical archives of the Unseen, and a secure repository for traditional medicine and prophetic history.",
-        privacyContent: "Your privacy is our utmost priority. The biometric palm scans performed on this platform utilize local browser memory strictly for the duration of the scan to calculate your astrological alignment. NO video, image, or facial data is ever recorded, transmitted, or saved to our servers. Your spiritual inquiries remain between you and the Oracle."
-    };
-    saveData(defaults);
-    return defaults;
+
+    // Enforce default structure safely
+    if(!data.adminAuth) data.adminAuth = { user: 'admin216', hash: bcrypt.hashSync('admin1234', 10) };
+    if(!data.contact) data.contact = { email: 'abdullahharuna216@gmail.com', phone: '2348080335353' };
+    if(!data.users) data.users = [];
+    if(!data.posts) data.posts = [];
+    if(!data.audios) data.audios = [];
+    if(!data.stats) data.stats = { totalScans: 1204 }; // Starts at 1204 for social proof
+    
+    if(!data.aboutContent) data.aboutContent = "FALAKI is an advanced Neural Ramlu and Spiritual Archives platform. We bridge the ancient, profound mathematical systems of Hisab al-Jummal (Abjad) and Ilm al-Raml with modern biometric web technologies.";
+    if(!data.privacyContent) data.privacyContent = "Your privacy is our utmost priority. The biometric palm scans performed on this platform utilize local browser memory strictly for the duration of the scan to calculate your astrological alignment. NO video, image, or facial data is ever recorded.";
+
+    saveData(data);
+    return data;
 }
 
 function saveData(data) {
     try { fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2)); } catch(e) {}
 }
+
+// Initialize database on startup
+getData();
 
 // ==================== REUSABLE SNIPPETS ====================
 const googleAnalytics = `
@@ -176,7 +183,7 @@ app.get('/auth', (req, res) => {
 app.post('/api/register', (req, res) => {
     const { name, email, password } = req.body;
     const data = getData();
-    if (data.users.find(u => u.email === email)) return res.send('<script>alert("Email already registered!"); window.location="/auth";</script>');
+    if (data.users.find(u => u.email === email)) return res.send('<script>alert("Email already registered! Please login."); window.location="/auth";</script>');
     
     const user = { id: Date.now(), name, email, pass: bcrypt.hashSync(password, 10), joined: new Date().toISOString() };
     data.users.push(user);
@@ -210,19 +217,22 @@ app.get('/logout', (req, res) => {
 app.get('/', checkUserAuth, (req, res) => {
     const data = getData();
     
-    const renderCards = (cat) => {
-        const posts = data.posts.filter(p => p.category === cat);
-        return posts.map(p => `
-            <div class="card">
-                ${p.image ? `<img src="${p.image}" class="card-img" alt="${p.title}">` : ''}
-                <div class="card-body">
-                    <h3>${p.title}</h3>
-                    <p>${p.content.replace(/<[^>]*>/g, '').substring(0, 80)}...</p>
-                    <a href="/read/${p.id}">Read Manuscript →</a>
-                </div>
+    // Categorize Posts
+    const seerah = data.posts.filter(p => p.category === 'Seerah');
+    const jinn = data.posts.filter(p => p.category === 'Jinn');
+    const medicine = data.posts.filter(p => p.category === 'Medicine');
+    const history = data.posts.filter(p => p.category === 'History');
+
+    const renderCards = (posts) => posts.map(p => `
+        <div class="card">
+            ${p.image ? `<img src="${p.image}" class="card-img" alt="${p.title}">` : ''}
+            <div class="card-body">
+                <h3>${p.title}</h3>
+                <p>${p.content.replace(/<[^>]*>/g, '').substring(0, 80)}...</p>
+                <a href="/read/${p.id}">Read Manuscript →</a>
             </div>
-        `).join('') || '<p style="color:#555; font-size:12px;">No manuscripts found.</p>';
-    };
+        </div>
+    `).join('') || '<p style="color:#555; font-size:12px;">No manuscripts found.</p>';
 
     const audioHtml = data.audios.map(a => `
         <div class="audio-track">
@@ -265,6 +275,8 @@ app.get('/', checkUserAuth, (req, res) => {
         .oracle-header { text-align:center; margin-bottom:40px;}
         .oracle-header h1 { color:var(--gold); letter-spacing:8px; font-size:36px; margin:0;}
         .oracle-header p { color:#888; font-size:14px; margin-top:5px;}
+        .scan-count { background:rgba(75,0,130,0.3); border:1px solid var(--purple); padding:5px 15px; border-radius:20px; color:var(--gold); font-size:12px; font-weight:bold; display:inline-block; margin-top:15px; animation:pulse 2s infinite;}
+        @keyframes pulse { 50% { opacity:0.6; } }
 
         /* STEP 1: GATES GRID */
         .gates-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; max-width:600px;}
@@ -282,7 +294,6 @@ app.get('/', checkUserAuth, (req, res) => {
         /* STEP 3: SCANNER */
         #scanner-ui { display:none; width:100%; max-width:500px; text-align:center;}
         .scanner-wrap { position: relative; width: 100%; height: 350px; background: #000; border: 2px solid var(--gold); margin: 0 auto 20px; border-radius:10px; overflow:hidden;}
-        /* NOTE: ScaleX(1) for back camera so it isn't mirrored! */
         video { width: 100%; height: 100%; object-fit: cover; filter: sepia(100%) hue-rotate(250deg) brightness(90%); transform: scaleX(1); }
         .scan-line { display:none; position: absolute; width: 100%; height: 4px; background: #ffcc00; top: 0; animation: scan 2s linear infinite; box-shadow: 0 0 20px #ffcc00, 0 0 40px #ffcc00; }
         @keyframes scan { 0% { top: 0; } 50% { top:100%; } 100% { top: 0; } }
@@ -316,11 +327,16 @@ app.get('/', checkUserAuth, (req, res) => {
         footer { background: #000; text-align: center; padding: 50px 20px; border-top: 1px solid var(--purple); margin-top:60px;}
         .footer-content { max-width:800px; margin:0 auto; color:#888; font-size:13px; line-height:1.6;}
         .footer-content h4 { color:var(--gold); font-size:16px; margin-bottom:10px;}
+
+        /* WHATSAPP CTA WIDGET */
+        .wa-float { position:fixed; bottom:20px; left:20px; background:#25d366; color:#fff; padding:12px 20px; border-radius:30px; font-weight:bold; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 5px 15px rgba(37,211,102,0.4); z-index:100; transition:0.3s;}
+        .wa-float:hover { transform:scale(1.05); }
+
+        @media(max-width:600px) { .input-grid{grid-template-columns:1fr;} nav a{padding:10px; font-size:12px;} }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
     <nav class="top-nav">
         <a href="/" class="nav-brand">👁️ FALAKI</a>
         <div class="nav-links">
@@ -338,7 +354,7 @@ app.get('/', checkUserAuth, (req, res) => {
             <div class="widget">
                 <h3>📜 Unseen Archives</h3>
                 <p style="font-size:12px; color:#888;">Explore the history of Jinn, Prophets, and traditional healing.</p>
-                <div class="grid">${renderCards(jinn).substring(0, 500)}</div> <!-- Preview only -->
+                <div class="grid">${renderCards(jinn).substring(0, 800)}</div> <!-- Preview only -->
                 <a href="#archives" style="display:block; margin-top:10px; color:var(--purple); font-size:12px; text-align:center;">View All Archives →</a>
             </div>
             <div class="widget" id="audio">
@@ -353,6 +369,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 ${magicalLogoHtml}
                 <h1>FALAKI</h1>
                 <p>Select a gateway below to begin your calculation.</p>
+                <div class="scan-count">👁️ ${data.stats.totalScans} Souls Scanned</div>
             </div>
 
             <!-- STEP 1: GATES -->
@@ -435,7 +452,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 </div>
             </div>
             
-            <div id="archives" style="width:100%; margin-top:60px; display:none;"> <!-- Hidden on desktop, visible on mobile if needed -->
+            <div id="archives" style="width:100%; margin-top:60px; display:none;">
             </div>
         </section>
 
@@ -465,17 +482,22 @@ app.get('/', checkUserAuth, (req, res) => {
             
             <div style="margin-top:40px; padding-top:20px; border-top:1px solid #222;">
                 <p style="color:var(--gold); font-size:14px; font-weight:bold;">Contact The Oracle Archives</p>
-                <p>Email: ${data.contact.email} | WhatsApp: ${data.contact.phone}</p>
+                <p>Email: ${data.contact.email}</p>
                 <p style="margin-top:20px; font-size:11px;">© 2026 FALAKI CLOUD ARCHIVES. Deployed on Render.</p>
             </div>
         </div>
     </footer>
 
+    <!-- CONSULT THE ORACLE WIDGET -->
+    <a href="https://wa.me/${data.contact.phone.replace(/[^0-9]/g,'')}?text=Hello,%20I%20need%20a%20private%20Falaki%20consultation." class="wa-float" target="_blank">
+        <span style="font-size:20px;">💬</span> Consult The Oracle
+    </a>
+
     <script>
         // ABJAD ENGINE
         const abjad = {
             'a':1,'b':2,'j':3,'d':4,'h':5,'w':6,'z':7,'x':8,'t':9,'y':10,'k':20,'l':30,'m':40,'n':50,'s':60,'o':70,'f':80,'p':90,'q':100,'r':200,'sh':300,'c':400,'u':6,'v':6,'e':5,'i':10,'g':3,
-            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
+            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'r':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
         };
 
         const buruj = [
@@ -533,7 +555,7 @@ app.get('/', checkUserAuth, (req, res) => {
             document.getElementById('scanner-ui').style.display = 'block';
             document.getElementById('oracle-header').style.display = 'none';
 
-            // IMPORTANT: Request BACK CAMERA (environment)
+            // IMPORTANT: Request BACK CAMERA
             const videoEl = document.getElementById('webcam');
             if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
@@ -574,14 +596,14 @@ app.get('/', checkUserAuth, (req, res) => {
             scanBtn.style.color = "#fff";
             scanLine.style.display = "block";
 
-            // Record scan API hit silently
+            // Record scan API hit
             fetch('/api/track-scan', {method:'POST'});
 
             setTimeout(() => {
                 stopCamera();
                 document.getElementById('scanner-ui').style.display = 'none';
                 generateResult();
-            }, 4000); // 4 seconds scan
+            }, 4000); 
         }
 
         function generateResult() {
@@ -658,7 +680,76 @@ app.get('/', checkUserAuth, (req, res) => {
     `);
 });
 
+// API for tracking scans
+app.post('/api/track-scan', (req, res) => {
+    const data = getData();
+    data.stats.totalScans = (data.stats.totalScans || 0) + 1;
+    saveData(data);
+    res.json({success: true});
+});
+
+// READ MANUSCRIPT (BLOG DETAIL)
+app.get('/read/:id', checkUserAuth, (req, res) => {
+    const data = getData();
+    const post = data.posts.find(p => p.id == req.params.id);
+    if (!post) return res.redirect('/');
+    post.views = (post.views || 0) + 1;
+    saveData(data);
+    
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>${post.title} | FALAKI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ${googleAnalytics}
+    <style>
+        body { background: #050505; color: #ccc; font-family: 'Courier New', monospace; margin: 0; padding: 40px 5%; line-height: 1.8;}
+        .wrap { max-width: 800px; margin: auto; background: #111; padding: 40px; border: 1px solid #333; border-radius: 8px;}
+        h1 { color: #ffcc00; text-transform: uppercase; margin-bottom:10px;}
+        .meta { color: #888; font-size:12px; margin-bottom:20px; text-transform:uppercase;}
+        img { max-width: 100%; border: 1px solid #333; border-radius: 5px; margin: 20px 0; }
+        a { color: #4b0082; text-decoration: none; font-weight: bold; }
+        a:hover { color: #ffcc00; }
+        p { margin-bottom:15px; font-size:15px;}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <a href="/">← Return to Archives</a>
+        <h1>${post.title}</h1>
+        <div class="meta">Category: ${post.category} | Views: ${post.views} | Decrypted: ${new Date(post.date).toLocaleDateString()}</div>
+        ${post.image ? `<img src="${post.image}">` : ''}
+        <div>${post.content}</div>
+    </div>
+</body>
+</html>`);
+});
+
 // ==================== SUPER ADMIN (CEO PANEL) ====================
+app.get('/admin-login', (req, res) => {
+    res.send(`<!DOCTYPE html><html><head><title>CEO Login</title>
+        <style>body{background:#000;color:#ffcc00;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;}
+        .box{background:#111;padding:40px;border:1px solid #4b0082;text-align:center;}
+        input{width:100%;padding:12px;margin:10px 0;background:#000;border:1px solid #333;color:#ffcc00;box-sizing:border-box;}
+        button{width:100%;padding:12px;background:#4b0082;color:#fff;border:none;cursor:pointer;margin-top:10px;}</style></head>
+        <body><div class="box"><h2>[ CEO OVERRIDE ]</h2>
+        <form method="POST" action="/admin-auth">
+            <input type="text" name="user" placeholder="Username" required>
+            <input type="password" name="pass" placeholder="Password" required>
+            <button type="submit">ACCESS SYSTEM</button>
+        </form></div></body></html>`);
+});
+
+app.post('/admin-auth', (req, res) => {
+    const { user, pass } = req.body;
+    const data = getData();
+    if (user === data.adminAuth.user && bcrypt.compareSync(pass, data.adminAuth.hash)) {
+        req.session.isSuperAdmin = true; res.redirect('/super-admin');
+    } else {
+        res.send('<script>alert("Access Denied"); window.location="/admin-login";</script>');
+    }
+});
+
 app.get('/super-admin', checkAdminAuth, (req, res) => {
     const data = getData();
     res.send(`<!DOCTYPE html>
@@ -704,6 +795,7 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
                 <div style="background:#111; padding:20px; border:1px solid #333; border-radius:8px;">
                     <h4 style="color:#ffcc00; margin-top:0;">Total Oracle Scans</h4>
                     <p style="font-size:40px; margin:0;">${data.stats.totalScans}</p>
+                    <button onclick="window.location.href='/admin/reset-scans'" style="background:#880000; color:white; padding:5px 10px; margin-top:10px; font-size:12px;">Reset Counter</button>
                 </div>
                 <div style="background:#111; padding:20px; border:1px solid #333; border-radius:8px;">
                     <h4 style="color:#ffcc00; margin-top:0;">Registered Souls</h4>
@@ -870,6 +962,13 @@ app.post('/admin/change-pass', checkAdminAuth, (req, res) => {
     data.adminAuth.hash = bcrypt.hashSync(req.body.newPass, 10);
     saveData(data);
     res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
+});
+
+app.get('/admin/reset-scans', checkAdminAuth, (req, res) => {
+    const data = getData();
+    data.stats.totalScans = 0;
+    saveData(data);
+    res.redirect('/super-admin');
 });
 
 // Start Server
