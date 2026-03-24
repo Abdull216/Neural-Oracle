@@ -1,5 +1,5 @@
 {
-  "name": "neural-oracle",
+  "name": "falaki-oracle",
   "version": "1.0.0",
   "description": "FALAKI - AI Oracle & Spiritual Archives",
   "main": "server.js",
@@ -12,5 +12,8 @@
     "express-session": "^1.17.3",
     "fs-extra": "^11.1.1",
     "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
