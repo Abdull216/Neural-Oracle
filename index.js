@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '-'));
     }
 });
-const upload = multer({ storage, limits: { fileSize: 500 * 1024 * 1024 } }); 
+const upload = multer({ storage, limits: { fileSize: 500 * 1024 * 1024 } }); // 500MB limit
 
 // ==================== DATABASE ====================
 const DATA_FILE = './falaki_db.json';
@@ -169,12 +169,23 @@ app.get('/auth', (req, res) => {
     `);
 });
 
+// ✅ FIX: MISSING USER REGISTRATION & LOGIN ROUTES ADDED BACK
 app.post('/api/register', (req, res) => {
     const { name, email, password } = req.body;
     const data = getData();
-    if (data.users.find(u => u.email === email)) return res.send('<script>alert("Email already registered!"); window.location="/auth";</script>');
     
-    const user = { id: Date.now(), name, email, pass: bcrypt.hashSync(password, 10), joined: new Date().toISOString() };
+    if (data.users.find(u => u.email === email)) {
+        return res.send('<script>alert("Email already registered! Please login."); window.location="/auth";</script>');
+    }
+    
+    const user = { 
+        id: Date.now(), 
+        name, 
+        email, 
+        pass: bcrypt.hashSync(password, 10), 
+        joined: new Date().toISOString() 
+    };
+    
     data.users.push(user);
     saveData(data);
     
@@ -467,6 +478,7 @@ app.post('/api/track-scan', (req, res) => {
     res.json({success: true});
 });
 
+// READ MANUSCRIPT (BLOG DETAIL)
 app.get('/read/:id', checkUserAuth, (req, res) => {
     const data = getData();
     const post = data.posts.find(p => p.id == req.params.id);
@@ -503,7 +515,7 @@ app.get('/read/:id', checkUserAuth, (req, res) => {
 </html>`);
 });
 
-// ==================== SUPER ADMIN ====================
+// ==================== SUPER ADMIN (CEO PANEL) ====================
 app.get('/admin-login', (req, res) => {
     res.send(`<!DOCTYPE html><html><head><title>CEO Login</title>
         <style>body{background:#000;color:#ffcc00;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;}
@@ -604,7 +616,7 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
         <div id="audio" class="panel">
             <h3>Upload Spiritual Audio (Ruqyah/Quran)</h3>
             <form action="/admin/upload-audio" method="POST" enctype="multipart/form-data">
-                <input type="text" name="title" placeholder="Audio Title (e.g. Surah Baqarah, Ruqyah)" required>
+                <input type="text" name="title" placeholder="Audio Title (e.g. Surah Baqarah, Ruqyah for Jinn)" required>
                 <select name="category">
                     <option value="Quran">Quran</option>
                     <option value="Ruqyah">Ruqyah / Healing</option>
@@ -652,6 +664,7 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
 </html>`);
 });
 
+// Admin Post Handlers
 app.post('/admin/post-article', checkAdminAuth, upload.single('image'), (req, res) => {
     const data = getData();
     data.posts.unshift({
@@ -675,7 +688,10 @@ app.post('/admin/upload-audio', checkAdminAuth, upload.single('audio'), (req, re
     if (!req.file) return res.send('<script>alert("No file!"); window.location="/super-admin";</script>');
     const data = getData();
     data.audios.unshift({
-        id: Date.now(), title: req.body.title, category: req.body.category, url: `/uploads/audio/${req.file.filename}`
+        id: Date.now(),
+        title: req.body.title,
+        category: req.body.category,
+        url: `/uploads/audio/${req.file.filename}`
     });
     saveData(data);
     res.send('<script>alert("Audio Uploaded!"); window.location="/super-admin";</script>');
@@ -687,11 +703,14 @@ app.get('/admin/delete-audio/:id', checkAdminAuth, (req, res) => {
 
 app.post('/admin/change-pass', checkAdminAuth, (req, res) => {
     const data = getData();
-    data.adminAuth.user = req.body.newUser; data.adminAuth.hash = bcrypt.hashSync(newPassword, 10);
+    data.adminAuth.user = req.body.newUser;
+    data.adminAuth.hash = bcrypt.hashSync(req.body.newPass, 10);
     saveData(data);
     res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
 });
 
+// Start Server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`👁️ FALAKI SYSTEM ONLINE on http://localhost:${PORT}`);
+    console.log(`⚙️ CEO Admin Panel: http://localhost:${PORT}/super-admin`);
 });
