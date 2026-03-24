@@ -1,7 +1,7 @@
 {
   "name": "neural-oracle",
   "version": "1.0.0",
-  "description": "Neural Oracle Spiritual Archives",
+  "description": "FALAKI - AI Oracle & Spiritual Archives",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
