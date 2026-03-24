@@ -2,9 +2,9 @@
   "name": "falaki-oracle",
   "version": "1.0.0",
   "description": "FALAKI - AI Oracle & Spiritual Archives",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
