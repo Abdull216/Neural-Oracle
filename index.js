@@ -50,8 +50,13 @@ function getData() {
         }
     } catch (e) { console.error("Error reading database", e); }
 
+    // Enforce default structure safely
     if(!data.adminAuth) data.adminAuth = { user: 'admin216', hash: bcrypt.hashSync('admin1234', 10) };
     if(!data.contact) data.contact = { email: 'abdullahharuna216@gmail.com', phone: '2348080335353' };
+    
+    // NEW: Financial Configuration for Sadaqah/Donations
+    if(!data.finance) data.finance = { bank: '', paypal: '', crypto: '' };
+
     if(!data.users) data.users = [];
     if(!data.posts) data.posts = [];
     if(!data.audios) data.audios = [];
@@ -68,7 +73,7 @@ function saveData(data) {
     try { fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2)); } catch(e) {}
 }
 
-getData();
+getData(); // Initialize on boot
 
 // ==================== REUSABLE SNIPPETS ====================
 const googleAnalytics = `
@@ -214,7 +219,6 @@ app.get('/logout', (req, res) => {
 app.get('/', checkUserAuth, (req, res) => {
     const data = getData();
     
-    // Categorize Posts
     const seerah = data.posts.filter(p => p.category === 'Seerah');
     const jinn = data.posts.filter(p => p.category === 'Jinn');
     const medicine = data.posts.filter(p => p.category === 'Medicine');
@@ -237,6 +241,18 @@ app.get('/', checkUserAuth, (req, res) => {
             <audio controls preload="none"><source src="${a.url}" type="audio/mpeg"></audio>
         </div>
     `).join('') || '<p style="color:#555; font-size:12px;">No audio transmissions found.</p>';
+
+    // DYNAMIC DONATION HTML
+    const donationHtml = `
+        <div class="donate-box">
+            <h3 style="color:#ffcc00; margin-top:0;">💰 Give Sadaqah (Support The Archives)</h3>
+            <p style="color:#888; font-size:13px;">If this Oracle has brought you clarity, please consider supporting the servers and scholars.</p>
+            ${data.finance.bank ? `<div class="pay-method"><strong>Bank Transfer:</strong> ${data.finance.bank}</div>` : ''}
+            ${data.finance.paypal ? `<div class="pay-method"><strong>PayPal:</strong> ${data.finance.paypal}</div>` : ''}
+            ${data.finance.crypto ? `<div class="pay-method"><strong>Crypto/Binance:</strong> ${data.finance.crypto}</div>` : ''}
+            ${(!data.finance.bank && !data.finance.paypal && !data.finance.crypto) ? `<div class="pay-method">Contact Admin for Sadaqah details.</div>` : ''}
+        </div>
+    `;
 
     res.send(`
 <!DOCTYPE html>
@@ -285,8 +301,8 @@ app.get('/', checkUserAuth, (req, res) => {
         #user-form { display:none; width:100%; max-width:500px; background:var(--card); padding:30px; border-radius:10px; border:1px solid var(--gold); box-shadow:0 0 30px rgba(255,204,0,0.1);}
         .input-group { margin-bottom:15px; text-align:left;}
         .input-group label { display:block; color:#888; font-size:12px; margin-bottom:5px; text-transform:uppercase;}
-        .input-group input, .input-group select { width:100%; padding:12px; background:#000; border:1px solid #333; color:var(--gold); font-family:inherit; box-sizing:border-box;}
-        .input-group input:focus { outline:none; border-color:var(--gold); }
+        .input-group input, .input-group select { width:100%; padding:12px; background:#000; border:1px solid #333; color:var(--gold); font-family:inherit; font-size:14px; box-sizing:border-box;}
+        .input-group input:focus, .input-group select:focus { outline:none; border-color:var(--gold); }
 
         /* LOADING ANIMATION */
         #loading-ui { display:none; text-align:center; padding:40px; }
@@ -302,6 +318,10 @@ app.get('/', checkUserAuth, (req, res) => {
 
         .btn-main { background: var(--gold); color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; font-family:inherit; font-size:16px; transition:0.3s; border-radius:5px;}
         .btn-main:hover { background: #fff; box-shadow:0 0 20px #fff;}
+
+        /* DONATE BOX */
+        .donate-box { background:rgba(75,0,130,0.2); border:1px solid var(--purple); padding:20px; border-radius:8px; margin-top:30px; text-align:left;}
+        .pay-method { background:#000; padding:10px; border:1px solid #333; border-radius:5px; margin-top:10px; font-size:13px; color:#ccc;}
 
         /* SIDEBARS & CARDS */
         .widget { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:8px; margin-bottom:20px;}
@@ -346,7 +366,7 @@ app.get('/', checkUserAuth, (req, res) => {
             <div class="widget">
                 <h3>📜 Unseen Archives</h3>
                 <p style="font-size:12px; color:#888;">Explore the history of Jinn, Prophets, and traditional healing.</p>
-                <div class="grid">${renderCards(jinn).substring(0, 800)}</div>
+                <div class="grid">${renderCards(jinn).substring(0, 800)}</div> <!-- Preview only -->
                 <a href="#archives" style="display:block; margin-top:10px; color:var(--purple); font-size:12px; text-align:center;">View All Archives →</a>
             </div>
             <div class="widget" id="audio">
@@ -361,7 +381,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 ${magicalLogoHtml}
                 <h1>FALAKI</h1>
                 <p>Select a gateway below to begin your calculation.</p>
-                <div class="scan-count">👁️ ${data.stats.totalScans} Souls Scanned</div>
+                <div class="scan-count">👁️ ${data.stats.totalScans} Souls Calculated</div>
             </div>
 
             <!-- STEP 1: GATES -->
@@ -376,7 +396,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 <button class="gate-btn" onclick="selectQuestion('custom')"><span class="gate-icon">🔮</span> Write Custom Inquiry</button>
             </div>
 
-            <!-- STEP 2: FORM -->
+            <!-- STEP 2: PURE TEXT FORM -->
             <div id="user-form">
                 <h3 style="color:var(--gold); text-align:center; margin-top:0;" id="form-title">Enter Spiritual Details</h3>
                 <p style="color:#888; font-size:12px; text-align:center; margin-bottom:20px;">The Abjad system requires exact names for accurate calculation.</p>
@@ -397,7 +417,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 <div class="input-group" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                     <div>
                         <label>City of Birth</label>
-                        <input type="text" id="uCity" placeholder="e.g. Kano" required>
+                        <input type="text" id="city" placeholder="e.g. Kano" required>
                     </div>
                     <div>
                         <label>Secret Number (1-12)</label>
@@ -415,6 +435,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button class="btn-main" style="background:#333; color:#fff;" onclick="resetToGrid()">BACK</button>
+                    <!-- PERFECTED CALCULATE BUTTON -->
                     <button class="btn-main" onclick="startCalculation()">CALCULATE DESTINY</button>
                 </div>
             </div>
@@ -434,6 +455,10 @@ app.get('/', checkUserAuth, (req, res) => {
                     <div class="ramlu-fig" id="resRamlu"></div>
                 </div>
                 <div class="res-desc" id="resDesc"></div>
+                
+                <!-- DONATION SECTION INJECTED HERE -->
+                ${donationHtml}
+
                 <div style="text-align:center; margin-top:30px;">
                     <button class="btn-main" onclick="resetToGrid()" style="max-width:300px;">Consult Again</button>
                 </div>
@@ -448,13 +473,19 @@ app.get('/', checkUserAuth, (req, res) => {
                 <h3>📜 Seerah Archives</h3>
                 <div class="grid">${renderCards(seerah).substring(0, 500)}</div>
             </div>
-            <div class="widget">
-                <h3>🌿 Traditional Medicine</h3>
-                <div class="grid">${renderCards(medicine).substring(0, 500)}</div>
-            </div>
+            
             <div class="widget">
                 <h3>🌍 History</h3>
                 <div class="grid">${renderCards(history).substring(0, 500)}</div>
+            </div>
+
+            <!-- SADAQAH WIDGET FOR RIGHT SIDEBAR -->
+            <div class="widget" style="border-color:var(--gold);">
+                <h3 style="color:var(--gold);">💰 Sadaqah / Donate</h3>
+                <p style="font-size:12px; color:#888; margin-bottom:10px;">Support the Oracle servers.</p>
+                ${data.finance.bank ? `<div class="pay-method">🏦 <strong>Bank:</strong> ${data.finance.bank}</div>` : ''}
+                ${data.finance.paypal ? `<div class="pay-method">🅿️ <strong>PayPal:</strong> ${data.finance.paypal}</div>` : ''}
+                ${data.finance.crypto ? `<div class="pay-method">₿ <strong>Crypto:</strong> ${data.finance.crypto}</div>` : ''}
             </div>
         </aside>
     </div>
@@ -475,11 +506,14 @@ app.get('/', checkUserAuth, (req, res) => {
         </div>
     </footer>
 
+    <!-- SECRET ADMIN GATEWAY -->
+    <a href="/super-admin" class="gateway">⚙️ System Access</a>
+
     <script>
-        // ABJAD ENGINE
+        // AUTHENTIC ABJAD ENGINE
         const abjad = {
             'a':1,'b':2,'j':3,'d':4,'h':5,'w':6,'z':7,'x':8,'t':9,'y':10,'k':20,'l':30,'m':40,'n':50,'s':60,'o':70,'f':80,'p':90,'q':100,'r':200,'sh':300,'c':400,'u':6,'v':6,'e':5,'i':10,'g':3,
-            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'r':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
+            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
         };
 
         const buruj = [
@@ -553,6 +587,7 @@ app.get('/', checkUserAuth, (req, res) => {
             return total;
         }
 
+        // FLAWLESS CALCULATION TRIGGER
         function startCalculation() {
             const n = document.getElementById('uName').value;
             const m = document.getElementById('mName').value;
@@ -579,7 +614,7 @@ app.get('/', checkUserAuth, (req, res) => {
         function generateResult(n, m, c, num, q) {
             const lang = document.getElementById('uLang').value;
             
-            // DYNAMIC ABJAD MATH
+            // DYNAMIC ABJAD MATH (Calculates exact string inputs + User's secret number)
             let baseSum = calculateAbjad(n) + calculateAbjad(m) + calculateAbjad(c);
             let gateVal = calculateAbjad(selectedGate);
             if(selectedGate === 'custom') gateVal += calculateAbjad(q);
@@ -685,7 +720,6 @@ app.get('/', checkUserAuth, (req, res) => {
     `);
 });
 
-// API for tracking scans
 app.post('/api/track-scan', (req, res) => {
     const data = getData();
     data.stats.totalScans = (data.stats.totalScans || 0) + 1;
@@ -783,6 +817,7 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
     <div class="sidebar">
         <h2>CEO PANEL</h2>
         <a onclick="show('dash')" class="active">📊 Dashboard</a>
+        <a onclick="show('finance')">💳 Financial Details</a>
         <a onclick="show('article')">📜 Write Manuscript</a>
         <a onclick="show('audio')">🎧 Upload Audio</a>
         <a onclick="show('contact')">📞 Edit Contact/Footer</a>
@@ -817,6 +852,24 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
             </div>
         </div>
 
+        <!-- NEW: FINANCIAL SETTINGS (DONATIONS) -->
+        <div id="finance" class="panel">
+            <h3>💳 Sadaqah / Donation Settings</h3>
+            <p style="color:#888; margin-bottom:20px; font-size:14px;">Enter your payment details below. These will be shown to users after they get their reading, so they can thank you.</p>
+            <form action="/admin/update-finance" method="POST" style="max-width:600px;">
+                <label style="color:#888; font-size:12px;">Bank Account (Name, Number, Bank)</label>
+                <input type="text" name="bank" placeholder="e.g. John Doe, 0123456789, GTBank" value="${data.finance.bank}">
+                
+                <label style="color:#888; font-size:12px;">PayPal Email / Link</label>
+                <input type="text" name="paypal" placeholder="e.g. your@paypal.com or paypal.me/link" value="${data.finance.paypal}">
+                
+                <label style="color:#888; font-size:12px;">Crypto Wallet (BTC, USDT, or Binance Pay ID)</label>
+                <input type="text" name="crypto" placeholder="e.g. USDT TRC20: 0x123..." value="${data.finance.crypto}">
+                
+                <button type="submit">Update Payment Details</button>
+            </form>
+        </div>
+
         <!-- BLOGS -->
         <div id="article" class="panel">
             <h3>Write to Archives</h3>
@@ -834,7 +887,7 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
                 <button type="submit">Encrypt to Database</button>
             </form>
             
-            <h3 style="margin-top:50px;">Manage Manuscripts</h3>
+            <h3 style="margin-top:40px;">Manage Manuscripts</h3>
             <table>
                 <tr><th>Title</th><th>Category</th><th>Action</th></tr>
                 ${data.posts.map(p=>`<tr><td>${p.title}</td><td>${p.category}</td><td><a href="/admin/delete-post/${p.id}" style="color:#ff4444;">Delete</a></td></tr>`).join('')}
@@ -856,7 +909,7 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
                 <button type="submit">Upload Audio</button>
             </form>
 
-            <h3 style="margin-top:50px;">Manage Audios</h3>
+            <h3 style="margin-top:40px;">Manage Audios</h3>
             <table>
                 <tr><th>Title</th><th>Type</th><th>Action</th></tr>
                 ${data.audios.map(a=>`<tr><td>${a.title}</td><td>${a.category}</td><td><a href="/admin/delete-audio/${a.id}" style="color:#ff4444;">Delete</a></td></tr>`).join('')}
@@ -916,19 +969,22 @@ app.get('/super-admin', checkAdminAuth, (req, res) => {
 });
 
 // Admin Post Handlers
+app.post('/admin/update-finance', checkAdminAuth, (req, res) => {
+    const data = getData();
+    data.finance = { bank: req.body.bank, paypal: req.body.paypal, crypto: req.body.crypto };
+    saveData(data);
+    res.send('<script>alert("Financial Details Saved!"); window.location="/super-admin";</script>');
+});
+
 app.post('/admin/post-article', checkAdminAuth, upload.single('image'), (req, res) => {
     const data = getData();
     data.posts.unshift({
-        id: Date.now(),
-        title: req.body.title,
-        category: req.body.category,
+        id: Date.now(), title: req.body.title, category: req.body.category,
         content: req.body.content.replace(/\n/g, '<br>'),
         image: req.file ? `/uploads/images/${req.file.filename}` : null,
-        date: new Date().toISOString(),
-        views: 0
+        date: new Date().toISOString(), views: 0
     });
-    saveData(data);
-    res.send('<script>alert("Manuscript Encrypted!"); window.location="/super-admin";</script>');
+    saveData(data); res.send('<script>alert("Manuscript Encrypted!"); window.location="/super-admin";</script>');
 });
 
 app.get('/admin/delete-post/:id', checkAdminAuth, (req, res) => {
@@ -938,14 +994,8 @@ app.get('/admin/delete-post/:id', checkAdminAuth, (req, res) => {
 app.post('/admin/upload-audio', checkAdminAuth, upload.single('audio'), (req, res) => {
     if (!req.file) return res.send('<script>alert("No file!"); window.location="/super-admin";</script>');
     const data = getData();
-    data.audios.unshift({
-        id: Date.now(),
-        title: req.body.title,
-        category: req.body.category,
-        url: `/uploads/audio/${req.file.filename}`
-    });
-    saveData(data);
-    res.send('<script>alert("Audio Uploaded!"); window.location="/super-admin";</script>');
+    data.audios.unshift({ id: Date.now(), title: req.body.title, category: req.body.category, url: `/uploads/audio/${req.file.filename}` });
+    saveData(data); res.send('<script>alert("Audio Uploaded!"); window.location="/super-admin";</script>');
 });
 
 app.get('/admin/delete-audio/:id', checkAdminAuth, (req, res) => {
@@ -955,25 +1005,18 @@ app.get('/admin/delete-audio/:id', checkAdminAuth, (req, res) => {
 app.post('/admin/update-contact', checkAdminAuth, (req, res) => {
     const data = getData();
     data.contact = { email: req.body.email, phone: req.body.phone };
-    data.aboutContent = req.body.aboutContent;
-    data.privacyContent = req.body.privacyContent;
-    saveData(data);
-    res.send('<script>alert("Contact & Texts Updated!"); window.location="/super-admin";</script>');
+    data.aboutContent = req.body.aboutContent; data.privacyContent = req.body.privacyContent;
+    saveData(data); res.send('<script>alert("Contact & Texts Updated!"); window.location="/super-admin";</script>');
 });
 
 app.post('/admin/change-pass', checkAdminAuth, (req, res) => {
     const data = getData();
-    data.adminAuth.user = req.body.newUser;
-    data.adminAuth.hash = bcrypt.hashSync(req.body.newPass, 10);
-    saveData(data);
-    res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
+    data.adminAuth.user = req.body.newUser; data.adminAuth.hash = bcrypt.hashSync(req.body.newPass, 10);
+    saveData(data); res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
 });
 
 app.get('/admin/reset-scans', checkAdminAuth, (req, res) => {
-    const data = getData();
-    data.stats.totalScans = 0;
-    saveData(data);
-    res.redirect('/super-admin');
+    const data = getData(); data.stats.totalScans = 0; saveData(data); res.redirect('/super-admin');
 });
 
 // Start Server
