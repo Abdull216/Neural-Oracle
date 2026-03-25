@@ -18,12 +18,10 @@ app.use(session({
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 
-// Create necessary folders
 fs.ensureDirSync(path.join(__dirname, 'uploads', 'images'));
 fs.ensureDirSync(path.join(__dirname, 'uploads', 'audio'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Multer Configuration (Separates Images and Audio)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         if (file.mimetype.startsWith('audio')) {
@@ -50,18 +48,13 @@ function getData() {
         }
     } catch (e) { console.error("Error reading database", e); }
 
-    // Enforce default structure safely
     if(!data.adminAuth) data.adminAuth = { user: 'admin216', hash: bcrypt.hashSync('admin1234', 10) };
     if(!data.contact) data.contact = { email: 'abdullahharuna216@gmail.com', phone: '2348080335353' };
-    
-    // NEW: Financial Configuration for Sadaqah/Donations
     if(!data.finance) data.finance = { bank: '', paypal: '', crypto: '' };
-
     if(!data.users) data.users = [];
     if(!data.posts) data.posts = [];
     if(!data.audios) data.audios = [];
     if(!data.stats) data.stats = { totalScans: 1204 }; 
-    
     if(!data.aboutContent) data.aboutContent = "FALAKI is an advanced Neural Ramlu and Spiritual Archives platform. We bridge the ancient, profound mathematical systems of Hisab al-Jummal (Abjad) and Ilm al-Raml with modern web technologies.";
     if(!data.privacyContent) data.privacyContent = "Your privacy is our utmost priority. All spiritual inquiries and Abjad calculations are processed locally and securely. We do not sell or share your personal spiritual readings.";
 
@@ -72,8 +65,7 @@ function getData() {
 function saveData(data) {
     try { fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2)); } catch(e) {}
 }
-
-getData(); // Initialize on boot
+getData(); 
 
 // ==================== REUSABLE SNIPPETS ====================
 const googleAnalytics = `
@@ -109,7 +101,6 @@ function checkUserAuth(req, res, next) {
     if (req.session.userId) return next();
     res.redirect('/auth');
 }
-
 function checkAdminAuth(req, res, next) {
     if (req.session.isSuperAdmin) return next();
     res.redirect('/admin-login');
@@ -126,15 +117,15 @@ app.get('/auth', (req, res) => {
             <title>FALAKI | Authentication Gateway</title>
             ${googleAnalytics}
             <style>
-                body { background: #050505; color: #ffcc00; font-family: 'Courier New', monospace; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; overflow:hidden;}
-                .auth-box { background: #111; padding: 40px; border: 1px solid #4b0082; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 0 40px rgba(75,0,130,0.6); position:relative; z-index:10;}
+                body { background: #050505; color: #ffcc00; font-family: 'Courier New', monospace; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px;}
+                .auth-box { background: #111; padding: 40px; border: 1px solid #4b0082; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 0 40px rgba(75,0,130,0.6); position:relative; z-index:10;}
                 ${magicalLogoCss}
                 input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-family: inherit; box-sizing:border-box;}
                 input:focus { outline:none; border-color: #ffcc00; }
                 button { width: 100%; padding: 15px; background: #ffcc00; color: #000; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-radius: 5px; margin-top: 10px; font-family: inherit; transition:0.3s;}
                 button:hover { background: #fff; box-shadow: 0 0 20px #fff;}
                 .switch { color: #888; font-size: 12px; margin-top: 20px; display: block; cursor: pointer; text-decoration: underline; }
-                .bg-stars { position:absolute; width:100%; height:100%; top:0; left:0; background:url('https://www.transparenttextures.com/patterns/stardust.png'); opacity:0.3; z-index:1; pointer-events:none;}
+                .bg-stars { position:fixed; width:100%; height:100%; top:0; left:0; background:url('https://www.transparenttextures.com/patterns/stardust.png'); opacity:0.3; z-index:1; pointer-events:none;}
             </style>
         </head>
         <body>
@@ -143,7 +134,6 @@ app.get('/auth', (req, res) => {
                 ${magicalLogoHtml}
                 <h2 style="letter-spacing:4px; margin-bottom:5px;">FALAKI</h2>
                 <p style="color:#888; font-size:12px; margin-bottom:20px;">The Spiritual & AI Archives</p>
-                
                 <form id="authForm" method="POST" action="/api/register">
                     <input type="text" name="name" id="nameField" placeholder="Enter Full Name" required>
                     <input type="email" name="email" placeholder="Enter Email Address" required>
@@ -152,7 +142,6 @@ app.get('/auth', (req, res) => {
                 </form>
                 <span class="switch" onclick="toggleAuth()">Already have an access key? Login here.</span>
             </div>
-
             <script>
                 let isLogin = false;
                 function toggleAuth() {
@@ -161,19 +150,12 @@ app.get('/auth', (req, res) => {
                     const nameField = document.getElementById('nameField');
                     const btnText = document.getElementById('btnText');
                     const switchText = document.querySelector('.switch');
-                    
                     if(isLogin) {
-                        form.action = '/api/login';
-                        nameField.style.display = 'none';
-                        nameField.removeAttribute('required');
-                        btnText.textContent = "ENTER ARCHIVES";
-                        switchText.textContent = "New seeker? Register here.";
+                        form.action = '/api/login'; nameField.style.display = 'none'; nameField.removeAttribute('required');
+                        btnText.textContent = "ENTER ARCHIVES"; switchText.textContent = "New seeker? Register here.";
                     } else {
-                        form.action = '/api/register';
-                        nameField.style.display = 'block';
-                        nameField.setAttribute('required', 'true');
-                        btnText.textContent = "UNLOCK ARCHIVES";
-                        switchText.textContent = "Already have an access key? Login here.";
+                        form.action = '/api/register'; nameField.style.display = 'block'; nameField.setAttribute('required', 'true');
+                        btnText.textContent = "UNLOCK ARCHIVES"; switchText.textContent = "Already have an access key? Login here.";
                     }
                 }
             </script>
@@ -186,39 +168,27 @@ app.post('/api/register', (req, res) => {
     const { name, email, password } = req.body;
     const data = getData();
     if (data.users.find(u => u.email === email)) return res.send('<script>alert("Email already registered! Please login."); window.location="/auth";</script>');
-    
     const user = { id: Date.now(), name, email, pass: bcrypt.hashSync(password, 10), joined: new Date().toISOString() };
-    data.users.push(user);
-    saveData(data);
-    
-    req.session.userId = user.id;
-    req.session.userName = user.name;
-    res.redirect('/');
+    data.users.push(user); saveData(data);
+    req.session.userId = user.id; req.session.userName = user.name; res.redirect('/');
 });
 
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     const data = getData();
     const user = data.users.find(u => u.email === email);
-    
     if (user && bcrypt.compareSync(password, user.pass)) {
-        req.session.userId = user.id;
-        req.session.userName = user.name;
-        res.redirect('/');
-    } else {
-        res.send('<script>alert("Invalid Credentials"); window.location="/auth";</script>');
-    }
+        req.session.userId = user.id; req.session.userName = user.name; res.redirect('/');
+    } else { res.send('<script>alert("Invalid Credentials"); window.location="/auth";</script>'); }
 });
 
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/auth');
-});
+app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/auth'); });
 
 // ==================== MAIN APPLICATION (PROTECTED) ====================
 app.get('/', checkUserAuth, (req, res) => {
     const data = getData();
     
+    // Categorize Posts
     const seerah = data.posts.filter(p => p.category === 'Seerah');
     const jinn = data.posts.filter(p => p.category === 'Jinn');
     const medicine = data.posts.filter(p => p.category === 'Medicine');
@@ -242,14 +212,13 @@ app.get('/', checkUserAuth, (req, res) => {
         </div>
     `).join('') || '<p style="color:#555; font-size:12px;">No audio transmissions found.</p>';
 
-    // DYNAMIC DONATION HTML
     const donationHtml = `
         <div class="donate-box">
             <h3 style="color:#ffcc00; margin-top:0;">💰 Give Sadaqah (Support The Archives)</h3>
-            <p style="color:#888; font-size:13px;">If this Oracle has brought you clarity, please consider supporting the servers and scholars.</p>
-            ${data.finance.bank ? `<div class="pay-method"><strong>Bank Transfer:</strong> ${data.finance.bank}</div>` : ''}
-            ${data.finance.paypal ? `<div class="pay-method"><strong>PayPal:</strong> ${data.finance.paypal}</div>` : ''}
-            ${data.finance.crypto ? `<div class="pay-method"><strong>Crypto/Binance:</strong> ${data.finance.crypto}</div>` : ''}
+            <p style="color:#888; font-size:13px;">If this Oracle has brought you clarity, please consider giving Sadaqah to maintain the servers and support the scholars.</p>
+            ${data.finance.bank ? `<div class="pay-method">🏦 <strong>Bank:</strong> ${data.finance.bank}</div>` : ''}
+            ${data.finance.paypal ? `<div class="pay-method">🅿️ <strong>PayPal:</strong> ${data.finance.paypal}</div>` : ''}
+            ${data.finance.crypto ? `<div class="pay-method">₿ <strong>Crypto:</strong> ${data.finance.crypto}</div>` : ''}
             ${(!data.finance.bank && !data.finance.paypal && !data.finance.crypto) ? `<div class="pay-method">Contact Admin for Sadaqah details.</div>` : ''}
         </div>
     `;
@@ -268,58 +237,55 @@ app.get('/', checkUserAuth, (req, res) => {
         
         ${magicalLogoCss}
         
-        /* TOP MENU NAV */
         nav.top-nav { background: #000; border-bottom: 1px solid var(--purple); display:flex; justify-content:space-between; align-items:center; padding: 15px 5%; position:sticky; top:0; z-index:1000; box-shadow:0 4px 15px rgba(75,0,130,0.4);}
         .nav-brand { font-size: 20px; font-weight: bold; color: var(--gold); letter-spacing: 2px; text-decoration:none;}
         .nav-links { display:flex; gap: 20px; align-items:center;}
         .nav-links a { color: #fff; text-decoration:none; font-size: 14px; font-weight:bold; transition:0.3s;}
         .nav-links a:hover { color: var(--gold); }
         .admin-btn { background:var(--purple); color:#fff !important; padding:8px 15px; border-radius:5px;}
-        .admin-btn:hover { background:#ffcc00; color:#000 !important;}
-
-        /* MAIN LAYOUT GRID */
+        
         .layout { display: grid; grid-template-columns: 250px 1fr 300px; gap: 30px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
         @media(max-width: 1024px) { .layout { grid-template-columns: 1fr; } .left-sidebar, .right-sidebar { display:none; } }
 
-        /* CENTER CONTENT */
         .center-content { display:flex; flex-direction:column; align-items:center; }
-        
-        /* ORACLE UI */
         .oracle-header { text-align:center; margin-bottom:40px;}
         .oracle-header h1 { color:var(--gold); letter-spacing:8px; font-size:36px; margin:0;}
-        .oracle-header p { color:#888; font-size:14px; margin-top:5px;}
         .scan-count { background:rgba(75,0,130,0.3); border:1px solid var(--purple); padding:5px 15px; border-radius:20px; color:var(--gold); font-size:12px; font-weight:bold; display:inline-block; margin-top:15px; animation:pulse 2s infinite;}
         @keyframes pulse { 50% { opacity:0.6; } }
 
-        /* STEP 1: GATES GRID */
+        /* UI BUTTONS */
+        .btn-main { background: var(--gold); color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; font-family:inherit; font-size:16px; transition:0.3s; border-radius:5px;}
+        .btn-main:hover { background: #fff; box-shadow:0 0 20px #fff;}
+        .btn-diag { background: #4b0082; color: #fff; border: 1px solid var(--gold); margin-top:20px;}
+        .btn-diag:hover { background: #ffcc00; color:#000;}
+
+        /* GATES GRID */
         .gates-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; max-width:600px;}
         .gate-btn { background:var(--card); border:1px solid var(--purple); padding:20px; border-radius:10px; color:#fff; font-family:inherit; font-size:15px; font-weight:bold; cursor:pointer; transition:0.3s; text-align:left; display:flex; align-items:center; gap:10px;}
-        .gate-btn:hover { background:var(--purple); border-color:var(--gold); transform:translateY(-3px); box-shadow:0 10px 20px rgba(75,0,130,0.5);}
+        .gate-btn:hover { background:var(--purple); border-color:var(--gold); transform:translateY(-3px);}
         .gate-icon { font-size:24px; }
 
-        /* STEP 2: FORM (NO CAMERA) */
-        #user-form { display:none; width:100%; max-width:500px; background:var(--card); padding:30px; border-radius:10px; border:1px solid var(--gold); box-shadow:0 0 30px rgba(255,204,0,0.1);}
+        /* FORMS & UI PANELS */
+        #user-form, #diagnosis-form { display:none; width:100%; max-width:500px; background:var(--card); padding:30px; border-radius:10px; border:1px solid var(--gold); box-shadow:0 0 30px rgba(255,204,0,0.1);}
         .input-group { margin-bottom:15px; text-align:left;}
-        .input-group label { display:block; color:#888; font-size:12px; margin-bottom:5px; text-transform:uppercase;}
+        .input-group label { display:block; color:#888; font-size:12px; margin-bottom:5px;}
         .input-group input, .input-group select { width:100%; padding:12px; background:#000; border:1px solid #333; color:var(--gold); font-family:inherit; font-size:14px; box-sizing:border-box;}
-        .input-group input:focus, .input-group select:focus { outline:none; border-color:var(--gold); }
 
-        /* LOADING ANIMATION */
+        /* DIAGNOSIS CHECKBOXES */
+        .diag-check { display:flex; align-items:center; gap:10px; background:#000; padding:15px; border:1px solid #333; margin-bottom:10px; border-radius:5px; cursor:pointer;}
+        .diag-check:hover { border-color:var(--purple);}
+
         #loading-ui { display:none; text-align:center; padding:40px; }
         .mystic-text { color:var(--gold); font-size:18px; letter-spacing:3px; margin-top:20px; animation:pulse 1s infinite;}
 
-        /* STEP 3: RESULT */
-        #result-ui { display:none; width:100%; max-width:600px; border: 2px dashed var(--gold); padding: 30px; background:#000; animation:fadeIn 1s; box-sizing:border-box;}
+        #result-ui { display:none; width:100%; max-width:700px; border: 2px dashed var(--gold); padding: 30px; background:#000; animation:fadeIn 1s; box-sizing:border-box;}
         @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
         .res-star { font-size:26px; color:var(--gold); margin-bottom:10px; font-weight:bold;}
-        .res-element { font-size:13px; color:var(--purple); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;}
-        .res-desc { line-height:1.8; color:#ccc; margin-bottom:30px; font-size:15px; text-align:justify; border-left:3px solid var(--purple); padding-left:15px;}
+        .res-element { font-size:13px; color:var(--purple); margin-bottom:20px; text-transform:uppercase; font-weight:bold;}
+        .res-desc { line-height:1.8; color:#ccc; margin-bottom:20px; font-size:15px; text-align:justify; border-left:3px solid var(--purple); padding-left:15px;}
+        .final-answer { background:rgba(75,0,130,0.2); padding:20px; border:1px solid var(--gold); border-radius:8px; font-size:16px; font-weight:bold; color:#fff; margin-bottom:30px; text-align:center;}
         .ramlu-fig { font-size: 20px; color:#fff; background:var(--purple); padding:5px 10px; border-radius:5px; margin-bottom:15px; display:inline-block;}
 
-        .btn-main { background: var(--gold); color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; font-family:inherit; font-size:16px; transition:0.3s; border-radius:5px;}
-        .btn-main:hover { background: #fff; box-shadow:0 0 20px #fff;}
-
-        /* DONATE BOX */
         .donate-box { background:rgba(75,0,130,0.2); border:1px solid var(--purple); padding:20px; border-radius:8px; margin-top:30px; text-align:left;}
         .pay-method { background:#000; padding:10px; border:1px solid #333; border-radius:5px; margin-top:10px; font-size:13px; color:#ccc;}
 
@@ -329,26 +295,25 @@ app.get('/', checkUserAuth, (req, res) => {
         
         .grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .card { background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition:0.3s;}
-        .card:hover { border-color:var(--gold);}
         .card-img { width: 100%; height: 140px; object-fit: cover; border-bottom:1px solid var(--border);}
         .card-body { padding: 15px; }
         .card-body h3 { color: #fff; margin:0 0 5px; font-size:15px;}
-        .card-body p { color: #888; font-size: 12px; line-height: 1.4; margin-bottom: 10px; }
-        .card-body a { color: var(--gold); font-weight: bold; text-decoration: none; font-size:12px;}
+        .card-body p { color: #888; font-size: 12px; margin-bottom: 10px; }
+        .card-body a { color: var(--gold); text-decoration: none; font-size:12px; font-weight:bold;}
 
         .audio-track { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #222; flex-wrap:wrap; gap:10px;}
         .audio-track audio { height:35px; outline:none; max-width:200px;}
-
         footer { background: #000; text-align: center; padding: 50px 20px; border-top: 1px solid var(--purple); margin-top:60px;}
-        .footer-content { max-width:800px; margin:0 auto; color:#888; font-size:13px; line-height:1.6;}
-        .footer-content h4 { color:var(--gold); font-size:16px; margin-bottom:10px;}
+        .section-title { color:var(--purple); border-bottom: 2px solid var(--purple); padding-bottom:10px; margin-bottom:30px; font-size:24px; text-transform:uppercase;}
+        
+        .wa-float { position:fixed; bottom:20px; right:20px; background:#25d366; color:#fff; padding:12px 20px; border-radius:30px; font-weight:bold; text-decoration:none; display:flex; align-items:center; gap:8px; box-shadow:0 5px 15px rgba(37,211,102,0.4); z-index:100; transition:0.3s;}
+        .wa-float:hover { transform:scale(1.05); }
 
         @media(max-width:600px) { .input-grid{grid-template-columns:1fr;} nav a{padding:10px; font-size:12px;} .gates-grid{grid-template-columns:1fr;} }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
     <nav class="top-nav">
         <a href="/" class="nav-brand">👁️ FALAKI</a>
         <div class="nav-links">
@@ -366,7 +331,7 @@ app.get('/', checkUserAuth, (req, res) => {
             <div class="widget">
                 <h3>📜 Unseen Archives</h3>
                 <p style="font-size:12px; color:#888;">Explore the history of Jinn, Prophets, and traditional healing.</p>
-                <div class="grid">${renderCards(jinn).substring(0, 800)}</div> <!-- Preview only -->
+                <div class="grid">${renderCards(jinn).substring(0, 800)}</div>
                 <a href="#archives" style="display:block; margin-top:10px; color:var(--purple); font-size:12px; text-align:center;">View All Archives →</a>
             </div>
             <div class="widget" id="audio">
@@ -382,6 +347,9 @@ app.get('/', checkUserAuth, (req, res) => {
                 <h1>FALAKI</h1>
                 <p>Select a gateway below to begin your calculation.</p>
                 <div class="scan-count">👁️ ${data.stats.totalScans} Souls Calculated</div>
+                <br>
+                <!-- NEW: DIAGNOSIS BUTTON -->
+                <button class="btn-main btn-diag" onclick="openDiagnosis()" style="max-width:400px; margin-top:20px;">🔍 Test for Sihr, Jinn, or Evil Eye</button>
             </div>
 
             <!-- STEP 1: GATES -->
@@ -396,7 +364,7 @@ app.get('/', checkUserAuth, (req, res) => {
                 <button class="gate-btn" onclick="selectQuestion('custom')"><span class="gate-icon">🔮</span> Write Custom Inquiry</button>
             </div>
 
-            <!-- STEP 2: PURE TEXT FORM -->
+            <!-- STEP 2: ABJAD FORM -->
             <div id="user-form">
                 <h3 style="color:var(--gold); text-align:center; margin-top:0;" id="form-title">Enter Spiritual Details</h3>
                 <p style="color:#888; font-size:12px; text-align:center; margin-bottom:20px;">The Abjad system requires exact names for accurate calculation.</p>
@@ -415,14 +383,8 @@ app.get('/', checkUserAuth, (req, res) => {
                     <input type="text" id="mName" placeholder="e.g. Aisha" required>
                 </div>
                 <div class="input-group" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <div>
-                        <label>City of Birth</label>
-                        <input type="text" id="city" placeholder="e.g. Kano" required>
-                    </div>
-                    <div>
-                        <label>Secret Number (1-12)</label>
-                        <input type="number" id="uNum" min="1" max="12" placeholder="Choose 1-12" required>
-                    </div>
+                    <div><label>City of Birth</label><input type="text" id="city" placeholder="e.g. Kano" required></div>
+                    <div><label>Secret Number (1-12)</label><input type="number" id="uNum" min="1" max="12" placeholder="Choose 1-12" required></div>
                 </div>
                 <div class="input-group">
                     <label>Reading Language</label>
@@ -432,31 +394,47 @@ app.get('/', checkUserAuth, (req, res) => {
                         <option value="ar">Arabic (العربية)</option>
                     </select>
                 </div>
-                
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button class="btn-main" style="background:#333; color:#fff;" onclick="resetToGrid()">BACK</button>
-                    <!-- PERFECTED CALCULATE BUTTON -->
                     <button class="btn-main" onclick="startCalculation()">CALCULATE DESTINY</button>
+                </div>
+            </div>
+
+            <!-- NEW: SPIRITUAL DIAGNOSIS FORM -->
+            <div id="diagnosis-form">
+                <h3 style="color:var(--gold); text-align:center; margin-top:0;">🔍 Spiritual Diagnosis Test</h3>
+                <p style="color:#888; font-size:12px; text-align:center; margin-bottom:20px;">Check the symptoms you are experiencing to determine if your blockages are physical, Sihr (Magic), Mass (Jinn), or Hasad (Evil Eye).</p>
+                
+                <label class="diag-check"><input type="checkbox" id="sym1"> Sudden extreme fatigue and laziness.</label>
+                <label class="diag-check"><input type="checkbox" id="sym2"> Business failing suddenly after a big success.</label>
+                <label class="diag-check"><input type="checkbox" id="sym3"> Frequent nightmares of falling, snakes, or dogs.</label>
+                <label class="diag-check"><input type="checkbox" id="sym4"> Constant unexplained headaches or chest heat.</label>
+                <label class="diag-check"><input type="checkbox" id="sym5"> Sudden hatred towards your spouse or family.</label>
+                <label class="diag-check"><input type="checkbox" id="sym6"> Feeling a presence or seeing shadows at home.</label>
+                <label class="diag-check"><input type="checkbox" id="sym7"> Money disappearing quickly without explanation.</label>
+
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-main" style="background:#333; color:#fff;" onclick="resetToGrid()">CANCEL</button>
+                    <button class="btn-main" onclick="startDiagnosis()">RUN DIAGNOSIS</button>
                 </div>
             </div>
 
             <!-- STEP 3: LOADING -->
             <div id="loading-ui">
                 ${magicalLogoHtml}
-                <div class="mystic-text">DECRYPTING STARS...</div>
-                <p style="color:#888; font-size:12px; margin-top:10px;">Calculating Abjad values against the 16 Houses of Ramlu.</p>
+                <div class="mystic-text">DECRYPTING FREQUENCIES...</div>
             </div>
 
             <!-- STEP 4: RESULT -->
             <div id="result-ui">
                 <div style="text-align:center;">
+                    <div class="ramlu-fig" id="resRamlu"></div>
                     <div class="res-star" id="resTitle"></div>
                     <div class="res-element" id="resElement"></div>
-                    <div class="ramlu-fig" id="resRamlu"></div>
                 </div>
                 <div class="res-desc" id="resDesc"></div>
+                <div class="final-answer" id="finalAnswer"></div>
                 
-                <!-- DONATION SECTION INJECTED HERE -->
                 ${donationHtml}
 
                 <div style="text-align:center; margin-top:30px;">
@@ -473,13 +451,14 @@ app.get('/', checkUserAuth, (req, res) => {
                 <h3>📜 Seerah Archives</h3>
                 <div class="grid">${renderCards(seerah).substring(0, 500)}</div>
             </div>
-            
+            <div class="widget">
+                <h3>🌿 Traditional Medicine</h3>
+                <div class="grid">${renderCards(medicine).substring(0, 500)}</div>
+            </div>
             <div class="widget">
                 <h3>🌍 History</h3>
                 <div class="grid">${renderCards(history).substring(0, 500)}</div>
             </div>
-
-            <!-- SADAQAH WIDGET FOR RIGHT SIDEBAR -->
             <div class="widget" style="border-color:var(--gold);">
                 <h3 style="color:var(--gold);">💰 Sadaqah / Donate</h3>
                 <p style="font-size:12px; color:#888; margin-bottom:10px;">Support the Oracle servers.</p>
@@ -506,11 +485,16 @@ app.get('/', checkUserAuth, (req, res) => {
         </div>
     </footer>
 
+    <!-- CONSULT THE ORACLE WIDGET -->
+    <a href="https://wa.me/${data.contact.phone.replace(/[^0-9]/g,'')}?text=Hello,%20I%20need%20a%20private%20Falaki%20consultation." class="wa-float" target="_blank">
+        <span style="font-size:20px;">💬</span> Consult The Oracle
+    </a>
+
     <!-- SECRET ADMIN GATEWAY -->
     <a href="/super-admin" class="gateway">⚙️ System Access</a>
 
     <script>
-        // AUTHENTIC ABJAD ENGINE
+        // THE ULTIMATE ABJAD & RAMLU ENGINE
         const abjad = {
             'a':1,'b':2,'j':3,'d':4,'h':5,'w':6,'z':7,'x':8,'t':9,'y':10,'k':20,'l':30,'m':40,'n':50,'s':60,'o':70,'f':80,'p':90,'q':100,'r':200,'sh':300,'c':400,'u':6,'v':6,'e':5,'i':10,'g':3,
             'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
@@ -532,23 +516,45 @@ app.get('/', checkUserAuth, (req, res) => {
         ];
 
         const ramlFigures = [
-            { name: "Dariqee", nature: "Good for travel, indicates movement." },
-            { name: "Jama'a", nature: "Good for partnership, crowds, business." },
-            { name: "Uqba", nature: "Indicates delays, the end of a matter." },
-            { name: "Kausaji", nature: "Deceit, something hidden or incomplete." },
-            { name: "Dhahika", nature: "Joy, success, good news coming." },
-            { name: "Qabla Kharija", nature: "Money leaving, safe travel out." },
-            { name: "Humra", nature: "Conflict, passion, fire, blood." },
-            { name: "Inkees", nature: "Loss, sadness, things turning upside down." },
-            { name: "Bayaad", nature: "Purity, clarity, a good outcome." },
-            { name: "Nusra Kharija", nature: "Victory over distant enemies." },
-            { name: "Nusra Dakhila", nature: "Victory at home, inner peace." },
-            { name: "Qabla Dakhila", nature: "Money arriving, safe return." },
-            { name: "Ijtima", nature: "Meeting of two things, good for marriage." },
-            { name: "Uqla", nature: "Tied up, delayed, restricted movement." },
-            { name: "Kabid Kharija", nature: "Loss of property, theft." },
-            { name: "Kabid Dakhila", nature: "Gaining property, holding tight." }
+            { id: 1, name: "Dariqee", type: "delayed" },
+            { id: 2, name: "Jama'a", type: "favorable" },
+            { id: 3, name: "Uqba", type: "unfavorable" },
+            { id: 4, name: "Kausaji", type: "spiritual" },
+            { id: 5, name: "Dhahika", type: "favorable" },
+            { id: 6, name: "Qabla Kharija", type: "delayed" },
+            { id: 7, name: "Humra", type: "spiritual" },
+            { id: 8, name: "Inkees", type: "unfavorable" },
+            { id: 9, name: "Bayaad", type: "favorable" },
+            { id: 10, name: "Nusra Kharija", type: "delayed" },
+            { id: 11, name: "Nusra Dakhila", type: "favorable" },
+            { id: 12, name: "Qabla Dakhila", type: "favorable" },
+            { id: 13, name: "Ijtima", type: "delayed" },
+            { id: 14, name: "Uqla", type: "unfavorable" },
+            { id: 15, name: "Kabid Kharija", type: "unfavorable" },
+            { id: 16, name: "Kabid Dakhila", type: "unfavorable" }
         ];
+
+        // THE KNOWLEDGE BRAIN (Matrix of Answers)
+        const logicMatrix = {
+            relationship: {
+                favorable: { en: "Final Answer: YES. You are highly compatible. This union will bring peace and prosperity.", ha: "Amsar Karshe: EH. Taurarinku sun dace sosai. Wannan auren zai kawo alheri.", ar: "الجواب النهائي: نعم. أنتم متوافقون للغاية." },
+                delayed: { en: "Final Answer: IT WILL HAPPEN, BUT WITH DELAY. You will face family resistance or timing hurdles first.", ha: "Amsar Karshe: ZAI YIWU, AMMA DA JINKIRI. Zaku fuskanci kalubale daga dangi tukunna.", ar: "الجواب النهائي: سيحدث، ولكن مع التأخير." },
+                unfavorable: { en: "Final Answer: NO. Your elements do not match. Proceeding will bring constant emotional conflict.", ha: "Amsar Karshe: A'A. Dabi'un ku basu zo daya ba. Idan akayi auren za'a samu tashin hankali.", ar: "الجواب النهائي: لا. عناصرك لا تتطابق." },
+                spiritual: { en: "Final Answer: BE CAREFUL. There is a third party or Hasad (Evil Eye) trying to block this union.", ha: "Amsar Karshe: KU KIYAYE. Akwai katsalandan ko hasada a cikin wannan al'amari.", ar: "الجواب النهائي: كن حذرا. هناك حسد يحاول عرقلة هذا الاتحاد." }
+            },
+            wealth: {
+                favorable: { en: "Final Answer: YES. Great success is coming. The doors of wealth are open for you right now.", ha: "Amsar Karshe: EH. Babban nasara na zuwa. Kofofin arziki a bude suke a yanzu.", ar: "الجواب النهائي: نعم. نجاح كبير قادم." },
+                delayed: { en: "Final Answer: SUCCESS WILL COME SLOWLY. Keep working hard, your debts and struggles will clear eventually.", ha: "Amsar Karshe: NASARA ZATA ZO A HANKALI. Ka ci gaba da hakuri, komai zai yi kyau.", ar: "الجواب النهائي: النجاح سيأتي ببطء." },
+                unfavorable: { en: "Final Answer: NO. There is a high risk of financial loss right now. Do not invest or trust blindly.", ha: "Amsar Karshe: A'A. Akwai hadarin asarar kudi a yanzu. Kar ka yarda da sabon kasuwanci.", ar: "الجواب النهائي: لا. هناك خطر كبير من الخسارة المالية." },
+                spiritual: { en: "Final Answer: SPIRITUAL BLOCKAGE. Your wealth is tied down by Sihr or heavy Evil Eye. Give Sadaqah immediately.", ha: "Amsar Karshe: KULLEN ASIRI. Arzikinka yana daure saboda hasada ko sammu. Ka gaggauta fitar da sadaka.", ar: "الجواب النهائي: انسداد روحي. ثروتك مقيدة بالسحر." }
+            },
+            timing: {
+                favorable: { en: "Final Answer: VERY SOON. Within days or a few weeks.", ha: "Amsar Karshe: NAN KUSA. Cikin yan kwanaki ko makonni kadan.", ar: "الجواب النهائي: قريبا جدا." },
+                delayed: { en: "Final Answer: LATER. It will take several months to a year.", ha: "Amsar Karshe: ZAI DAU LOKACI. Zai dauki watanni ko shekara.", ar: "الجواب النهائي: في وقت لاحق." },
+                unfavorable: { en: "Final Answer: BLOCKED. It will not happen unless conditions change.", ha: "Amsar Karshe: A RUFE. Ba zai faru ba sai idan ka canza tsari.", ar: "الجواب النهائي: محظور." },
+                spiritual: { en: "Final Answer: UNCERTAIN. Spiritual interference is confusing the timeline.", ha: "Amsar Karshe: RASHIN TABBAS. Akwai katsalandan din shaidanu a lokacin.", ar: "الجواب النهائي: غير مؤكد." }
+            }
+        };
 
         let selectedGate = '';
 
@@ -566,9 +572,16 @@ app.get('/', checkUserAuth, (req, res) => {
             document.getElementById('custom-query-box').style.display = gate === 'custom' ? 'block' : 'none';
         }
 
+        function openDiagnosis() {
+            document.getElementById('gates-grid').style.display = 'none';
+            document.getElementById('oracle-header').style.display = 'none';
+            document.getElementById('diagnosis-form').style.display = 'block';
+        }
+
         function resetToGrid() {
             document.getElementById('gates-grid').style.display = 'grid';
             document.getElementById('user-form').style.display = 'none';
+            document.getElementById('diagnosis-form').style.display = 'none';
             document.getElementById('loading-ui').style.display = 'none';
             document.getElementById('result-ui').style.display = 'none';
             document.getElementById('oracle-header').style.display = 'block';
@@ -587,7 +600,68 @@ app.get('/', checkUserAuth, (req, res) => {
             return total;
         }
 
-        // FLAWLESS CALCULATION TRIGGER
+        function determineIntent(gate, query) {
+            if (gate === 'marriage') return 'relationship';
+            if (gate === 'wealth' || gate === 'business') return 'wealth';
+            if (gate === 'timing') return 'timing';
+            
+            if (gate === 'custom') {
+                const q = query.toLowerCase();
+                if (q.includes('marry') || q.includes('wife') || q.includes('husband') || q.includes('love') || q.includes('match')) return 'relationship';
+                if (q.includes('money') || q.includes('rich') || q.includes('business') || q.includes('success')) return 'wealth';
+                if (q.includes('when') || q.includes('time') || q.includes('how long')) return 'timing';
+            }
+            return 'wealth'; 
+        }
+
+        function startDiagnosis() {
+            let symCount = 0;
+            let evilEyeCount = 0;
+            let jinnCount = 0;
+            let sihrCount = 0;
+
+            if(document.getElementById('sym1').checked) { symCount++; evilEyeCount++; } // Laziness = Ayn
+            if(document.getElementById('sym2').checked) { symCount++; evilEyeCount++; } // Business fail = Ayn
+            if(document.getElementById('sym3').checked) { symCount++; jinnCount++; } // Nightmares = Mass
+            if(document.getElementById('sym4').checked) { symCount++; sihrCount++; } // Headaches = Sihr
+            if(document.getElementById('sym5').checked) { symCount++; sihrCount++; } // Hatred spouse = Sihr
+            if(document.getElementById('sym6').checked) { symCount++; jinnCount++; } // Presence = Mass
+            if(document.getElementById('sym7').checked) { symCount++; evilEyeCount++; } // Money disappearing = Ayn
+
+            document.getElementById('diagnosis-form').style.display = 'none';
+            document.getElementById('loading-ui').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('loading-ui').style.display = 'none';
+                document.getElementById('result-ui').style.display = 'block';
+                document.getElementById('resRamlu').style.display = 'none';
+                document.getElementById('resElement').style.display = 'none';
+                
+                let result = "";
+                let title = "";
+
+                if (symCount === 0) {
+                    title = "✅ YOU ARE SPIRITUALLY CLEAR";
+                    result = "Your symptoms are likely physical or stress-related. There is no major spiritual blockage detected. Seek standard medical or psychological advice.";
+                } else if (evilEyeCount >= 2 && evilEyeCount > jinnCount && evilEyeCount > sihrCount) {
+                    title = "👁️ DIAGNOSIS: AL-AYN (EVIL EYE / HASAD)";
+                    result = "<strong>You are suffering from the Evil Eye (Hasad).</strong> This is not black magic, but the jealous eyes of people around you destroying your progress and draining your energy.<br><br><strong>Cure:</strong> Stop sharing your successes on social media. Recite Surah Al-Falaq, An-Nas, and Ayatul Kursi every morning and evening. Take a bath with Ruqyah water.";
+                } else if (jinnCount >= 2 && jinnCount > sihrCount) {
+                    title = "👥 DIAGNOSIS: AL-MASS (JINN PRESENCE)";
+                    result = "<strong>There is a spiritual presence around you.</strong> The nightmares and shadows indicate an unseen entity is attached to your aura.<br><br><strong>Cure:</strong> Play Surah Al-Baqarah in your home every 3 days. Do not sleep without Wudu. Listen to the Ruqyah audio provided in our Spiritual Audio section.";
+                } else {
+                    title = "🔮 DIAGNOSIS: SIHR (SPIRITUAL BLOCKAGE / MAGIC)";
+                    result = "<strong>Warning: You are under a deliberate spiritual blockage.</strong> The sudden hatred, severe headaches, and locked doors indicate a tied knot (Uqla) or Sihr.<br><br><strong>Cure:</strong> You need immediate Ruqyah. Give a significant charity (Sadaqah) today with the intention of breaking the curse, as charity extinguishes the wrath of the unseen.";
+                }
+
+                document.getElementById('resTitle').innerText = title;
+                document.getElementById('resTitle').style.color = "#ff4444";
+                document.getElementById('resDesc').innerHTML = result;
+                document.getElementById('finalAnswer').style.display = 'none';
+
+            }, 3000);
+        }
+
         function startCalculation() {
             const n = document.getElementById('uName').value;
             const m = document.getElementById('mName').value;
@@ -596,7 +670,7 @@ app.get('/', checkUserAuth, (req, res) => {
             const q = document.getElementById('uQuery').value;
             
             if(!n || !m || !c || !num || num < 1 || num > 12) return alert("All fields are required, and number must be 1-12.");
-            if(selectedGate === 'custom' && !q) return alert("Please enter your question.");
+            if(selectedGate === 'custom' && !q) return alert("Please enter your specific question.");
 
             document.getElementById('user-form').style.display = 'none';
             document.getElementById('oracle-header').style.display = 'none';
@@ -608,95 +682,53 @@ app.get('/', checkUserAuth, (req, res) => {
             setTimeout(() => {
                 document.getElementById('loading-ui').style.display = 'none';
                 generateResult(n, m, c, num, q);
-            }, 3000); // 3 seconds calculation animation
+            }, 3000); 
         }
 
         function generateResult(n, m, c, num, q) {
             const lang = document.getElementById('uLang').value;
             
-            // DYNAMIC ABJAD MATH (Calculates exact string inputs + User's secret number)
+            // 1. MATH CALCULATIONS
             let baseSum = calculateAbjad(n) + calculateAbjad(m) + calculateAbjad(c);
             let gateVal = calculateAbjad(selectedGate);
             if(selectedGate === 'custom') gateVal += calculateAbjad(q);
             
             let totalSum = baseSum + gateVal + num;
 
-            // Find Star (1-12)
-            let starIndex = totalSum % 12;
-            if(starIndex === 0) starIndex = 12;
+            // 2. FIND STAR (1-12) & RAMLU (1-16)
+            let starIndex = totalSum % 12; if(starIndex === 0) starIndex = 12;
             const starData = buruj[starIndex - 1];
 
-            // Find Raml Figure (1-16)
-            let ramlIndex = totalSum % 16;
-            if(ramlIndex === 0) ramlIndex = 16;
+            let ramlIndex = totalSum % 16; if(ramlIndex === 0) ramlIndex = 16;
             const ramlData = ramlFigures[ramlIndex - 1];
 
-            const isFire = starData.element === 'Fire';
-            const isWater = starData.element === 'Water';
-            const isEarth = starData.element === 'Earth';
-            const isAir = starData.element === 'Air';
+            // 3. INTENT & OUTCOME MAPPING
+            const intent = determineIntent(selectedGate, q);
+            const outcomeType = ramlData.type; // 'favorable', 'delayed', 'unfavorable', 'spiritual'
+            
+            const finalAnswerObj = logicMatrix[intent][outcomeType];
+            const finalAnswer = finalAnswerObj[lang] || finalAnswerObj['en'];
 
-            let resEn = "Based on the exact calculation of your details (Abjad Value: " + totalSum + "), your reading is guided by the star of <strong>" + starData.nameEn + "</strong> and the Raml figure of <strong>" + ramlData.name + "</strong>.<br><br>";
-            let resHa = "Bisa tsantsar lissafin bayanan ka (Adadin Abjad: " + totalSum + "), duba dinka ya fada kan tauraron <strong>" + starData.nameHa + "</strong> da kofofin Ramlu na <strong>" + ramlData.name + "</strong>.<br><br>";
+            // 4. BUILD EXPLANATION
+            let resEn = "Based on your Abjad calculation (" + totalSum + "), your star is <strong>" + starData.nameEn + "</strong> and the Raml figure is <strong>" + ramlData.name + "</strong>.<br><br>";
+            let resHa = "Bisa lissafin Abjad dinka (" + totalSum + "), tauraronka shine <strong>" + starData.nameHa + "</strong> kuma siffar Ramlu itace <strong>" + ramlData.name + "</strong>.<br><br>";
             let resAr = "بناءً على حساب الأبجد الخاص بك (" + totalSum + ")، نجمك هو <strong>" + starData.nameAr + "</strong> وشكل الرمل هو <strong>" + ramlData.name + "</strong>.<br><br>";
 
-            // DYNAMIC RESPONSES PER GATE
-            if (selectedGate === 'marriage') {
-                if(isFire) {
-                    resEn += "For marriage: Fire is passionate but destructive. Avoid marrying a Water star, as it will extinguish your progress. An Earth star will ground your anger.";
-                    resHa += "Aurenku: Wuta tana da zafi. Kar ka auri tauraron Ruwa domin zai kashe maka karsashi. Tauraron Kasa zai fi rike ka da kwanciyar hankali.";
-                    resAr += "للزواج: النار عاطفية ولكنها مدمرة. تجنب الزواج من نجم مائي.";
-                } else if (isWater) {
-                    resEn += "For marriage: Water blends well. You need an Earth star to contain you and build a home. Avoid Fire, it will cause constant emotional boiling.";
-                    resHa += "Aurenku: Ruwa yana bukatan Kasa don ya zauna wuri daya. Kar ka auri Wuta, zaku ringa samun tashin hankali (Tafasa).";
-                    resAr += "للزواج: الماء يمتزج جيدا. أنت بحاجة إلى نجم ترابي لاحتوائك وبناء منزل.";
-                } else if (isEarth) {
-                    resEn += "For marriage: You are stable. Water stars bring you wealth and growth. Air stars will cause dust and confusion in your home.";
-                    resHa += "Aurenku: Kasa tana son Ruwa don ta kawo amfanin gona (Arziki). Amma idan ka auri Iska, zaku yawaita samun kura da rashin jituwa.";
-                    resAr += "للزواج: أنت مستقر. النجوم المائية تجلب لك الثروة والنمو.";
-                } else {
-                    resEn += "For marriage: Air needs Fire to expand, but too much Fire burns the house. A Water star will never understand your need for freedom.";
-                    resHa += "Aurenku: Iska tana son Wuta don ta kara karfi. Amma tauraron Ruwa ba zai taba fahimtar yanci da zirga-zirgar ka ba.";
-                    resAr += "للزواج: الهواء يحتاج إلى النار ليتمدد، لكن كثرة النار تحرق المنزل.";
-                }
-            } 
-            else if (selectedGate === 'business' || selectedGate === 'wealth') {
-                if(isEarth) {
-                    resEn += "Business: Your element is Earth. Real estate, farming, and physical trades will bring you massive wealth. Do not rush; your wealth builds slowly but permanently.";
-                    resHa += "Kasuwanci: Asalinka Kasa ne. Kasuwancin filaye, noma, ko gine-gine zai kawo maka arziki mai dorewa. Kada ka yi gaggawa.";
-                    resAr += "الأعمال: عنصرك هو الأرض. العقارات والزراعة والتجارة المادية ستجلب لك ثروة هائلة.";
-                } else if(isAir) {
-                    resEn += "Business: Air moves fast. Digital business, communication, and travel are your paths to wealth. You must learn to save, as money leaves your hand as fast as wind.";
-                    resHa += "Kasuwanci: Iska tana tafiya da sauri. Kasuwancin yanar gizo ko tafiye-tafiye zasu fi karbe ka. Dole ka koyi tattali, kudi yana saurin fita a hannunka.";
-                    resAr += "الأعمال: الهواء يتحرك بسرعة. الأعمال الرقمية والتواصل والسفر هي طرقك نحو الثروة.";
-                } else {
-                    resEn += "Business: Your element requires partnership. Do not do business alone this month. Give charity on a Thursday before starting the new venture.";
-                    resHa += "Kasuwanci: Dabi'arka tana bukatar hadin gwiwa. Kar ka yi kasuwanci kai kadai a wannan watan. Ka bayar da sadaka ranar Alhamis kafin ka fara.";
-                    resAr += "الأعمال: عنصرك يتطلب الشراكة. لا تقم بأعمال تجارية بمفردك هذا الشهر.";
-                }
-            }
-            else if (selectedGate === 'travel') {
-                if(ramlData.name === "Dariqee" || ramlData.name === "Qabla Kharija") {
-                    resEn += "The stars align perfectly for movement. " + ramlData.nature + " Proceed with your journey.";
-                    resHa += "Taurari sun bada dama. " + ramlData.nature + " Ci gaba da shirin tafiyarka.";
-                    resAr += "النجوم تتوافق تمامًا للحركة. " + ramlData.nature + " المضي قدما في رحلتك.";
-                } else if (ramlData.name === "Uqla" || ramlData.name === "Inkees") {
-                    resEn += "Warning: " + ramlData.nature + " It is highly advised to delay travel. Give charity before moving.";
-                    resHa += "Gargadi: " + ramlData.nature + " An fi so ka daga tafiyar. Kuma kayi sadaka kafin ka fita.";
-                    resAr += "تحذير: " + ramlData.nature + " ينصح بشدة بتأخير السفر. إعطاء الصدقة قبل التحرك.";
-                } else {
-                    resEn += "The journey is neutral. The figure reveals: " + ramlData.nature;
-                    resHa += "Tafiyar tana da matsakaicin tsari. Ramlu ya nuna: " + ramlData.nature;
-                    resAr += "الرحلة محايدة. الشكل يكشف: " + ramlData.nature;
-                }
-            }
-            else {
-                resEn += "For your specific inquiry, the unseen calculation brings forth " + ramlData.name + ". This means: " + ramlData.nature + " Let your " + starData.element + " nature guide your next steps.";
-                resHa += "Dangane da tambayarka, lissafin ya fito da " + ramlData.name + ". Wannan yana nufin: " + ramlData.nature + " Ka bar asalin dabi'arka ta " + starData.element + " ta jagorance ka.";
-                resAr += "لسؤالك المحدد، الحساب الغيبي يبرز " + ramlData.name + ". وهذا يعني: " + ramlData.nature + " دع طبيعتك ترشد خطواتك القادمة.";
+            if(starData.element === 'Fire') {
+                resEn += "Your Fire nature brings passion but attracts envy. "; resHa += "Dabi'ar Wuta tana jawo kishi da farin jini. ";
+            } else if(starData.element === 'Water') {
+                resEn += "Your Water nature brings emotion and wealth. "; resHa += "Dabi'ar Ruwa tana kawo sanyi da arziki. ";
+            } else if(starData.element === 'Earth') {
+                resEn += "Your Earth nature means slow, steady growth. "; resHa += "Dabi'ar Kasa tana nufin girma a hankali. ";
+            } else {
+                resEn += "Your Air nature makes you intelligent but restless. "; resHa += "Dabi'ar Iska tana kawo basira amma rashin zama wuri daya. ";
             }
 
             document.getElementById('result-ui').style.display = 'block';
+            document.getElementById('resRamlu').style.display = 'inline-block';
+            document.getElementById('resElement').style.display = 'block';
+            document.getElementById('finalAnswer').style.display = 'block';
+
             document.getElementById('resRamlu').innerText = "RAMLU: " + ramlData.name;
             
             if(lang === 'ha') {
@@ -712,7 +744,9 @@ app.get('/', checkUserAuth, (req, res) => {
                 document.getElementById('resDesc').innerHTML = resEn;
             }
             
+            document.getElementById('resTitle').style.color = "var(--gold)";
             document.getElementById('resElement').innerText = "ELEMENT: " + starData.element;
+            document.getElementById('finalAnswer').innerHTML = finalAnswer;
         }
     </script>
 </body>
@@ -979,12 +1013,16 @@ app.post('/admin/update-finance', checkAdminAuth, (req, res) => {
 app.post('/admin/post-article', checkAdminAuth, upload.single('image'), (req, res) => {
     const data = getData();
     data.posts.unshift({
-        id: Date.now(), title: req.body.title, category: req.body.category,
+        id: Date.now(),
+        title: req.body.title,
+        category: req.body.category,
         content: req.body.content.replace(/\n/g, '<br>'),
         image: req.file ? `/uploads/images/${req.file.filename}` : null,
-        date: new Date().toISOString(), views: 0
+        date: new Date().toISOString(),
+        views: 0
     });
-    saveData(data); res.send('<script>alert("Manuscript Encrypted!"); window.location="/super-admin";</script>');
+    saveData(data);
+    res.send('<script>alert("Manuscript Encrypted!"); window.location="/super-admin";</script>');
 });
 
 app.get('/admin/delete-post/:id', checkAdminAuth, (req, res) => {
@@ -994,8 +1032,14 @@ app.get('/admin/delete-post/:id', checkAdminAuth, (req, res) => {
 app.post('/admin/upload-audio', checkAdminAuth, upload.single('audio'), (req, res) => {
     if (!req.file) return res.send('<script>alert("No file!"); window.location="/super-admin";</script>');
     const data = getData();
-    data.audios.unshift({ id: Date.now(), title: req.body.title, category: req.body.category, url: `/uploads/audio/${req.file.filename}` });
-    saveData(data); res.send('<script>alert("Audio Uploaded!"); window.location="/super-admin";</script>');
+    data.audios.unshift({
+        id: Date.now(),
+        title: req.body.title,
+        category: req.body.category,
+        url: `/uploads/audio/${req.file.filename}`
+    });
+    saveData(data);
+    res.send('<script>alert("Audio Uploaded!"); window.location="/super-admin";</script>');
 });
 
 app.get('/admin/delete-audio/:id', checkAdminAuth, (req, res) => {
@@ -1005,21 +1049,29 @@ app.get('/admin/delete-audio/:id', checkAdminAuth, (req, res) => {
 app.post('/admin/update-contact', checkAdminAuth, (req, res) => {
     const data = getData();
     data.contact = { email: req.body.email, phone: req.body.phone };
-    data.aboutContent = req.body.aboutContent; data.privacyContent = req.body.privacyContent;
-    saveData(data); res.send('<script>alert("Contact & Texts Updated!"); window.location="/super-admin";</script>');
+    data.aboutContent = req.body.aboutContent;
+    data.privacyContent = req.body.privacyContent;
+    saveData(data);
+    res.send('<script>alert("Contact & Texts Updated!"); window.location="/super-admin";</script>');
 });
 
 app.post('/admin/change-pass', checkAdminAuth, (req, res) => {
     const data = getData();
-    data.adminAuth.user = req.body.newUser; data.adminAuth.hash = bcrypt.hashSync(req.body.newPass, 10);
-    saveData(data); res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
+    data.adminAuth.user = req.body.newUser;
+    data.adminAuth.hash = bcrypt.hashSync(req.body.newPass, 10);
+    saveData(data);
+    res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
 });
 
 app.get('/admin/reset-scans', checkAdminAuth, (req, res) => {
-    const data = getData(); data.stats.totalScans = 0; saveData(data); res.redirect('/super-admin');
+    const data = getData();
+    data.stats.totalScans = 0;
+    saveData(data);
+    res.redirect('/super-admin');
 });
 
 // Start Server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`👁️ FALAKI SYSTEM ONLINE on http://localhost:${PORT}`);
+    console.log(`⚙️ CEO Admin Panel: http://localhost:${PORT}/super-admin`);
 });
