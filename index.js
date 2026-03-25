@@ -188,7 +188,6 @@ app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/auth');
 app.get('/', checkUserAuth, (req, res) => {
     const data = getData();
     
-    // Categorize Posts
     const seerah = data.posts.filter(p => p.category === 'Seerah');
     const jinn = data.posts.filter(p => p.category === 'Jinn');
     const medicine = data.posts.filter(p => p.category === 'Medicine');
@@ -253,25 +252,16 @@ app.get('/', checkUserAuth, (req, res) => {
         .scan-count { background:rgba(75,0,130,0.3); border:1px solid var(--purple); padding:5px 15px; border-radius:20px; color:var(--gold); font-size:12px; font-weight:bold; display:inline-block; margin-top:15px; animation:pulse 2s infinite;}
         @keyframes pulse { 50% { opacity:0.6; } }
 
-        /* UI BUTTONS */
-        .btn-main { background: var(--gold); color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; font-family:inherit; font-size:16px; transition:0.3s; border-radius:5px;}
-        .btn-main:hover { background: #fff; box-shadow:0 0 20px #fff;}
-        .btn-diag { background: #4b0082; color: #fff; border: 1px solid var(--gold); margin-top:20px;}
-        .btn-diag:hover { background: #ffcc00; color:#000;}
-
-        /* GATES GRID */
         .gates-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; max-width:600px;}
         .gate-btn { background:var(--card); border:1px solid var(--purple); padding:20px; border-radius:10px; color:#fff; font-family:inherit; font-size:15px; font-weight:bold; cursor:pointer; transition:0.3s; text-align:left; display:flex; align-items:center; gap:10px;}
         .gate-btn:hover { background:var(--purple); border-color:var(--gold); transform:translateY(-3px);}
         .gate-icon { font-size:24px; }
 
-        /* FORMS & UI PANELS */
         #user-form, #diagnosis-form { display:none; width:100%; max-width:500px; background:var(--card); padding:30px; border-radius:10px; border:1px solid var(--gold); box-shadow:0 0 30px rgba(255,204,0,0.1);}
         .input-group { margin-bottom:15px; text-align:left;}
         .input-group label { display:block; color:#888; font-size:12px; margin-bottom:5px;}
         .input-group input, .input-group select { width:100%; padding:12px; background:#000; border:1px solid #333; color:var(--gold); font-family:inherit; font-size:14px; box-sizing:border-box;}
 
-        /* DIAGNOSIS CHECKBOXES */
         .diag-check { display:flex; align-items:center; gap:10px; background:#000; padding:15px; border:1px solid #333; margin-bottom:10px; border-radius:5px; cursor:pointer;}
         .diag-check:hover { border-color:var(--purple);}
 
@@ -281,25 +271,30 @@ app.get('/', checkUserAuth, (req, res) => {
         #result-ui { display:none; width:100%; max-width:700px; border: 2px dashed var(--gold); padding: 30px; background:#000; animation:fadeIn 1s; box-sizing:border-box;}
         @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
         .res-star { font-size:26px; color:var(--gold); margin-bottom:10px; font-weight:bold;}
-        .res-element { font-size:13px; color:var(--purple); margin-bottom:20px; text-transform:uppercase; font-weight:bold;}
+        .res-element { font-size:13px; color:var(--purple); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;}
         .res-desc { line-height:1.8; color:#ccc; margin-bottom:20px; font-size:15px; text-align:justify; border-left:3px solid var(--purple); padding-left:15px;}
-        .final-answer { background:rgba(75,0,130,0.2); padding:20px; border:1px solid var(--gold); border-radius:8px; font-size:16px; font-weight:bold; color:#fff; margin-bottom:30px; text-align:center;}
+        .final-answer { background:rgba(75,0,130,0.2); padding:20px; border:1px solid var(--gold); border-radius:8px; font-size:16px; font-weight:bold; color:#fff; margin-bottom:30px; text-align:center; box-shadow:0 0 15px rgba(255,204,0,0.1);}
         .ramlu-fig { font-size: 20px; color:#fff; background:var(--purple); padding:5px 10px; border-radius:5px; margin-bottom:15px; display:inline-block;}
+
+        .btn-main { background: var(--gold); color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; font-family:inherit; font-size:16px; transition:0.3s; border-radius:5px;}
+        .btn-main:hover { background: #fff; box-shadow:0 0 20px #fff;}
+        .btn-diag { background: #4b0082; color: #fff; border: 1px solid var(--gold); margin-top:20px;}
+        .btn-diag:hover { background: #ffcc00; color:#000;}
 
         .donate-box { background:rgba(75,0,130,0.2); border:1px solid var(--purple); padding:20px; border-radius:8px; margin-top:30px; text-align:left;}
         .pay-method { background:#000; padding:10px; border:1px solid #333; border-radius:5px; margin-top:10px; font-size:13px; color:#ccc;}
 
-        /* SIDEBARS & CARDS */
         .widget { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:8px; margin-bottom:20px;}
         .widget h3 { color:var(--gold); margin-top:0; border-bottom:1px solid #333; padding-bottom:10px; font-size:16px;}
         
         .grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .card { background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition:0.3s;}
+        .card:hover { border-color:var(--gold);}
         .card-img { width: 100%; height: 140px; object-fit: cover; border-bottom:1px solid var(--border);}
         .card-body { padding: 15px; }
         .card-body h3 { color: #fff; margin:0 0 5px; font-size:15px;}
-        .card-body p { color: #888; font-size: 12px; margin-bottom: 10px; }
-        .card-body a { color: var(--gold); text-decoration: none; font-size:12px; font-weight:bold;}
+        .card-body p { color: #888; font-size: 12px; line-height: 1.4; margin-bottom: 10px; }
+        .card-body a { color: var(--gold); font-weight: bold; text-decoration: none; font-size:12px;}
 
         .audio-track { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #222; flex-wrap:wrap; gap:10px;}
         .audio-track audio { height:35px; outline:none; max-width:200px;}
@@ -348,7 +343,6 @@ app.get('/', checkUserAuth, (req, res) => {
                 <p>Select a gateway below to begin your calculation.</p>
                 <div class="scan-count">👁️ ${data.stats.totalScans} Souls Calculated</div>
                 <br>
-                <!-- NEW: DIAGNOSIS BUTTON -->
                 <button class="btn-main btn-diag" onclick="openDiagnosis()" style="max-width:400px; margin-top:20px;">🔍 Test for Sihr, Jinn, or Evil Eye</button>
             </div>
 
@@ -358,9 +352,9 @@ app.get('/', checkUserAuth, (req, res) => {
                 <button class="gate-btn" onclick="selectQuestion('wealth')"><span class="gate-icon">💰</span> Wealth & Funding</button>
                 <button class="gate-btn" onclick="selectQuestion('business')"><span class="gate-icon">🏢</span> Business Success</button>
                 <button class="gate-btn" onclick="selectQuestion('destiny')"><span class="gate-icon">⏳</span> Past & Future</button>
-                <button class="gate-btn" onclick="selectQuestion('encounter')"><span class="gate-icon">👥</span> Encounters & People</button>
+                <button class="gate-btn" onclick="selectQuestion('encounter')"><span class="gate-icon">👥</span> Character Profiling</button>
                 <button class="gate-btn" onclick="selectQuestion('marriage')"><span class="gate-icon">❤️</span> Marriage Compatibility</button>
-                <button class="gate-btn" onclick="selectQuestion('timing')"><span class="gate-icon">🌙</span> Auspicious Timing</button>
+                <button class="gate-btn" onclick="selectQuestion('health')"><span class="gate-icon">⚕️</span> Health & Illness</button>
                 <button class="gate-btn" onclick="selectQuestion('custom')"><span class="gate-icon">🔮</span> Write Custom Inquiry</button>
             </div>
 
@@ -370,12 +364,12 @@ app.get('/', checkUserAuth, (req, res) => {
                 <p style="color:#888; font-size:12px; text-align:center; margin-bottom:20px;">The Abjad system requires exact names for accurate calculation.</p>
                 
                 <div id="custom-query-box" class="input-group" style="display:none;">
-                    <label>What do you seek to know?</label>
+                    <label>What do you seek to know? (e.g. "Who is this person", "Will I get married")</label>
                     <input type="text" id="uQuery" placeholder="Type your specific question here...">
                 </div>
 
                 <div class="input-group">
-                    <label>Your Given Name</label>
+                    <label>Your Given Name (Or Subject's Name)</label>
                     <input type="text" id="uName" placeholder="e.g. Ibrahim" required>
                 </div>
                 <div class="input-group">
@@ -394,13 +388,14 @@ app.get('/', checkUserAuth, (req, res) => {
                         <option value="ar">Arabic (العربية)</option>
                     </select>
                 </div>
+                
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button class="btn-main" style="background:#333; color:#fff;" onclick="resetToGrid()">BACK</button>
                     <button class="btn-main" onclick="startCalculation()">CALCULATE DESTINY</button>
                 </div>
             </div>
 
-            <!-- NEW: SPIRITUAL DIAGNOSIS FORM -->
+            <!-- SPIRITUAL DIAGNOSIS FORM -->
             <div id="diagnosis-form">
                 <h3 style="color:var(--gold); text-align:center; margin-top:0;">🔍 Spiritual Diagnosis Test</h3>
                 <p style="color:#888; font-size:12px; text-align:center; margin-bottom:20px;">Check the symptoms you are experiencing to determine if your blockages are physical, Sihr (Magic), Mass (Jinn), or Hasad (Evil Eye).</p>
@@ -494,10 +489,10 @@ app.get('/', checkUserAuth, (req, res) => {
     <a href="/super-admin" class="gateway">⚙️ System Access</a>
 
     <script>
-        // THE ULTIMATE ABJAD & RAMLU ENGINE
+        // THE ULTIMATE ABJAD ENGINE
         const abjad = {
             'a':1,'b':2,'j':3,'d':4,'h':5,'w':6,'z':7,'x':8,'t':9,'y':10,'k':20,'l':30,'m':40,'n':50,'s':60,'o':70,'f':80,'p':90,'q':100,'r':200,'sh':300,'c':400,'u':6,'v':6,'e':5,'i':10,'g':3,
-            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
+            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'m':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
         };
 
         const buruj = [
@@ -516,43 +511,61 @@ app.get('/', checkUserAuth, (req, res) => {
         ];
 
         const ramlFigures = [
-            { id: 1, name: "Dariqee", type: "delayed" },
-            { id: 2, name: "Jama'a", type: "favorable" },
-            { id: 3, name: "Uqba", type: "unfavorable" },
-            { id: 4, name: "Kausaji", type: "spiritual" },
-            { id: 5, name: "Dhahika", type: "favorable" },
-            { id: 6, name: "Qabla Kharija", type: "delayed" },
-            { id: 7, name: "Humra", type: "spiritual" },
-            { id: 8, name: "Inkees", type: "unfavorable" },
-            { id: 9, name: "Bayaad", type: "favorable" },
-            { id: 10, name: "Nusra Kharija", type: "delayed" },
-            { id: 11, name: "Nusra Dakhila", type: "favorable" },
-            { id: 12, name: "Qabla Dakhila", type: "favorable" },
-            { id: 13, name: "Ijtima", type: "delayed" },
-            { id: 14, name: "Uqla", type: "unfavorable" },
-            { id: 15, name: "Kabid Kharija", type: "unfavorable" },
-            { id: 16, name: "Kabid Dakhila", type: "unfavorable" }
+            { id: 1, name: "Dariqee (The Path)", type: "delayed", meaning: "Movement, slow but sure journey." },
+            { id: 2, name: "Jama'a (The Gathering)", type: "favorable", meaning: "Partnership, community, good for business." },
+            { id: 3, name: "Uqba (The Outcome)", type: "unfavorable", meaning: "Delays, endings, blockages." },
+            { id: 4, name: "Kausaji (The Beardless)", type: "spiritual", meaning: "Deceit, something hidden, loss." },
+            { id: 5, name: "Dhahika (The Laughing)", type: "favorable", meaning: "Joy, success, good news coming." },
+            { id: 6, name: "Qabla Kharija (Outward Exit)", type: "delayed", meaning: "Money leaving, safe travel out." },
+            { id: 7, name: "Humra (Redness)", type: "spiritual", meaning: "Conflict, passion, fire, blood." },
+            { id: 8, name: "Inkees (The Inverted)", type: "unfavorable", meaning: "Loss, sadness, things turning upside down." },
+            { id: 9, name: "Bayaad (Whiteness)", type: "favorable", meaning: "Purity, clarity, a good outcome." },
+            { id: 10, name: "Nusra Kharija (Outward Victory)", type: "delayed", meaning: "Victory over distant enemies." },
+            { id: 11, name: "Nusra Dakhila (Inward Victory)", type: "favorable", meaning: "Victory at home, inner peace." },
+            { id: 12, name: "Qabla Dakhila (Inward Entry)", type: "favorable", meaning: "Money arriving, safe return." },
+            { id: 13, name: "Ijtima (Conjunction)", type: "delayed", meaning: "Meeting of two things, good for marriage." },
+            { id: 14, name: "Uqla (The Knot)", type: "unfavorable", meaning: "Tied up, delayed, restricted movement." },
+            { id: 15, name: "Kabid Kharija (Outward Seizing)", type: "unfavorable", meaning: "Loss of property, theft." },
+            { id: 16, name: "Kabid Dakhila (Inward Seizing)", type: "unfavorable", meaning: "Gaining property, holding tight." }
         ];
 
-        // THE KNOWLEDGE BRAIN (Matrix of Answers)
+        // THE DEEP LOGIC MATRIX (Translates to English, Hausa, Arabic)
         const logicMatrix = {
             relationship: {
-                favorable: { en: "Final Answer: YES. You are highly compatible. This union will bring peace and prosperity.", ha: "Amsar Karshe: EH. Taurarinku sun dace sosai. Wannan auren zai kawo alheri.", ar: "الجواب النهائي: نعم. أنتم متوافقون للغاية." },
-                delayed: { en: "Final Answer: IT WILL HAPPEN, BUT WITH DELAY. You will face family resistance or timing hurdles first.", ha: "Amsar Karshe: ZAI YIWU, AMMA DA JINKIRI. Zaku fuskanci kalubale daga dangi tukunna.", ar: "الجواب النهائي: سيحدث، ولكن مع التأخير." },
-                unfavorable: { en: "Final Answer: NO. Your elements do not match. Proceeding will bring constant emotional conflict.", ha: "Amsar Karshe: A'A. Dabi'un ku basu zo daya ba. Idan akayi auren za'a samu tashin hankali.", ar: "الجواب النهائي: لا. عناصرك لا تتطابق." },
-                spiritual: { en: "Final Answer: BE CAREFUL. There is a third party or Hasad (Evil Eye) trying to block this union.", ha: "Amsar Karshe: KU KIYAYE. Akwai katsalandan ko hasada a cikin wannan al'amari.", ar: "الجواب النهائي: كن حذرا. هناك حسد يحاول عرقلة هذا الاتحاد." }
+                favorable: { en: "Final Answer: YES. You are highly compatible. This union will bring peace and prosperity.", ha: "Amsar Karshe: EH. Wannan alakar zata kawo alheri sosai.", ar: "الجواب النهائي: نعم. أنتم متوافقون للغاية." },
+                delayed: { en: "Final Answer: IT WILL HAPPEN, BUT WITH DELAY. You will face resistance or hurdles first. Patience is required.", ha: "Amsar Karshe: ZAI YIWU, AMMA DA JINKIRI. Za a samu kalubale tukunna.", ar: "الجواب النهائي: سيحدث، ولكن مع التأخير." },
+                unfavorable: { en: "Final Answer: NO. The elements clash. Proceeding will bring constant conflict and regret.", ha: "Amsar Karshe: A'A. Dabi'un ku sun saba. Idan akayi za'a samu tashin hankali.", ar: "الجواب النهائي: لا. عناصرك لا تتطابق." },
+                spiritual: { en: "Final Answer: BE CAREFUL. There is a third party or Hasad (Evil Eye) trying to block or destroy this union.", ha: "Amsar Karshe: KU KIYAYE. Akwai katsalandan ko hasada daga wani mutum.", ar: "الجواب النهائي: كن حذرا. هناك حسد يحاول عرقلة هذا." }
             },
             wealth: {
-                favorable: { en: "Final Answer: YES. Great success is coming. The doors of wealth are open for you right now.", ha: "Amsar Karshe: EH. Babban nasara na zuwa. Kofofin arziki a bude suke a yanzu.", ar: "الجواب النهائي: نعم. نجاح كبير قادم." },
+                favorable: { en: "Final Answer: YES. Great success is coming. The doors of wealth are open for you right now.", ha: "Amsar Karshe: EH. Babban nasara na zuwa. Kofofin arziki a bude suke.", ar: "الجواب النهائي: نعم. نجاح كبير قادم." },
                 delayed: { en: "Final Answer: SUCCESS WILL COME SLOWLY. Keep working hard, your debts and struggles will clear eventually.", ha: "Amsar Karshe: NASARA ZATA ZO A HANKALI. Ka ci gaba da hakuri, komai zai yi kyau.", ar: "الجواب النهائي: النجاح سيأتي ببطء." },
-                unfavorable: { en: "Final Answer: NO. There is a high risk of financial loss right now. Do not invest or trust blindly.", ha: "Amsar Karshe: A'A. Akwai hadarin asarar kudi a yanzu. Kar ka yarda da sabon kasuwanci.", ar: "الجواب النهائي: لا. هناك خطر كبير من الخسارة المالية." },
+                unfavorable: { en: "Final Answer: NO. There is a high risk of financial loss right now. Do not invest or trust blindly.", ha: "Amsar Karshe: A'A. Akwai hadarin asarar kudi. Kar ka yarda da sabon kasuwanci a yanzu.", ar: "الجواب النهائي: لا. هناك خطر كبير من الخسارة المالية." },
                 spiritual: { en: "Final Answer: SPIRITUAL BLOCKAGE. Your wealth is tied down by Sihr or heavy Evil Eye. Give Sadaqah immediately.", ha: "Amsar Karshe: KULLEN ASIRI. Arzikinka yana daure saboda hasada ko sammu. Ka gaggauta fitar da sadaka.", ar: "الجواب النهائي: انسداد روحي. ثروتك مقيدة بالسحر." }
+            },
+            health_jinn: {
+                favorable: { en: "Final Answer: YOU ARE SAFE. The issue is a natural illness, not a spiritual attack. Seek medical help.", ha: "Amsar Karshe: BAKA DA MATSALA TA ALJANU. Ciwon na asibiti ne, ka nemi magani.", ar: "الجواب النهائي: أنت آمن. المشكلة هي مرض طبيعي." },
+                delayed: { en: "Final Answer: MILD AFFLICTION. You have been touched by Hasad (Evil Eye). Read protective verses daily.", ha: "Amsar Karshe: TABUWAR HASADA. Akwai kambun baka (Irin). Ka yawaita azkar din safe da yamma.", ar: "الجواب النهائي: أذى خفيف. لقد تأثرت بالحسد." },
+                unfavorable: { en: "Final Answer: SEVERE BLOCKAGE. You are experiencing closed doors due to your own past actions or mistakes.", ha: "Amsar Karshe: KULLEWAR AL'AMURA. Kurakuran ka na baya ne suka jawo maka wannan.", ar: "الجواب النهائي: انسداد شديد. أفعالك الماضية هي السبب." },
+                spiritual: { en: "Final Answer: JINN/SIHR DETECTED. You are under a direct spiritual attack. You urgently need Ruqyah.", ha: "Amsar Karshe: AKWAI ALJANU KO SAMMU. Ana yimaka aiki a boye. Kana bukatar ayi maka Ruqyah cikin gaggawa.", ar: "الجواب النهائي: تم اكتشاف جن/سحر. أنت بحاجة إلى رقية." }
             },
             timing: {
                 favorable: { en: "Final Answer: VERY SOON. Within days or a few weeks.", ha: "Amsar Karshe: NAN KUSA. Cikin yan kwanaki ko makonni kadan.", ar: "الجواب النهائي: قريبا جدا." },
                 delayed: { en: "Final Answer: LATER. It will take several months to a year.", ha: "Amsar Karshe: ZAI DAU LOKACI. Zai dauki watanni ko shekara.", ar: "الجواب النهائي: في وقت لاحق." },
                 unfavorable: { en: "Final Answer: BLOCKED. It will not happen unless conditions change.", ha: "Amsar Karshe: A RUFE. Ba zai faru ba sai idan ka canza tsari.", ar: "الجواب النهائي: محظور." },
                 spiritual: { en: "Final Answer: UNCERTAIN. Spiritual interference is confusing the timeline.", ha: "Amsar Karshe: RASHIN TABBAS. Akwai katsalandan din shaidanu a lokacin.", ar: "الجواب النهائي: غير مؤكد." }
+            },
+            profiling: {
+                favorable: { en: "Final Answer: GOOD CHARACTER. This person is honest, straightforward, and brings peace. You can trust them.", ha: "Amsar Karshe: MUTUMIN KIRKI NE. Mutum ne mai amana da gaskiya. Zaka iya yarda dashi.", ar: "الجواب النهائي: شخصية جيدة. هذا الشخص صادق." },
+                delayed: { en: "Final Answer: SECRETIVE. This person hides their true intentions. They are not bad, but they take time to trust others.", ha: "Amsar Karshe: MAI SIRRI NE. Wannan mutumin baya fadar abin da ke ransa. Ana bukatar hakuri dashi.", ar: "الجواب النهائي: كتوم. هذا الشخص يخفي نواياه الحقيقية." },
+                unfavorable: { en: "Final Answer: DECEITFUL. Be extremely careful. This person has bad intentions and comes to cause trouble or take from you.", ha: "Amsar Karshe: MAI HA'INCI NE. Ka kiyaye sosai. Wannan mutumin da mugun nufi yazo.", ar: "الجواب النهائي: مخادع. كن حذرا للغاية." },
+                spiritual: { en: "Final Answer: UNSTABLE. This person is highly influenced by unseen forces or bad company. They are confused.", ha: "Amsar Karshe: MAI RAUNI NE. Wannan mutumin yana karkashin tasirin kawayen banza ko shaidanu. Yana cikin rudani.", ar: "الجواب النهائي: غير مستقر. يتأثر بقوى غير مرئية." }
+            },
+            motive: {
+                favorable: { en: "Final Answer: POSITIVE MOTIVE. They come with good news, a gift, or an opportunity that brings wealth.", ha: "Amsar Karshe: NUFI MAI KYAU. Sun zo ne da albishir ko wata dama ta arziki.", ar: "الجواب النهائي: دافع إيجابي. يأتون بأخبار سارة أو فرصة." },
+                delayed: { en: "Final Answer: SEEKING ADVICE. They come for guidance or help. There is no immediate wealth, but future benefit.", ha: "Amsar Karshe: NEMAN SHAWARA. Sun zo ne neman taimako ko shawara. Babu kudi a hannunsu yanzu.", ar: "الجواب النهائي: طلب المشورة. يأتون للحصول على التوجيه." },
+                unfavorable: { en: "Final Answer: PARASITIC MOTIVE. They come empty-handed to take your energy, time, or money. Give them nothing.", ha: "Amsar Karshe: NUFIN ZAMBARA. Sun zo ne domin su amfana da kai kawai ba tare da sun kawo komai ba.", ar: "الجواب النهائي: دافع طفيلي. يأتون فارغي الأيدي ليأخذوا." },
+                spiritual: { en: "Final Answer: HIDDEN MOTIVE. Their visit is driven by jealousy or hidden observation (spying on your progress).", ha: "Amsar Karshe: BOYAYYEN NUFI. Zuwan su yana da nasaba da kishi ko kuma leken asiri a kanka.", ar: "الجواب النهائي: دافع خفي. زيارتهم مدفوعة بالغيرة." }
             }
         };
 
@@ -565,8 +578,8 @@ app.get('/', checkUserAuth, (req, res) => {
             
             const titles = {
                 'travel': '✈️ Travel & Journey Calculation', 'wealth': '💰 Wealth Calculation', 'business': '🏢 Business Calculation',
-                'destiny': '⏳ Destiny Calculation', 'encounter': '👥 Encounter Calculation', 'marriage': '❤️ Marriage Compatibility',
-                'timing': '🌙 Auspicious Timing', 'custom': '🔮 Custom Oracle Inquiry'
+                'destiny': '⏳ Destiny Calculation', 'encounter': '👥 Profiling (Who is this person?)', 'marriage': '❤️ Marriage Compatibility',
+                'timing': '🌙 Auspicious Timing', 'health': '⚕️ Health & Illness', 'custom': '🔮 Custom Oracle Inquiry'
             };
             document.getElementById('form-title').innerText = titles[gate];
             document.getElementById('custom-query-box').style.display = gate === 'custom' ? 'block' : 'none';
@@ -591,6 +604,11 @@ app.get('/', checkUserAuth, (req, res) => {
             document.getElementById('city').value = '';
             document.getElementById('uNum').value = '';
             document.getElementById('uQuery').value = '';
+            
+            for(let i=1; i<=7; i++) {
+                let cb = document.getElementById('sym'+i);
+                if(cb) cb.checked = false;
+            }
         }
 
         function calculateAbjad(str) {
@@ -604,14 +622,19 @@ app.get('/', checkUserAuth, (req, res) => {
             if (gate === 'marriage') return 'relationship';
             if (gate === 'wealth' || gate === 'business') return 'wealth';
             if (gate === 'timing') return 'timing';
+            if (gate === 'encounter') return 'profiling';
+            if (gate === 'health') return 'health_jinn';
             
             if (gate === 'custom') {
                 const q = query.toLowerCase();
-                if (q.includes('marry') || q.includes('wife') || q.includes('husband') || q.includes('love') || q.includes('match')) return 'relationship';
+                if (q.includes('marry') || q.includes('wife') || q.includes('husband') || q.includes('love') || q.includes('match') || q.includes('girlfriend') || q.includes('boyfriend')) return 'relationship';
                 if (q.includes('money') || q.includes('rich') || q.includes('business') || q.includes('success')) return 'wealth';
+                if (q.includes('jinn') || q.includes('magic') || q.includes('sihr') || q.includes('sick') || q.includes('enemy') || q.includes('health') || q.includes('illness')) return 'health_jinn';
+                if (q.includes('who') || q.includes('character') || q.includes('nature') || q.includes('person')) return 'profiling';
+                if (q.includes('why') || q.includes('motive') || q.includes('visit') || q.includes('gift') || q.includes('bring')) return 'motive';
                 if (q.includes('when') || q.includes('time') || q.includes('how long')) return 'timing';
             }
-            return 'wealth'; 
+            return 'wealth'; // Fallback
         }
 
         function startDiagnosis() {
@@ -620,13 +643,13 @@ app.get('/', checkUserAuth, (req, res) => {
             let jinnCount = 0;
             let sihrCount = 0;
 
-            if(document.getElementById('sym1').checked) { symCount++; evilEyeCount++; } // Laziness = Ayn
-            if(document.getElementById('sym2').checked) { symCount++; evilEyeCount++; } // Business fail = Ayn
-            if(document.getElementById('sym3').checked) { symCount++; jinnCount++; } // Nightmares = Mass
-            if(document.getElementById('sym4').checked) { symCount++; sihrCount++; } // Headaches = Sihr
-            if(document.getElementById('sym5').checked) { symCount++; sihrCount++; } // Hatred spouse = Sihr
-            if(document.getElementById('sym6').checked) { symCount++; jinnCount++; } // Presence = Mass
-            if(document.getElementById('sym7').checked) { symCount++; evilEyeCount++; } // Money disappearing = Ayn
+            if(document.getElementById('sym1').checked) { symCount++; evilEyeCount++; } 
+            if(document.getElementById('sym2').checked) { symCount++; evilEyeCount++; } 
+            if(document.getElementById('sym3').checked) { symCount++; jinnCount++; } 
+            if(document.getElementById('sym4').checked) { symCount++; sihrCount++; } 
+            if(document.getElementById('sym5').checked) { symCount++; sihrCount++; } 
+            if(document.getElementById('sym6').checked) { symCount++; jinnCount++; } 
+            if(document.getElementById('sym7').checked) { symCount++; evilEyeCount++; } 
 
             document.getElementById('diagnosis-form').style.display = 'none';
             document.getElementById('loading-ui').style.display = 'block';
@@ -710,8 +733,8 @@ app.get('/', checkUserAuth, (req, res) => {
             const finalAnswer = finalAnswerObj[lang] || finalAnswerObj['en'];
 
             // 4. BUILD EXPLANATION
-            let resEn = "Based on your Abjad calculation (" + totalSum + "), your star is <strong>" + starData.nameEn + "</strong> and the Raml figure is <strong>" + ramlData.name + "</strong>.<br><br>";
-            let resHa = "Bisa lissafin Abjad dinka (" + totalSum + "), tauraronka shine <strong>" + starData.nameHa + "</strong> kuma siffar Ramlu itace <strong>" + ramlData.name + "</strong>.<br><br>";
+            let resEn = "Based on your Abjad calculation (" + totalSum + "), your star is <strong>" + starData.nameEn + "</strong> and the Raml figure is <strong>" + ramlData.name + "</strong> (" + ramlData.meaning + ").<br><br>";
+            let resHa = "Bisa lissafin Abjad dinka (" + totalSum + "), tauraronka shine <strong>" + starData.nameHa + "</strong> kuma siffar Ramlu itace <strong>" + ramlData.name + "</strong> (" + ramlData.meaning + ").<br><br>";
             let resAr = "بناءً على حساب الأبجد الخاص بك (" + totalSum + ")، نجمك هو <strong>" + starData.nameAr + "</strong> وشكل الرمل هو <strong>" + ramlData.name + "</strong>.<br><br>";
 
             if(starData.element === 'Fire') {
