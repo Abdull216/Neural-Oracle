@@ -1,24 +1,9 @@
-/**
- * ============================================================================
- * NEURAL ENGINE : Quantum-Spiritual Matrix & White-Hat OS
- * ============================================================================
- * CEO: TICHER
- * Lead Architect: AI Partner
- * 
- * Capabilities initialized:
- * - Public Safe Diagnosis (Basic Stars, Elements, Safe Cures like Ya Latif)
- * - CEO Inner Sanctum (Deep Kashf, Ruhani Calculation, Asma al-Tahatil)
- * - CEO Instruction Manual (How/When to use the Secret Codes)
- * - Advanced Abjad Mathematical Engine (Hisab al-Jummal)
- * - White-Hat Hacker Terminal Simulation
- */
-
 const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const { exec } = require('child_process');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,14 +12,34 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-    secret: 'neural_engine_quantum_ceo_2026',
+    secret: 'falaki_spiritual_engine_2026',
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 
-// ==================== DATABASE (THE GRIMOIRE) ====================
-const DATA_FILE = './neural_db.json';
+// Create necessary folders
+fs.ensureDirSync(path.join(__dirname, 'uploads', 'images'));
+fs.ensureDirSync(path.join(__dirname, 'uploads', 'audio'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Multer Configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        if (file.mimetype.startsWith('audio')) {
+            cb(null, path.join(__dirname, 'uploads', 'audio'));
+        } else {
+            cb(null, path.join(__dirname, 'uploads', 'images'));
+        }
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '-'));
+    }
+});
+const upload = multer({ storage, limits: { fileSize: 500 * 1024 * 1024 } }); 
+
+// ==================== DATABASE ====================
+const DATA_FILE = './falaki_db.json';
 
 function getData() {
     let data = {};
@@ -43,13 +48,18 @@ function getData() {
             const content = fs.readFileSync(DATA_FILE, 'utf8');
             if(content.trim()) data = JSON.parse(content);
         }
-    } catch (e) { console.error("[SYSTEM ERROR] Failed to read Neural Matrix:", e); }
+    } catch (e) { console.error("Error reading database", e); }
 
     // Enforce default structure safely
-    if(!data.adminAuth) data.adminAuth = { user: 'ceo', hash: bcrypt.hashSync('ticher2026', 10) }; // Default Login: ceo / ticher2026
-    if(!data.finance) data.finance = { bank: 'Update in Admin', crypto: 'Update in Admin' };
-    if(!data.scans) data.scans = 1530; // Social Proof Counter
-    if(!data.clientLogs) data.clientLogs = []; // Stores public queries for you to review
+    if(!data.adminAuth) data.adminAuth = { user: 'admin216', hash: bcrypt.hashSync('admin1234', 10) };
+    if(!data.contact) data.contact = { email: 'abdullahharuna216@gmail.com', phone: '2348080335353' };
+    if(!data.finance) data.finance = { bank: '', paypal: '', crypto: '' };
+    if(!data.users) data.users = [];
+    if(!data.posts) data.posts = [];
+    if(!data.audios) data.audios = [];
+    if(!data.stats) data.stats = { totalScans: 1204 }; 
+    if(!data.aboutContent) data.aboutContent = "NEURAL ENGINE is an advanced Spiritual Archives platform. We bridge the ancient, profound mathematical systems of Hisab al-Jummal (Abjad) and Ilm al-Raml with modern web technologies.";
+    if(!data.privacyContent) data.privacyContent = "Your privacy is our utmost priority. All spiritual inquiries and Abjad calculations are processed locally and securely. We do not sell or share your personal spiritual readings.";
 
     saveData(data);
     return data;
@@ -60,472 +70,611 @@ function saveData(data) {
 }
 getData();
 
-// ==================== THE QUANTUM ABJAD ENGINE ====================
-const abjad = {
-    'a':1,'b':2,'j':3,'d':4,'h':5,'w':6,'z':7,'x':8,'t':9,'y':10,'k':20,'l':30,'m':40,'n':50,'s':60,'o':70,'f':80,'p':90,'q':100,'r':200,'sh':300,'c':400,'u':6,'v':6,'e':5,'i':10,'g':3,
-    'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
-};
+// ==================== REUSABLE SNIPPETS ====================
+const googleAnalytics = `
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HD01MF5SL9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HD01MF5SL9');
+    </script>
+`;
 
-// The 12 Stars (Buruj)
-const buruj = [
-    { id: 1, name: "Aries (Hamal)", element: "Fire", nature: "Hot & Dry" },
-    { id: 2, name: "Taurus (Thaur)", element: "Earth", nature: "Cold & Dry" },
-    { id: 3, name: "Gemini (Jauza)", element: "Air", nature: "Hot & Wet" },
-    { id: 4, name: "Cancer (Sartan)", element: "Water", nature: "Cold & Wet" },
-    { id: 5, name: "Leo (Asad)", element: "Fire", nature: "Hot & Dry" },
-    { id: 6, name: "Virgo (Sunbula)", element: "Earth", nature: "Cold & Dry" },
-    { id: 7, name: "Libra (Mizan)", element: "Air", nature: "Hot & Wet" },
-    { id: 8, name: "Scorpio (Aqrab)", element: "Water", nature: "Cold & Wet" },
-    { id: 9, name: "Sagittarius (Qaus)", element: "Fire", nature: "Hot & Dry" },
-    { id: 10, name: "Capricorn (Jadi)", element: "Earth", nature: "Cold & Dry" },
-    { id: 11, name: "Aquarius (Dalwu)", element: "Air", nature: "Hot & Wet" },
-    { id: 12, name: "Pisces (Hut)", element: "Water", nature: "Cold & Wet" }
-];
+const magicalLogoHtml = `
+    <div class="logo-container">
+        <div class="logo-ring"></div>
+        <div class="logo-ring2"></div>
+        <div class="logo-hand">✋</div>
+    </div>
+`;
 
-// The 99 Names of Allah mapped to their quantum frequencies
-const asmaUlHusna = [
-    { name: "Ya Allah", value: 66, benefit: "Ultimate connection to the Source." },
-    { name: "Ya Rahman", value: 298, benefit: "Attracts deep love and favor." },
-    { name: "Ya Razzaq", value: 308, benefit: "Opens blocked doors of wealth." },
-    { name: "Ya Latif", value: 129, benefit: "Brings hidden blessings, cures illness." },
-    { name: "Ya Wadud", value: 20, benefit: "The ultimate frequency for love." },
-    { name: "Ya Fattah", value: 489, benefit: "Breaks all forms of Sihr (Magic)." },
-    { name: "Ya Qahhar", value: 306, benefit: "Destroys dark energies and enemies." },
-    { name: "Ya Ghani", value: 1060, benefit: "Manifests rapid financial independence." }
-];
+const magicalLogoCss = `
+    .logo-container { position:relative; width: 140px; height: 140px; margin: 0 auto 20px; display:flex; align-items:center; justify-content:center; }
+    .logo-ring { position:absolute; width: 100%; height: 100%; border: 3px dashed #ffcc00; border-radius: 50%; animation: spin 15s linear infinite; box-shadow: 0 0 30px rgba(255, 204, 0, 0.4), inset 0 0 20px rgba(75, 0, 130, 0.8); }
+    .logo-ring2 { position:absolute; width: 75%; height: 75%; border: 2px solid #4b0082; border-radius: 50%; animation: spin-reverse 10s linear infinite; box-shadow: 0 0 15px rgba(75, 0, 130, 0.6);}
+    .logo-hand { font-size: 60px; position:relative; z-index:2; filter: drop-shadow(0 0 15px #ffcc00); animation: pulseGlow 2s infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+    @keyframes pulseGlow { 50% { transform: scale(1.1); filter: drop-shadow(0 0 25px #ffcc00) drop-shadow(0 0 10px #4b0082); } }
+`;
 
-// CEO SECRET: The 7 Days, Planets, Ruhanis, and the Instruction Manual
-const ruhaniMatrix = [
-    { 
-        day: "Sunday", planet: "Sun", angel: "Ruqyael", ruhani: "Al-Mudhib", tahatil: "Latahtil",
-        meaning: "The word 'Latahtil' controls the frequency of Light and Illumination.",
-        usage: "Write this word on a white plate with saffron ink. Wash it with Zamzam or rain water and give it to the client to drink. This clears confusion and brings sudden insight and respect from superiors.",
-        timing: "Perform this exactly at Sunrise on Sunday for maximum quantum alignment."
-    },
-    { 
-        day: "Monday", planet: "Moon", angel: "Jibraeel", ruhani: "Murrah", tahatil: "Mahatahtil",
-        meaning: "The word 'Mahatahtil' controls the frequency of Water, Emotion, and Secrets.",
-        usage: "If the client seeks love, marriage, or reconciliation, write this word on parchment and place it near flowing water (or bury it in a moist place).",
-        timing: "Perform this on Monday evening when the moon is visible."
-    },
-    { 
-        day: "Tuesday", planet: "Mars", angel: "Samsamael", ruhani: "Al-Ahmar", tahatil: "Qatahtil",
-        meaning: "The word 'Qatahtil' controls the frequency of Fire, War, and Destruction.",
-        usage: "Use this STRICTLY to destroy Black Magic (Sihr) or stop a violent enemy. Write it on red paper, recite 'Ya Qahhar' over it, and burn it to ashes to return the attack to the sender.",
-        timing: "Perform this on Tuesday at midday. (WARNING: Ensure you recite protective verses on yourself before doing this)."
-    },
-    { 
-        day: "Wednesday", planet: "Mercury", angel: "Mikaeel", ruhani: "Barqan", tahatil: "Fatahtil",
-        meaning: "The word 'Fatahtil' controls the frequency of Movement, Intelligence, and Business.",
-        usage: "If a client wants their business to grow or needs success in exams/interviews. Write it, fold it as a talisman (Laya), and have them carry it in their right pocket or wallet.",
-        timing: "Perform this on Wednesday morning."
-    },
-    { 
-        day: "Thursday", planet: "Jupiter", angel: "Sarfayael", ruhani: "Shamhurish", tahatil: "Nahatahtil",
-        meaning: "The word 'Nahatahtil' controls the frequency of Expansion, Justice, and Wealth.",
-        usage: "For massive wealth attraction or winning a court case. Write this on a green cloth or paper, perfume it with Musk, and keep it in a safe place.",
-        timing: "Perform this at dawn on Thursday. It is highly auspicious."
-    },
-    { 
-        day: "Friday", planet: "Venus", angel: "Anyael", ruhani: "Zawba'ah", tahatil: "Jahahtil",
-        meaning: "The word 'Jahahtil' controls the frequency of Beauty, Peace, and Healing.",
-        usage: "If a client is suffering from spiritual sickness, Hasad (Evil Eye), or Jinn possession (Mass). Write this with saffron, wash it in water, and instruct the client to bathe with it for 3 consecutive days.",
-        timing: "Perform this directly after Jum'ah prayers on Friday."
-    },
-    { 
-        day: "Saturday", planet: "Saturn", angel: "Kasfayael", ruhani: "Maimun", tahatil: "Lakhatahtil",
-        meaning: "The word 'Lakhatahtil' controls the frequency of Earth, Blockages, and Endings.",
-        usage: "Use this to 'tie' or block a situation (e.g., stopping someone from traveling, or freezing an enemy's plans). Write it on lead or heavy dark stone and bury it deep in the earth.",
-        timing: "Perform this on Saturday night. (WARNING: This is heavy earth energy. Do not use lightly)."
-    }
-];
-
-function calculateFrequency(str) {
-    let total = 0;
-    str = str.toLowerCase().replace(/\\s/g, '');
-    for(let char of str) { total += (abjad[char] || 1); }
-    return total;
+// ==================== AUTH MIDDLEWARE ====================
+function checkUserAuth(req, res, next) {
+    if (req.session.userId) return next();
+    res.redirect('/auth');
 }
-
-function findIsmalAzam(totalSum) {
-    let closest = asmaUlHusna[0];
-    let minDiff = Math.abs(totalSum - asmaUlHusna[0].value);
-    for (let i = 1; i < asmaUlHusna.length; i++) {
-        let diff = Math.abs(totalSum - asmaUlHusna[i].value);
-        if (diff < minDiff) { closest = asmaUlHusna[i]; minDiff = diff; }
-    }
-    return closest;
-}
-
-// ==================== MIDDLEWARE ====================
 function checkAdminAuth(req, res, next) {
     if (req.session.isSuperAdmin) return next();
-    res.redirect('/gateway');
+    res.redirect('/admin-login');
 }
 
-// ==================== PUBLIC API: SAFE CALCULATION ====================
-app.post('/api/public-calculate', (req, res) => {
-    const { name, mothersName, intent } = req.body;
+// ==================== AUTHENTICATION ROUTES ====================
+app.get('/auth', (req, res) => {
+    if(req.session.userId) return res.redirect('/');
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NEURAL ENGINE | Authentication Gateway</title>
+            ${googleAnalytics}
+            <style>
+                body { background: #050505; color: #ffcc00; font-family: 'Courier New', monospace; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; overflow:hidden;}
+                .auth-box { background: #111; padding: 40px; border: 1px solid #4b0082; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 0 40px rgba(75,0,130,0.6); position:relative; z-index:10;}
+                ${magicalLogoCss}
+                input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; font-family: inherit; box-sizing:border-box;}
+                input:focus { outline:none; border-color: #ffcc00; }
+                button { width: 100%; padding: 15px; background: #ffcc00; color: #000; border: none; font-weight: bold; font-size: 16px; cursor: pointer; border-radius: 5px; margin-top: 10px; font-family: inherit; transition:0.3s;}
+                button:hover { background: #fff; box-shadow: 0 0 20px #fff;}
+                .switch { color: #888; font-size: 12px; margin-top: 20px; display: block; cursor: pointer; text-decoration: underline; }
+                .bg-stars { position:absolute; width:100%; height:100%; top:0; left:0; background:url('https://www.transparenttextures.com/patterns/stardust.png'); opacity:0.3; z-index:1; pointer-events:none;}
+            </style>
+        </head>
+        <body>
+            <div class="bg-stars"></div>
+            <div class="auth-box">
+                ${magicalLogoHtml}
+                <h2 style="letter-spacing:4px; margin-bottom:5px;">NEURAL ENGINE</h2>
+                <p style="color:#888; font-size:12px; margin-bottom:20px;">The Spiritual & AI Archives</p>
+                <form id="authForm" method="POST" action="/api/register">
+                    <input type="text" name="name" id="nameField" placeholder="Enter Full Name" required>
+                    <input type="email" name="email" placeholder="Enter Email Address" required>
+                    <input type="password" name="password" placeholder="Enter Password" required>
+                    <button type="submit" id="btnText">UNLOCK ARCHIVES</button>
+                </form>
+                <span class="switch" onclick="toggleAuth()">Already have an access key? Login here.</span>
+            </div>
+            <script>
+                let isLogin = false;
+                function toggleAuth() {
+                    isLogin = !isLogin;
+                    const form = document.getElementById('authForm');
+                    const nameField = document.getElementById('nameField');
+                    const btnText = document.getElementById('btnText');
+                    const switchText = document.querySelector('.switch');
+                    if(isLogin) {
+                        form.action = '/api/login'; nameField.style.display = 'none'; nameField.removeAttribute('required');
+                        btnText.textContent = "ENTER ARCHIVES"; switchText.textContent = "New seeker? Register here.";
+                    } else {
+                        form.action = '/api/register'; nameField.style.display = 'block'; nameField.setAttribute('required', 'true');
+                        btnText.textContent = "UNLOCK ARCHIVES"; switchText.textContent = "Already have an access key? Login here.";
+                    }
+                }
+            </script>
+        </body>
+        </html>
+    `);
+});
+
+app.post('/api/register', (req, res) => {
+    const { name, email, password } = req.body;
+    const data = getData();
+    if (data.users.find(u => u.email === email)) return res.send('<script>alert("Email already registered! Please login."); window.location="/auth";</script>');
+    
+    const user = { id: Date.now(), name, email, pass: bcrypt.hashSync(password, 10), joined: new Date().toISOString() };
+    data.users.push(user); saveData(data);
+    req.session.userId = user.id; req.session.userName = user.name; res.redirect('/');
+});
+
+app.post('/api/login', (req, res) => {
+    const { email, password } = req.body;
+    const data = getData();
+    const user = data.users.find(u => u.email === email);
+    if (user && bcrypt.compareSync(password, user.pass)) {
+        req.session.userId = user.id; req.session.userName = user.name; res.redirect('/');
+    } else { res.send('<script>alert("Invalid Credentials"); window.location="/auth";</script>'); }
+});
+
+app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/auth'); });
+
+// ==================== MAIN APPLICATION (PROTECTED) ====================
+app.get('/', checkUserAuth, (req, res) => {
     const data = getData();
     
-    if(!name || !mothersName) return res.status(400).json({error: "Name parameters missing."});
+    const seerah = data.posts.filter(p => p.category === 'Seerah');
+    const jinn = data.posts.filter(p => p.category === 'Jinn');
+    const medicine = data.posts.filter(p => p.category === 'Medicine');
+    const history = data.posts.filter(p => p.category === 'History');
 
-    // Log the client's query for the CEO to review later
-    data.clientLogs.unshift({
-        date: new Date().toLocaleString(),
-        name, mothersName, intent
-    });
-    if(data.clientLogs.length > 100) data.clientLogs.pop();
-    data.scans++;
-    saveData(data);
+    const renderCards = (posts) => posts.map(p => `
+        <div class="card">
+            ${p.image ? `<img src="${p.image}" class="card-img" alt="${p.title}">` : ''}
+            <div class="card-body">
+                <h3>${p.title}</h3>
+                <p>${p.content.replace(/<[^>]*>/g, '').substring(0, 80)}...</p>
+                <a href="/read/${p.id}">Read Manuscript →</a>
+            </div>
+        </div>
+    `).join('') || '<p style="color:#555; font-size:12px;">No manuscripts found.</p>';
 
-    const nameFreq = calculateFrequency(name);
-    const motherFreq = calculateFrequency(mothersName);
-    const totalFreq = nameFreq + motherFreq;
+    const audioHtml = data.audios.map(a => `
+        <div class="audio-track">
+            <div class="audio-info">🎵 <strong>${a.title}</strong> <span style="font-size:12px; color:#888;">(${a.category})</span></div>
+            <audio controls preload="none"><source src="${a.url}" type="audio/mpeg"></audio>
+        </div>
+    `).join('') || '<p style="color:#555; font-size:12px;">No audio transmissions found.</p>';
 
-    // Element & Star Calculation (Modulo 12)
-    let starIndex = totalFreq % 12;
-    if (starIndex === 0) starIndex = 12;
-    const star = buruj[starIndex - 1];
-
-    // Build the SAFE Public Reading
-    let htmlResult = `
-        <h3 style="color:#00ff00; border-bottom:1px dashed #00ff00; padding-bottom:5px;">[ FREQUENCY DECRYPTED ]</h3>
-        <p><strong>Target Acquired:</strong> ${name.toUpperCase()}</p>
-        <p><strong>Astrological Star:</strong> ${star.name}</p>
-        <p><strong>Governing Element:</strong> ${star.element} (${star.nature})</p>
-        <br>
-    `;
-
-    // Dynamic Safe Answers based on Intent
-    if (intent === 'health') {
-        htmlResult += `
-            <p style="color:#ffcc00;"><strong>DIAGNOSIS:</strong> The calculation indicates a blockage in your energetic field. This may manifest as physical fatigue or mental stress.</p>
-            <p><strong>SAFE CURE:</strong> Recite <em>"Ya Latif"</em> 129 times daily. It brings hidden blessings, cures subtle illnesses, and clears the aura.</p>
-        `;
-    } else if (intent === 'wealth') {
-        if (star.element === "Earth" || star.element === "Water") {
-            htmlResult += `<p style="color:#00ff00;"><strong>PROGNOSIS:</strong> Your elemental frequency is aligned for wealth. Growth will be steady and permanent.</p>`;
-        } else {
-            htmlResult += `<p style="color:#ff4444;"><strong>PROGNOSIS:</strong> Your frequency shows fast movement, meaning money leaves your hands quickly. You must practice strict financial discipline.</p>`;
-        }
-        htmlResult += `<p><strong>SAFE CURE:</strong> Recite <em>"Ya Razzaq"</em> daily to open the blocked doors of sustenance.</p>`;
-    } else if (intent === 'relationship') {
-        htmlResult += `
-            <p style="color:#ffcc00;"><strong>PROGNOSIS:</strong> Relationships require elemental balance. As a ${star.element} sign, you must seek a partner whose nature cools your anger or grounds your thoughts.</p>
-            <p><strong>SAFE CURE:</strong> Recite <em>"Ya Wadud"</em> to foster peace, love, and understanding in your home.</p>
-        `;
-    }
-
-    htmlResult += `
-        <div style="background:rgba(0,255,0,0.1); padding:15px; border:1px dashed #00ff00; margin-top:20px;">
-            <h4 style="margin:0 0 10px 0; color:#fff;">[ SYSTEM NOTICE ]</h4>
-            <p style="font-size:12px; margin:0; color:#ccc;">To unlock your deep Spiritual Secrets (Your Ruling Angel, the exact nature of your enemies, or your personal Ism al-A'zam), a private CEO Consultation is required.</p>
+    const donationHtml = `
+        <div class="donate-box">
+            <h3 style="color:#ffcc00; margin-top:0;">💰 Give Sadaqah (Support The Archives)</h3>
+            <p style="color:#888; font-size:13px;">If this Oracle has brought you clarity, please consider giving Sadaqah to maintain the servers and support the scholars.</p>
+            ${data.finance.bank ? `<div class="pay-method">🏦 <strong>Bank:</strong> ${data.finance.bank}</div>` : ''}
+            ${data.finance.paypal ? `<div class="pay-method">🅿️ <strong>PayPal:</strong> ${data.finance.paypal}</div>` : ''}
+            ${data.finance.crypto ? `<div class="pay-method">₿ <strong>Crypto:</strong> ${data.finance.crypto}</div>` : ''}
+            ${(!data.finance.bank && !data.finance.paypal && !data.finance.crypto) ? `<div class="pay-method">Contact Admin for Sadaqah details.</div>` : ''}
         </div>
     `;
 
-    res.json({ success: true, html: htmlResult });
-});
-
-// ==================== CEO API: DEEP KASHF (SECRET) ====================
-app.post('/api/ceo-kashf', checkAdminAuth, (req, res) => {
-    const { name, mothersName } = req.body;
-    
-    const nameFreq = calculateFrequency(name);
-    const motherFreq = calculateFrequency(mothersName);
-    const totalFreq = nameFreq + motherFreq;
-
-    // Star & Element
-    let starIndex = totalFreq % 12; if (starIndex === 0) starIndex = 12;
-    const star = buruj[starIndex - 1];
-
-    // Planet & Ruhani Calculation (Modulo 7)
-    let planetIndex = totalFreq % 7; if(planetIndex === 0) planetIndex = 7;
-    const ruhani = ruhaniMatrix[planetIndex - 1];
-
-    // Personal Ism al-A'zam
-    const ism = findIsmalAzam(totalFreq);
-
-    // Build the DEEP SECRET Reading with the Instruction Manual
-    let htmlResult = `
-        <h3 style="color:#ffcc00; border-bottom:1px solid #ffcc00; padding-bottom:5px;">[ INNER SANCTUM: DEEP KASHF ]</h3>
-        <p><strong>Client / Target:</strong> ${name.toUpperCase()} (Abjad: ${totalFreq})</p>
-        <p><strong>Star & Element:</strong> ${star.name} | ${star.element}</p>
-        <hr style="border:1px solid #333;">
-        
-        <h4 style="color:#00ff00;">🌌 The Celestial Rulers</h4>
-        <p style="color:#00ff00;"><strong>Ruling Planet & Day:</strong> ${ruhani.planet} (${ruhani.day})</p>
-        <p style="color:#ff4444;"><strong>Ruling Mala'ikah (Angel):</strong> ${ruhani.angel}</p>
-        <p style="color:#ff4444;"><strong>Ruling Ruhani (Jinn King):</strong> ${ruhani.ruhani}</p>
-        
-        <hr style="border:1px solid #333; margin-top:20px;">
-        <h4 style="color:#00ff00;">🗝️ The Secret Code (Asma al-Tahatil)</h4>
-        <p style="color:#ff4444; font-size:20px; font-weight:bold;">${ruhani.tahatil}</p>
-        
-        <div style="background:#111; padding:15px; border-left:3px solid #ffcc00; margin-top:15px;">
-            <p style="color:#ffcc00; font-size:14px; margin-top:0;"><strong>Meaning:</strong> ${ruhani.meaning}</p>
-            <p style="color:#ccc; font-size:12px; margin-bottom:5px;"><strong>How to Use:</strong> ${ruhani.usage}</p>
-            <p style="color:#00ff00; font-size:12px; margin-bottom:0;"><strong>Timing:</strong> ${ruhani.timing}</p>
-        </div>
-
-        <hr style="border:1px solid #333; margin-top:20px;">
-        <h4 style="color:#00ff00;">📿 Personal Divine Frequency (Ism al-A'zam)</h4>
-        <p style="color:#fff; font-size:18px;"><strong>${ism.name}</strong></p>
-        <p style="color:#ccc; font-size:14px;"><strong>Target Number:</strong> Recite exactly ${ism.value} times daily.</p>
-        <p style="color:#ccc; font-size:14px;"><strong>Effect:</strong> ${ism.benefit}</p>
-    `;
-
-    res.json({ success: true, html: htmlResult });
-});
-
-// ==================== FRONTEND: PUBLIC TERMINAL ====================
-app.get('/', (req, res) => {
     res.send(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL ENGINE | Public Terminal</title>
+    <title>NEURAL ENGINE - AI Oracle & Spiritual Archives</title>
+    ${googleAnalytics}
     <style>
-        body { background-color: #050505; color: #00ff00; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .terminal-box { width: 100%; max-width: 600px; background: #000; border: 1px solid #00ff00; border-radius: 5px; padding: 30px; box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1), 0 0 30px rgba(0, 255, 0, 0.2); }
-        h1 { margin-top: 0; font-size: 26px; letter-spacing: 4px; text-shadow: 0 0 10px #00ff00; border-bottom: 1px dashed #00ff00; padding-bottom: 10px; text-align:center;}
-        .line { margin: 10px 0; font-size: 14px; line-height: 1.6; }
-        .cursor { display: inline-block; width: 10px; height: 15px; background: #00ff00; animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        :root { --gold: #ffcc00; --bg: #050505; --card: #111; --purple: #4b0082; --border: #222;}
+        body { background: var(--bg); color: #ccc; font-family: 'Courier New', monospace; margin: 0; padding: 0; scroll-behavior: smooth; overflow-x:hidden;}
         
-        .input-group { margin-bottom: 20px; text-align:left;}
-        .input-group label { display: block; color: #888; font-size: 12px; margin-bottom: 5px; text-transform:uppercase;}
-        .input-group input, .input-group select { width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid #005500; color: #00ff00; font-family: inherit; font-size:16px; box-sizing:border-box;}
-        .input-group input:focus, .input-group select:focus { outline:none; border-color: #00ff00; box-shadow: 0 0 10px rgba(0,255,0,0.5);}
+        ${magicalLogoCss}
         
-        button { width: 100%; padding: 15px; background: transparent; color: #00ff00; border: 1px solid #00ff00; font-weight: bold; font-size: 16px; cursor: pointer; font-family: inherit; transition: 0.3s; margin-top:10px; letter-spacing:2px;}
-        button:hover { background: #00ff00; color: #000; box-shadow: 0 0 20px #00ff00; }
+        nav.top-nav { background: #000; border-bottom: 1px solid var(--purple); display:flex; justify-content:space-between; align-items:center; padding: 15px 5%; position:sticky; top:0; z-index:1000; box-shadow:0 4px 15px rgba(75,0,130,0.4);}
+        .nav-brand { font-size: 20px; font-weight: bold; color: var(--gold); letter-spacing: 2px; text-decoration:none;}
+        .nav-links { display:flex; gap: 20px; align-items:center;}
+        .nav-links a { color: #fff; text-decoration:none; font-size: 14px; font-weight:bold; transition:0.3s;}
+        .nav-links a:hover { color: var(--gold); }
+        
+        .layout { display: grid; grid-template-columns: 250px 1fr 300px; gap: 30px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
+        @media(max-width: 1024px) { .layout { grid-template-columns: 1fr; } .left-sidebar, .right-sidebar { display:none; } }
 
-        #loading { display: none; text-align: center; padding: 20px; font-size: 16px; color:#ffcc00; animation: pulse 1s infinite; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
+        .center-content { display:flex; flex-direction:column; align-items:center; }
+        .oracle-header { text-align:center; margin-bottom:40px;}
+        .oracle-header h1 { color:var(--gold); letter-spacing:8px; font-size:36px; margin:0;}
+        .scan-count { background:rgba(75,0,130,0.3); border:1px solid var(--purple); padding:5px 15px; border-radius:20px; color:var(--gold); font-size:12px; font-weight:bold; display:inline-block; margin-top:15px; animation:pulse 2s infinite;}
+        @keyframes pulse { 50% { opacity:0.6; } }
 
-        #result { display: none; margin-top: 20px; padding: 20px; border: 1px dashed #00ff00; background: #0a0a0a; color: #fff; line-height: 1.6; font-size:14px; text-align:left;}
+        .gates-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; max-width:600px;}
+        .gate-btn { background:var(--card); border:1px solid var(--purple); padding:20px; border-radius:10px; color:#fff; font-family:inherit; font-size:15px; font-weight:bold; cursor:pointer; transition:0.3s; text-align:left; display:flex; align-items:center; gap:10px;}
+        .gate-btn:hover { background:var(--purple); border-color:var(--gold); transform:translateY(-3px);}
+        .gate-icon { font-size:24px; }
+
+        /* THE PURE TEXT FORM */
+        #user-form { display:none; width:100%; max-width:500px; background:var(--card); padding:30px; border-radius:10px; border:1px solid var(--gold); box-shadow:0 0 30px rgba(255,204,0,0.1);}
+        .input-group { margin-bottom:15px; text-align:left;}
+        .input-group label { display:block; color:#888; font-size:12px; margin-bottom:5px;}
+        .input-group input, .input-group select { width:100%; padding:12px; background:#000; border:1px solid #333; color:var(--gold); font-family:inherit; font-size:14px; box-sizing:border-box;}
+
+        #loading-ui { display:none; text-align:center; padding:40px; }
+        .mystic-text { color:var(--gold); font-size:18px; letter-spacing:3px; margin-top:20px; animation:pulse 1s infinite;}
+
+        #result-ui { display:none; width:100%; max-width:700px; border: 2px dashed var(--gold); padding: 30px; background:#000; animation:fadeIn 1s; box-sizing:border-box; text-align:left;}
+        @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
+        .res-star { font-size:26px; color:var(--gold); margin-bottom:10px; font-weight:bold;}
+        .res-element { font-size:13px; color:var(--purple); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;}
+        .res-desc { line-height:1.8; color:#ccc; margin-bottom:20px; font-size:15px; text-align:justify; border-left:3px solid var(--purple); padding-left:15px;}
+        .final-answer { background:rgba(75,0,130,0.2); padding:20px; border:1px solid var(--gold); border-radius:8px; font-size:16px; font-weight:bold; color:#fff; margin-bottom:30px; text-align:center; box-shadow:0 0 15px rgba(255,204,0,0.1);}
+        .ramlu-fig { font-size: 20px; color:#fff; background:var(--purple); padding:5px 10px; border-radius:5px; margin-bottom:15px; display:inline-block;}
+
+        .btn-main { background: var(--gold); color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; font-family:inherit; font-size:16px; transition:0.3s; border-radius:5px;}
+        .btn-main:hover { background: #fff; box-shadow:0 0 20px #fff;}
+
+        .donate-box { background:rgba(75,0,130,0.2); border:1px solid var(--purple); padding:20px; border-radius:8px; margin-top:30px; text-align:left;}
+        .pay-method { background:#000; padding:10px; border:1px solid #333; border-radius:5px; margin-top:10px; font-size:13px; color:#ccc;}
+
+        .widget { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:8px; margin-bottom:20px;}
+        .widget h3 { color:var(--gold); margin-top:0; border-bottom:1px solid #333; padding-bottom:10px; font-size:16px;}
         
-        .admin-link { position:fixed; bottom:10px; right:10px; color:#222; text-decoration:none; font-size:10px; transition:0.3s;}
-        .admin-link:hover { color:#00ff00;}
+        .grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .card { background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition:0.3s;}
+        .card:hover { border-color:var(--gold);}
+        .card-img { width: 100%; height: 140px; object-fit: cover; border-bottom:1px solid var(--border);}
+        .card-body { padding: 15px; }
+        .card-body h3 { color: #fff; margin:0 0 5px; font-size:15px;}
+        .card-body p { color: #888; font-size: 12px; line-height: 1.4; margin-bottom: 10px; }
+        .card-body a { color: var(--gold); font-weight: bold; text-decoration: none; font-size:12px;}
+
+        .audio-track { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #222; flex-wrap:wrap; gap:10px;}
+        .audio-track audio { height:35px; outline:none; max-width:200px;}
+        footer { background: #000; text-align: center; padding: 50px 20px; border-top: 1px solid var(--purple); margin-top:60px;}
+        
+        .gateway { position:fixed; bottom:10px; right:10px; font-size:10px; color:#222; text-decoration:none; }
+        .gateway:hover { color:var(--gold); }
+
+        @media(max-width:600px) { .input-grid{grid-template-columns:1fr;} nav a{padding:10px; font-size:12px;} .gates-grid{grid-template-columns:1fr;} }
     </style>
 </head>
 <body>
-    <div class="terminal-box" id="mainTerminal">
-        <h1>[ NEURAL ENGINE ]</h1>
-        <div class="line">> SYSTEM STATUS: ONLINE</div>
-        <div class="line">> ENTER PARAMETERS FOR SAFE DIAGNOSIS</div>
-        <br>
-        
-        <div class="input-group">
-            <label>> Nature of Inquiry</label>
-            <select id="tIntent">
-                <option value="health">Health, Sickness, or Spiritual Blockage</option>
-                <option value="wealth">Wealth, Business, or Success</option>
-                <option value="relationship">Marriage, Love, or Compatibility</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>> Target Given Name</label>
-            <input type="text" id="tName" placeholder="e.g. Ibrahim" required>
-        </div>
-        <div class="input-group">
-            <label>> Maternal Origin (Mother's Name)</label>
-            <input type="text" id="mName" placeholder="e.g. Aisha" required>
-        </div>
 
-        <button onclick="executeCalculation()">INITIATE SCAN</button>
+    <nav class="top-nav">
+        <a href="/" class="nav-brand">👁️ NEURAL ENGINE</a>
+        <div class="nav-links">
+            <a href="/">Oracle</a>
+            <a href="#archives">Archives</a>
+            <a href="#audio">Audio</a>
+            <a href="/logout" style="color:#ef4444;">Exit [${req.session.userName}]</a>
+        </div>
+    </nav>
 
-        <div id="loading">> ALIGNING ABJAD FREQUENCIES...</div>
-        <div id="result"></div>
+    <div class="layout">
+        <!-- LEFT SIDEBAR -->
+        <aside class="left-sidebar">
+            <div class="widget">
+                <h3>📜 Unseen Archives</h3>
+                <p style="font-size:12px; color:#888;">Explore the history of Jinn, Prophets, and traditional healing.</p>
+                <div class="grid">${renderCards(jinn).substring(0, 800)}</div>
+                <a href="#archives" style="display:block; margin-top:10px; color:var(--purple); font-size:12px; text-align:center;">View All Archives →</a>
+            </div>
+            <div class="widget" id="audio">
+                <h3>🎧 Healing Audio</h3>
+                ${audioHtml}
+            </div>
+        </aside>
+
+        <!-- CENTER CONTENT (THE ORACLE) -->
+        <section class="center-content">
+            <div class="oracle-header" id="oracle-header">
+                ${magicalLogoHtml}
+                <h1>NEURAL ENGINE</h1>
+                <p>Select a gateway below to begin your calculation.</p>
+                <div class="scan-count">👁️ ${data.stats.totalScans} Souls Calculated</div>
+            </div>
+
+            <!-- STEP 1: GATES -->
+            <div class="gates-grid" id="gates-grid">
+                <button class="gate-btn" onclick="selectQuestion('travel')"><span class="gate-icon">✈️</span> Travel & Journey</button>
+                <button class="gate-btn" onclick="selectQuestion('wealth')"><span class="gate-icon">💰</span> Wealth & Funding</button>
+                <button class="gate-btn" onclick="selectQuestion('business')"><span class="gate-icon">🏢</span> Business Success</button>
+                <button class="gate-btn" onclick="selectQuestion('health')"><span class="gate-icon">⚕️</span> Health & Illness</button>
+                <button class="gate-btn" onclick="selectQuestion('encounter')"><span class="gate-icon">👥</span> Character Profiling</button>
+                <button class="gate-btn" onclick="selectQuestion('marriage')"><span class="gate-icon">❤️</span> Marriage Compatibility</button>
+                <button class="gate-btn" onclick="selectQuestion('timing')"><span class="gate-icon">🌙</span> Auspicious Timing</button>
+                <button class="gate-btn" onclick="selectQuestion('custom')"><span class="gate-icon">🔮</span> Write Custom Inquiry</button>
+            </div>
+
+            <!-- STEP 2: PURE TEXT FORM -->
+            <div id="user-form">
+                <h3 style="color:var(--gold); text-align:center; margin-top:0;" id="form-title">Enter Spiritual Details</h3>
+                <p style="color:#888; font-size:12px; text-align:center; margin-bottom:20px;">The Abjad system requires exact names for accurate calculation.</p>
+                
+                <div id="custom-query-box" class="input-group" style="display:none;">
+                    <label>What do you seek to know? (e.g. "Who is this person", "Will I get married")</label>
+                    <input type="text" id="uQuery" placeholder="Type your specific question here...">
+                </div>
+
+                <div class="input-group">
+                    <label>Your Given Name (Or Subject's Name)</label>
+                    <input type="text" id="uName" placeholder="e.g. Ibrahim" required>
+                </div>
+                <div class="input-group">
+                    <label>Mother's Given Name</label>
+                    <input type="text" id="mName" placeholder="e.g. Aisha" required>
+                </div>
+                <div class="input-group" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><label>City of Birth</label><input type="text" id="city" placeholder="e.g. Kano" required></div>
+                    <div><label>Secret Number (1-12)</label><input type="number" id="uNum" min="1" max="12" placeholder="Choose 1-12" required></div>
+                </div>
+                <div class="input-group">
+                    <label>Reading Language</label>
+                    <select id="uLang">
+                        <option value="en">English Translation</option>
+                        <option value="ha">Hausa (Original)</option>
+                        <option value="ar">Arabic (العربية)</option>
+                    </select>
+                </div>
+                
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-main" style="background:#333; color:#fff;" onclick="resetToGrid()">BACK</button>
+                    <!-- FLAWLESS CALCULATE BUTTON -->
+                    <button class="btn-main" onclick="startCalculation()">CALCULATE DESTINY</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: LOADING -->
+            <div id="loading-ui">
+                ${magicalLogoHtml}
+                <div class="mystic-text">DECRYPTING FREQUENCIES...</div>
+            </div>
+
+            <!-- STEP 4: RESULT -->
+            <div id="result-ui">
+                <div style="text-align:center;">
+                    <div class="ramlu-fig" id="resRamlu"></div>
+                    <div class="res-star" id="resTitle"></div>
+                    <div class="res-element" id="resElement"></div>
+                </div>
+                <div class="res-desc" id="resDesc"></div>
+                
+                <!-- DIRECT ANSWER INJECTED HERE -->
+                <div class="final-answer" id="finalAnswer"></div>
+                
+                ${donationHtml}
+
+                <div style="text-align:center; margin-top:30px;">
+                    <button class="btn-main" onclick="resetToGrid()" style="max-width:300px;">Consult Again</button>
+                </div>
+            </div>
+            
+            <div id="archives" style="width:100%; margin-top:60px; display:none;"> </div>
+        </section>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="right-sidebar">
+            <div class="widget">
+                <h3>📜 Seerah Archives</h3>
+                <div class="grid">${renderCards(seerah).substring(0, 500)}</div>
+            </div>
+            <div class="widget">
+                <h3>🌍 History</h3>
+                <div class="grid">${renderCards(history).substring(0, 500)}</div>
+            </div>
+            <div class="widget" style="border-color:var(--gold);">
+                <h3 style="color:var(--gold);">💰 Sadaqah / Donate</h3>
+                <p style="font-size:12px; color:#888; margin-bottom:10px;">Support the Oracle servers.</p>
+                ${data.finance.bank ? `<div class="pay-method">🏦 <strong>Bank:</strong> ${data.finance.bank}</div>` : ''}
+                ${data.finance.paypal ? `<div class="pay-method">🅿️ <strong>PayPal:</strong> ${data.finance.paypal}</div>` : ''}
+                ${data.finance.crypto ? `<div class="pay-method">₿ <strong>Crypto:</strong> ${data.finance.crypto}</div>` : ''}
+            </div>
+        </aside>
     </div>
 
-    <a href="/gateway" class="admin-link">SYS_OVERRIDE</a>
+    <footer>
+        <div class="footer-content">
+            <h4>ABOUT FALAKI</h4>
+            <p>${data.aboutContent}</p>
+            <h4 style="margin-top:30px;">PRIVACY POLICY</h4>
+            <p>${data.privacyContent}</p>
+            
+            <div style="margin-top:40px; padding-top:20px; border-top:1px solid #222;">
+                <p style="color:var(--gold); font-size:14px; font-weight:bold;">Contact The Oracle Archives</p>
+                <p>Email: <a href="mailto:${data.contact.email}" style="color:var(--gold); text-decoration:none;">${data.contact.email}</a></p>
+                <p>WhatsApp: <a href="https://wa.me/${data.contact.phone.replace(/[^0-9]/g,'')}" style="color:var(--gold); text-decoration:none;">${data.contact.phone}</a></p>
+                <p style="margin-top:20px; font-size:11px;">© 2026 NEURAL ENGINE CLOUD. Deployed on Render.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SECRET ADMIN GATEWAY -->
+    <a href="/admin-login" class="gateway">⚙️ System Access</a>
 
     <script>
-        async function executeCalculation() {
-            const n = document.getElementById('tName').value;
-            const m = document.getElementById('mName').value;
-            const i = document.getElementById('tIntent').value;
-            
-            if(!n || !m) return alert("> ERROR: Name parameters missing.");
+        // THE ULTIMATE ABJAD ENGINE
+        const abjad = {
+            'a':1,'b':2,'j':3,'d':4,'h':5,'w':6,'z':7,'x':8,'t':9,'y':10,'k':20,'l':30,'m':40,'n':50,'s':60,'o':70,'f':80,'p':90,'q':100,'r':200,'sh':300,'c':400,'u':6,'v':6,'e':5,'i':10,'g':3,
+            'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000
+        };
 
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('result').style.display = 'none';
+        const buruj = [
+            { id: 1, nameEn: "Aries (Hamal)", nameHa: "Babban Rago (Hamal)", nameAr: "الحمل", element: "Fire" },
+            { id: 2, nameEn: "Taurus (Thaur)", nameHa: "Sa (Thaur)", nameAr: "الثور", element: "Earth" },
+            { id: 3, nameEn: "Gemini (Jauza)", nameHa: "Tagwaye (Jauza)", nameAr: "الجوزاء", element: "Air" },
+            { id: 4, nameEn: "Cancer (Sartan)", nameHa: "Kaguwa (Sartan)", nameAr: "السرطان", element: "Water" },
+            { id: 5, nameEn: "Leo (Asad)", nameHa: "Zaki (Asad)", nameAr: "الأسد", element: "Fire" },
+            { id: 6, nameEn: "Virgo (Sunbula)", nameHa: "Budurwa (Sunbula)", nameAr: "العذراء", element: "Earth" },
+            { id: 7, nameEn: "Libra (Mizan)", nameHa: "Sikeli (Mizan)", nameAr: "الميزان", element: "Air" },
+            { id: 8, nameEn: "Scorpio (Aqrab)", nameHa: "Kunama (Aqrab)", nameAr: "العقرب", element: "Water" },
+            { id: 9, nameEn: "Sagittarius (Qaus)", nameHa: "Maharbi (Qaus)", nameAr: "القوس", element: "Fire" },
+            { id: 10, nameEn: "Capricorn (Jadi)", nameHa: "Bunsuru (Jadi)", nameAr: "الجدي", element: "Earth" },
+            { id: 11, nameEn: "Aquarius (Dalwu)", nameHa: "Guga (Dalwu)", nameAr: "الدلو", element: "Air" },
+            { id: 12, nameEn: "Pisces (Hut)", nameHa: "Kifi (Hut)", nameAr: "الحوت", element: "Water" }
+        ];
 
-            try {
-                const res = await fetch('/api/public-calculate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: n, mothersName: m, intent: i })
-                });
-                const data = await res.json();
-                
-                setTimeout(() => {
-                    document.getElementById('loading').style.display = 'none';
-                    if(data.success) {
-                        document.getElementById('result').innerHTML = data.html;
-                        document.getElementById('result').style.display = 'block';
-                    } else { alert("> SYSTEM ERROR."); }
-                }, 2500);
+        const ramlFigures = [
+            { id: 1, name: "Dariqee", type: "delayed", meaning: "Movement, slow but sure journey." },
+            { id: 2, name: "Jama'a", type: "favorable", meaning: "Partnership, community, good for business." },
+            { id: 3, name: "Uqba", type: "unfavorable", meaning: "Delays, endings, blockages." },
+            { id: 4, name: "Kausaji", type: "spiritual", meaning: "Deceit, something hidden, loss." },
+            { id: 5, name: "Dhahika", type: "favorable", meaning: "Joy, success, good news coming." },
+            { id: 6, name: "Qabla Kharija", type: "delayed", meaning: "Money leaving, safe travel out." },
+            { id: 7, name: "Humra", type: "spiritual", meaning: "Conflict, passion, fire, blood." },
+            { id: 8, name: "Inkees", type: "unfavorable", meaning: "Loss, sadness, things turning upside down." },
+            { id: 9, name: "Bayaad", type: "favorable", meaning: "Purity, clarity, a good outcome." },
+            { id: 10, name: "Nusra Kharija", type: "delayed", meaning: "Victory over distant enemies." },
+            { id: 11, name: "Nusra Dakhila", type: "favorable", meaning: "Victory at home, inner peace." },
+            { id: 12, name: "Qabla Dakhila", type: "favorable", meaning: "Money arriving, safe return." },
+            { id: 13, name: "Ijtima", type: "delayed", meaning: "Meeting of two things, good for marriage." },
+            { id: 14, name: "Uqla", type: "unfavorable", meaning: "Tied up, delayed, restricted movement." },
+            { id: 15, name: "Kabid Kharija", type: "unfavorable", meaning: "Loss of property, theft." },
+            { id: 16, name: "Kabid Dakhila", type: "unfavorable", meaning: "Gaining property, holding tight." }
+        ];
 
-            } catch(e) {
-                alert("> NETWORK ERROR.");
-                document.getElementById('loading').style.display = 'none';
+        // THE DEEP LOGIC MATRIX
+        const logicMatrix = {
+            relationship: {
+                favorable: { en: "Final Answer: YES. You are highly compatible. This union will bring peace and prosperity.", ha: "Amsar Karshe: EH. Wannan alakar zata kawo alheri sosai.", ar: "الجواب النهائي: نعم. أنتم متوافقون للغاية." },
+                delayed: { en: "Final Answer: IT WILL HAPPEN, BUT WITH DELAY. You will face resistance or hurdles first. Patience is required.", ha: "Amsar Karshe: ZAI YIWU, AMMA DA JINKIRI. Za a samu kalubale tukunna.", ar: "الجواب النهائي: سيحدث، ولكن مع التأخير." },
+                unfavorable: { en: "Final Answer: NO. The elements clash. Proceeding will bring constant conflict and regret.", ha: "Amsar Karshe: A'A. Dabi'un ku sun saba. Idan akayi za'a samu tashin hankali.", ar: "الجواب النهائي: لا. عناصرك لا تتطابق." },
+                spiritual: { en: "Final Answer: BE CAREFUL. There is a third party or Hasad (Evil Eye) trying to block or destroy this union.", ha: "Amsar Karshe: KU KIYAYE. Akwai katsalandan ko hasada daga wani mutum.", ar: "الجواب النهائي: كن حذرا. هناك حسد يحاول عرقلة هذا." }
+            },
+            wealth: {
+                favorable: { en: "Final Answer: YES. Great success is coming. The doors of wealth are open for you right now.", ha: "Amsar Karshe: EH. Babban nasara na zuwa. Kofofin arziki a bude suke.", ar: "الجواب النهائي: نعم. نجاح كبير قادم." },
+                delayed: { en: "Final Answer: SUCCESS WILL COME SLOWLY. Keep working hard, your debts and struggles will clear eventually.", ha: "Amsar Karshe: NASARA ZATA ZO A HANKALI. Ka ci gaba da hakuri, komai zai yi kyau.", ar: "الجواب النهائي: النجاح سيأتي ببطء." },
+                unfavorable: { en: "Final Answer: NO. There is a high risk of financial loss right now. Do not invest or trust blindly.", ha: "Amsar Karshe: A'A. Akwai hadarin asarar kudi. Kar ka yarda da sabon kasuwanci a yanzu.", ar: "الجواب النهائي: لا. هناك خطر كبير من الخسارة المالية." },
+                spiritual: { en: "Final Answer: SPIRITUAL BLOCKAGE. Your wealth is tied down by Sihr or heavy Evil Eye. Give Sadaqah immediately.", ha: "Amsar Karshe: KULLEN ASIRI. Arzikinka yana daure saboda hasada ko sammu. Ka gaggauta fitar da sadaka.", ar: "الجواب النهائي: انسداد روحي. ثروتك مقيدة بالسحر." }
+            },
+            health_jinn: {
+                favorable: { en: "Final Answer: YOU ARE SAFE. The issue is a natural illness, not a spiritual attack. Seek medical help.", ha: "Amsar Karshe: BAKA DA MATSALA TA ALJANU. Ciwon na asibiti ne, ka nemi magani.", ar: "الجواب النهائي: أنت آمن. المشكلة هي مرض طبيعي." },
+                delayed: { en: "Final Answer: MILD AFFLICTION. You have been touched by Hasad (Evil Eye). Read protective verses daily.", ha: "Amsar Karshe: TABUWAR HASADA. Akwai kambun baka (Irin). Ka yawaita azkar din safe da yamma.", ar: "الجواب النهائي: أذى خفيف. لقد تأثرت بالحسد." },
+                unfavorable: { en: "Final Answer: SEVERE BLOCKAGE. You are experiencing closed doors due to your own past actions or mistakes.", ha: "Amsar Karshe: KULLEWAR AL'AMURA. Kurakuran ka na baya ne suka jawo maka wannan.", ar: "الجواب النهائي: انسداد شديد. أفعالك الماضية هي السبب." },
+                spiritual: { en: "Final Answer: JINN/SIHR DETECTED. You are under a direct spiritual attack. You urgently need Ruqyah.", ha: "Amsar Karshe: AKWAI ALJANU KO SAMMU. Ana yimaka aiki a boye. Kana bukatar ayi maka Ruqyah cikin gaggawa.", ar: "الجواب النهائي: تم اكتشاف جن/سحر. أنت بحاجة إلى رقية." }
+            },
+            timing: {
+                favorable: { en: "Final Answer: VERY SOON. Within days or a few weeks.", ha: "Amsar Karshe: NAN KUSA. Cikin yan kwanaki ko makonni kadan.", ar: "الجواب النهائي: قريبا جدا." },
+                delayed: { en: "Final Answer: LATER. It will take several months to a year.", ha: "Amsar Karshe: ZAI DAU LOKACI. Zai dauki watanni ko shekara.", ar: "الجواب النهائي: في وقت لاحق." },
+                unfavorable: { en: "Final Answer: BLOCKED. It will not happen unless conditions change.", ha: "Amsar Karshe: A RUFE. Ba zai faru ba sai idan ka canza tsari.", ar: "الجواب النهائي: محظور." },
+                spiritual: { en: "Final Answer: UNCERTAIN. Spiritual interference is confusing the timeline.", ha: "Amsar Karshe: RASHIN TABBAS. Akwai katsalandan din shaidanu a lokacin.", ar: "الجواب النهائي: غير مؤكد." }
+            },
+            profiling: {
+                favorable: { en: "Final Answer: GOOD CHARACTER. This person is honest, straightforward, and brings peace. You can trust them.", ha: "Amsar Karshe: MUTUMIN KIRKI NE. Mutum ne mai amana da gaskiya. Zaka iya yarda dashi.", ar: "الجواب النهائي: شخصية جيدة. هذا الشخص صادق." },
+                delayed: { en: "Final Answer: SECRETIVE. This person hides their true intentions. They are not bad, but they take time to trust others.", ha: "Amsar Karshe: MAI SIRRI NE. Wannan mutumin baya fadar abin da ke ransa. Ana bukatar hakuri dashi.", ar: "الجواب النهائي: كتوم. هذا الشخص يخفي نواياه الحقيقية." },
+                unfavorable: { en: "Final Answer: DECEITFUL. Be extremely careful. This person has bad intentions and comes to cause trouble or take from you.", ha: "Amsar Karshe: MAI HA'INCI NE. Ka kiyaye sosai. Wannan mutumin da mugun nufi yazo.", ar: "الجواب النهائي: مخادع. كن حذرا للغاية." },
+                spiritual: { en: "Final Answer: UNSTABLE. This person is highly influenced by unseen forces or bad company. They are confused.", ha: "Amsar Karshe: MAI RAUNI NE. Wannan mutumin yana karkashin tasirin kawayen banza ko shaidanu. Yana cikin rudani.", ar: "الجواب النهائي: غير مستقر. يتأثر بقوى غير مرئية." }
             }
+        };
+
+        let selectedGate = '';
+
+        function selectQuestion(gate) {
+            selectedGate = gate;
+            document.getElementById('gates-grid').style.display = 'none';
+            document.getElementById('user-form').style.display = 'block';
+            
+            const titles = {
+                'travel': '✈️ Travel & Journey Calculation', 'wealth': '💰 Wealth Calculation', 'business': '🏢 Business Calculation',
+                'destiny': '⏳ Destiny Calculation', 'encounter': '👥 Profiling (Who is this person?)', 'marriage': '❤️ Marriage Compatibility',
+                'health': '⚕️ Health & Illness', 'timing': '🌙 Auspicious Timing', 'custom': '🔮 Custom Oracle Inquiry'
+            };
+            document.getElementById('form-title').innerText = titles[gate];
+            document.getElementById('custom-query-box').style.display = gate === 'custom' ? 'block' : 'none';
+        }
+
+        function resetToGrid() {
+            document.getElementById('gates-grid').style.display = 'grid';
+            document.getElementById('user-form').style.display = 'none';
+            document.getElementById('loading-ui').style.display = 'none';
+            document.getElementById('result-ui').style.display = 'none';
+            document.getElementById('oracle-header').style.display = 'block';
+            
+            document.getElementById('uName').value = '';
+            document.getElementById('mName').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('uNum').value = '';
+            document.getElementById('uQuery').value = '';
+        }
+
+        function calculateAbjad(str) {
+            let total = 0;
+            str = str.toLowerCase().replace(/\\s/g, '');
+            for(let char of str) { total += (abjad[char] || 1); }
+            return total;
+        }
+
+        function determineIntent(gate, query) {
+            if (gate === 'marriage') return 'relationship';
+            if (gate === 'wealth' || gate === 'business') return 'wealth';
+            if (gate === 'timing') return 'timing';
+            if (gate === 'encounter') return 'profiling';
+            if (gate === 'health') return 'health_jinn';
+            
+            if (gate === 'custom') {
+                const q = query.toLowerCase();
+                if (q.includes('marry') || q.includes('wife') || q.includes('husband') || q.includes('love') || q.includes('match') || q.includes('girlfriend') || q.includes('boyfriend')) return 'relationship';
+                if (q.includes('money') || q.includes('rich') || q.includes('business') || q.includes('success')) return 'wealth';
+                if (q.includes('jinn') || q.includes('magic') || q.includes('sihr') || q.includes('sick') || q.includes('enemy') || q.includes('health') || q.includes('illness')) return 'health_jinn';
+                if (q.includes('who') || q.includes('character') || q.includes('nature') || q.includes('person')) return 'profiling';
+                if (q.includes('when') || q.includes('time') || q.includes('how long')) return 'timing';
+            }
+            return 'wealth'; 
+        }
+
+        // FLAWLESS CALCULATION TRIGGER (No Camera, Just Math)
+        function startCalculation() {
+            const n = document.getElementById('uName').value;
+            const m = document.getElementById('mName').value;
+            const c = document.getElementById('city').value;
+            const num = parseInt(document.getElementById('uNum').value);
+            const q = document.getElementById('uQuery').value;
+            
+            if(!n || !m || !c || !num || num < 1 || num > 12) return alert("All fields are required, and number must be 1-12.");
+            if(selectedGate === 'custom' && !q) return alert("Please enter your specific question.");
+
+            document.getElementById('user-form').style.display = 'none';
+            document.getElementById('oracle-header').style.display = 'none';
+            document.getElementById('loading-ui').style.display = 'block';
+
+            fetch('/api/track-scan', {method:'POST'});
+
+            setTimeout(() => {
+                document.getElementById('loading-ui').style.display = 'none';
+                generateResult(n, m, c, num, q);
+            }, 3000); 
+        }
+
+        function generateResult(n, m, c, num, q) {
+            const lang = document.getElementById('uLang').value;
+            
+            let baseSum = calculateAbjad(n) + calculateAbjad(m) + calculateAbjad(c);
+            let gateVal = calculateAbjad(selectedGate);
+            if(selectedGate === 'custom') gateVal += calculateAbjad(q);
+            
+            let totalSum = baseSum + gateVal + num;
+
+            let starIndex = totalSum % 12; if(starIndex === 0) starIndex = 12;
+            const starData = buruj[starIndex - 1];
+
+            let ramlIndex = totalSum % 16; if(ramlIndex === 0) ramlIndex = 16;
+            const ramlData = ramlFigures[ramlIndex - 1];
+
+            const intent = determineIntent(selectedGate, q);
+            const outcomeType = ramlData.type; 
+            
+            const finalAnswerObj = logicMatrix[intent][outcomeType];
+            const finalAnswer = finalAnswerObj[lang] || finalAnswerObj['en'];
+
+            let resEn = "Based on your Abjad calculation (" + totalSum + "), the star is <strong>" + starData.nameEn + "</strong> and the Raml figure is <strong>" + ramlData.name + "</strong>.<br><br>";
+            let resHa = "Bisa lissafin Abjad dinka (" + totalSum + "), tauraron shine <strong>" + starData.nameHa + "</strong> kuma siffar Ramlu itace <strong>" + ramlData.name + "</strong>.<br><br>";
+            let resAr = "بناءً على حساب الأبجد الخاص بك (" + totalSum + ")، النجم هو <strong>" + starData.nameAr + "</strong> وشكل الرمل هو <strong>" + ramlData.name + "</strong>.<br><br>";
+
+            if(starData.element === 'Fire') {
+                resEn += "The Fire nature brings passion but attracts envy and conflict. "; resHa += "Dabi'ar Wuta tana jawo kishi da farin jini amma akwai fada. "; resAr += "طبيعة النار تجلب العاطفة ولكنها تجذب الحسد. ";
+            } else if(starData.element === 'Water') {
+                resEn += "The Water nature brings emotion, secrets, and wealth. "; resHa += "Dabi'ar Ruwa tana kawo sanyi, sirri, da arziki. "; resAr += "طبيعة الماء تجلب العاطفة والسرية والثروة. ";
+            } else if(starData.element === 'Earth') {
+                resEn += "The Earth nature means slow, steady growth and stubbornness. "; resHa += "Dabi'ar Kasa tana nufin girma a hankali da taurin kai. "; resAr += "طبيعة الأرض تعني النمو البطيء والمطرد والعناد. ";
+            } else {
+                resEn += "The Air nature makes things intelligent, fast, but restless. "; resHa += "Dabi'ar Iska tana kawo basira amma rashin zama wuri daya. "; resAr += "طبيعة الهواء تجعل الأشياء ذكية، سريعة، لكنها لا تهدأ. ";
+            }
+
+            document.getElementById('result-ui').style.display = 'block';
+            document.getElementById('resRamlu').style.display = 'inline-block';
+            document.getElementById('resElement').style.display = 'block';
+            document.getElementById('finalAnswer').style.display = 'block';
+
+            document.getElementById('resRamlu').innerText = "RAMLU: " + ramlData.name;
+            
+            if(lang === 'ha') {
+                document.getElementById('resTitle').innerText = "⭐ " + starData.nameHa;
+                document.getElementById('resDesc').innerHTML = resHa;
+            } else if(lang === 'ar') {
+                document.getElementById('resTitle').innerText = "⭐ " + starData.nameAr;
+                document.getElementById('resDesc').innerHTML = resAr;
+                document.getElementById('resDesc').style.textAlign = "right";
+                document.getElementById('resDesc').style.direction = "rtl";
+            } else {
+                document.getElementById('resTitle').innerText = "⭐ " + starData.nameEn;
+                document.getElementById('resDesc').innerHTML = resEn;
+            }
+            
+            document.getElementById('resTitle').style.color = "var(--gold)";
+            document.getElementById('resElement').innerText = "ELEMENT: " + starData.element;
+            document.getElementById('finalAnswer').innerHTML = finalAnswer;
         }
     </script>
 </body>
 </html>
     `);
-});
-
-// ==================== CEO GATEWAY & SUPER ADMIN ====================
-app.get('/gateway', (req, res) => {
-    res.send(`<!DOCTYPE html><html><head><title>CEO Gateway</title>
-        <style>body{background:#000;color:#ffcc00;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;}
-        .box{background:#111;padding:40px;border:1px solid #4b0082;text-align:center;box-shadow:0 0 30px rgba(255,204,0,0.2);}
-        input{width:100%;padding:12px;margin:10px 0;background:#000;border:1px solid #555;color:#ffcc00;box-sizing:border-box;}
-        button{width:100%;padding:12px;background:#ffcc00;color:#000;border:none;cursor:pointer;font-weight:bold;margin-top:10px;}</style></head>
-        <body><div class="box"><h2>[ INNER SANCTUM ]</h2>
-        <form method="POST" action="/api/auth-ceo">
-            <input type="text" name="user" placeholder="CEO ID" required>
-            <input type="password" name="pass" placeholder="Passcode" required>
-            <button type="submit">ACCESS MATRIX</button>
-        </form></div></body></html>`);
-});
-
-app.post('/api/auth-ceo', (req, res) => {
-    const { user, pass } = req.body;
-    const data = getData();
-    if (user === data.adminAuth.user && bcrypt.compareSync(pass, data.adminAuth.hash)) {
-        req.session.isSuperAdmin = true; res.redirect('/super-admin');
-    } else {
-        res.send('<script>alert("Access Denied"); window.location="/gateway";</script>');
-    }
-});
-
-app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
-
-app.get('/super-admin', checkAdminAuth, (req, res) => {
-    const data = getData();
-    res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>CEO Inner Sanctum</title>
-    <style>
-        body { font-family: monospace; background:#050505; color:#00ff00; display:flex; margin:0; height:100vh; }
-        .sidebar { width:250px; background:#111; padding:20px; border-right:1px solid #333; }
-        .sidebar h2 { color:#ffcc00; margin-bottom:30px;}
-        .sidebar a { display:block; padding:12px; color:#888; text-decoration:none; cursor:pointer; border-radius:5px; margin-bottom:5px;}
-        .sidebar a:hover, .sidebar a.active { color:#000; background:#ffcc00;}
-        .main { flex:1; padding:40px; overflow-y:auto; }
-        .panel { display:none; } .panel.active { display:block; }
-        h3 { color:#ffcc00; border-bottom:1px dashed #333; padding-bottom:10px; font-size:22px;}
-        input, select { width:100%; padding:12px; margin-bottom:15px; background:#000; border:1px solid #333; color:#00ff00; box-sizing:border-box;}
-        button { background:#ffcc00; color:#000; border:none; padding:12px 20px; font-weight:bold; cursor:pointer; border-radius:5px;}
-        .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-        .log-box { background:#111; padding:15px; border:1px solid #333; border-radius:5px; margin-bottom:10px; font-size:12px; color:#ccc;}
-        .terminal { background:#000; color:#0f0; padding:20px; border-radius:8px; height:auto; min-height:300px; border:1px solid #0f0; margin-bottom:20px;}
-    </style>
-</head>
-<body>
-    <div class="sidebar">
-        <h2>CEO SANCTUM</h2>
-        <a onclick="show('kashf')" class="active">👁️ Deep Kashf Engine</a>
-        <a onclick="show('logs')">📜 Client Logs</a>
-        <a onclick="show('finance')">💳 Payment Settings</a>
-        <a onclick="show('sec')">🛡️ Security</a>
-        <a href="/" target="_blank" style="margin-top:50px; color:#4b0082;">🌐 View Public Terminal</a>
-        <a href="/logout" style="color:red; margin-top:20px;">🚪 Logout</a>
-    </div>
-
-    <div class="main">
-        <!-- DEEP KASHF PANEL -->
-        <div id="kashf" class="panel active">
-            <h3>👁️ Deep Kashf Engine (CEO Only)</h3>
-            <p style="color:#888; margin-bottom:20px;">Enter client details to reveal their Ruling Angel, Jinn King, Asma al-Tahatil, and Personal Ism al-A'zam. Use the instructions provided to administer spiritual remedies.</p>
-            <div class="grid">
-                <div>
-                    <label>Client Given Name</label>
-                    <input type="text" id="cName" placeholder="e.g. Ibrahim">
-                    <label>Mother's Given Name</label>
-                    <input type="text" id="cmName" placeholder="e.g. Aisha">
-                    <button onclick="runDeepKashf()" style="width:100%; margin-top:10px;">REVEAL SECRETS</button>
-                </div>
-                <div class="terminal" id="kashfResult">
-                    [WAITING FOR TARGET INPUT...]
-                </div>
-            </div>
-        </div>
-
-        <!-- CLIENT LOGS -->
-        <div id="logs" class="panel">
-            <h3>📜 Public Oracle Logs</h3>
-            <p style="color:#888;">Recent queries made by the public on the main page. Reach out to these clients to offer them your premium Deep Kashf services.</p>
-            ${data.clientLogs.length === 0 ? '<p>No logs yet.</p>' : data.clientLogs.map(l => `
-                <div class="log-box">
-                    <strong>Date:</strong> ${l.date} | <strong>Target:</strong> ${l.name} (Mother: ${l.mothersName}) | <strong>Intent:</strong> ${l.intent}
-                </div>
-            `).join('')}
-        </div>
-
-        <!-- FINANCE -->
-        <div id="finance" class="panel">
-            <h3>💳 Sadaqah / Donation Settings</h3>
-            <form action="/admin/update-finance" method="POST" style="max-width:500px;">
-                <label>Bank Account Details</label>
-                <input type="text" name="bank" value="${data.finance.bank}" required>
-                <label>Crypto / USDT Address</label>
-                <input type="text" name="crypto" value="${data.finance.crypto}" required>
-                <button type="submit">Update Records</button>
-            </form>
-        </div>
-
-        <!-- SECURITY -->
-        <div id="sec" class="panel">
-            <h3>🛡️ Update CEO Credentials</h3>
-            <form action="/admin/change-pass" method="POST" style="max-width:500px;">
-                <label>New Username</label>
-                <input type="text" name="newUser" value="${data.adminAuth.user}" required>
-                <label>New Password</label>
-                <input type="password" name="newPass" required>
-                <button type="submit">Update Security</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        function show(id){
-            document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-            document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        async function runDeepKashf() {
-            const n = document.getElementById('cName').value;
-            const m = document.getElementById('cmName').value;
-            const resBox = document.getElementById('kashfResult');
-            
-            if(!n || !m) return alert("Enter both names.");
-            resBox.innerHTML = "Decrypting Matrix... Please wait.";
-
-            try {
-                const res = await fetch('/api/ceo-kashf', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: n, mothersName: m })
-                });
-                const data = await res.json();
-                if(data.success) resBox.innerHTML = data.html;
-            } catch(e) { resBox.innerHTML = "Network Error."; }
-        }
-    </script>
-</body>
-</html>`);
 });
 
 // Admin Post Handlers
@@ -541,11 +690,41 @@ app.post('/admin/change-pass', checkAdminAuth, (req, res) => {
     saveData(data); res.send('<script>alert("Security Updated!"); window.location="/super-admin";</script>');
 });
 
+app.post('/admin/post-article', checkAdminAuth, upload.single('image'), (req, res) => {
+    const data = getData();
+    data.posts.unshift({
+        id: Date.now(), title: req.body.title, category: req.body.category,
+        content: req.body.content.replace(/\n/g, '<br>'),
+        image: req.file ? `/uploads/images/${req.file.filename}` : null,
+        date: new Date().toISOString(), views: 0
+    });
+    saveData(data); res.send('<script>alert("Manuscript Encrypted!"); window.location="/super-admin";</script>');
+});
+
+app.get('/admin/delete-post/:id', checkAdminAuth, (req, res) => {
+    const data = getData(); data.posts = data.posts.filter(p => p.id != req.params.id); saveData(data); res.redirect('/super-admin');
+});
+
+app.post('/admin/upload-audio', checkAdminAuth, upload.single('audio'), (req, res) => {
+    if (!req.file) return res.send('<script>alert("No file!"); window.location="/super-admin";</script>');
+    const data = getData();
+    data.audios.unshift({ id: Date.now(), title: req.body.title, category: req.body.category, url: `/uploads/audio/${req.file.filename}` });
+    saveData(data); res.send('<script>alert("Audio Uploaded!"); window.location="/super-admin";</script>');
+});
+
+app.get('/admin/delete-audio/:id', checkAdminAuth, (req, res) => {
+    const data = getData(); data.audios = data.audios.filter(a => a.id != req.params.id); saveData(data); res.redirect('/super-admin');
+});
+
+app.get('/admin/reset-scans', checkAdminAuth, (req, res) => {
+    const data = getData(); data.stats.totalScans = 0; saveData(data); res.redirect('/super-admin');
+});
+
 // Start Server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n==============================================`);
     console.log(`[SYSTEM] NEURAL ENGINE IS LIVE ON PORT ${PORT}`);
     console.log(`[SYSTEM] Public Terminal Active.`);
-    console.log(`[SYSTEM] Secret CEO Gateway: /gateway`);
+    console.log(`[SYSTEM] Secret CEO Gateway: /admin-login`);
     console.log(`==============================================\n`);
 });
