@@ -51,7 +51,6 @@ const RAML_FIGURES = [
   { id: 16, name: "Kabid Dakhila", type: "unfavorable", meaning: "Gaining property, holding tight." }
 ];
 
-// --- APP SETUP ---
 const app = express();
 app.use(express.json());
 
@@ -106,25 +105,25 @@ app.get('/', (req, res) => {
     whatsapp: "+234808033353"
   };
 
-  const html = `
-<!DOCTYPE html>
+  // Using a plain string and replacing placeholders to avoid template literal syntax errors
+  let html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neural Engine Spiritual Core</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_PLACEHOLDER"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_ID_HERE"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'GA_PLACEHOLDER');
+      gtag('config', 'GA_ID_HERE');
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-    <script>window.NEURAL_DATA = DATA_PLACEHOLDER;</script>
+    <script>window.NEURAL_DATA = DATA_HERE;</script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; overflow-x: hidden; }
@@ -295,13 +294,17 @@ app.get('/', (req, res) => {
     </script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </body>
-</html>
-  `;
+</html>`;
 
-  res.send(html.replace(/GA_PLACEHOLDER/g, clientData.gaId).replace('DATA_PLACEHOLDER', JSON.stringify(clientData)));
+  // Safe replacement to avoid template literal issues on Render
+  const finalHtml = html
+    .replace(/GA_ID_HERE/g, clientData.gaId)
+    .replace('DATA_HERE', JSON.stringify(clientData));
+
+  res.send(finalHtml);
 });
 
-app.listen(PORT, '0.0.0.0', () => { console.log(`NEURAL ENGINE LIVE ON ${PORT}`); });
+app.listen(3000, '0.0.0.0', () => { console.log("NEURAL ENGINE LIVE"); });
 }
 
 startServer();
