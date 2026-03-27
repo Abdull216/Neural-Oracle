@@ -1,17 +1,15 @@
 {
   "name": "falaki-oracle",
-  "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js",
-    "lint": "node --check index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
-    "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "dotenv": "^17.2.3",
     "fs-extra": "^11.3.4"
   }
 }
