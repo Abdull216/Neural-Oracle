@@ -1,19 +1,17 @@
 {
   "name": "falaki-oracle",
+  "private": true,
   "version": "1.0.0",
-  "description": "FALAKI - AI Oracle & Spiritual Archives",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "node index.js",
+    "lint": "node --check index.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "express": "^4.18.2",
-    "express-session": "^1.17.3",
-    "fs-extra": "^11.1.1",
-    "multer": "^1.4.5-lts.1"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "@google/genai": "^1.29.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "fs-extra": "^11.3.4"
   }
 }
