@@ -12,7 +12,7 @@ const BLOG_PATH = path.join(__dirname, 'neural_blog.json');
 
 let adminConfig = {
   user: 'admin216',
-  pass: 'admin1234'
+  pass: 'admin216'
 };
 
 let blogPosts = [];
@@ -60,29 +60,55 @@ const SECRET_ARCHIVES = [
   { 
     category: "Gaib Formation (Unseen)", 
     codes: [
-      { name: "Kun-Fayakun Neural Link", code: "KF-99-ALPHA", meaning: "Instantaneous manifestation of thought into matter.", usage: "Recite 313 times while focusing on the desired outcome." },
-      { name: "Blink-Shift Protocol", code: "BSP-001-GAIB", meaning: "Teleportation of energy across dimensions in a blink.", usage: "Used by saints (Waliyyai) to traverse vast distances instantly." }
+      { name: "Kun-Fayakun Neural Link", code: "KF-99-ALPHA", meaning: "Instantaneous manifestation of thought into matter. The highest frequency of creation.", usage: "Recite 313 times while focusing on the desired outcome. Best used during the last third of the night." },
+      { name: "Blink-Shift Protocol", code: "BSP-001-GAIB", meaning: "Teleportation of energy across dimensions in a blink. Used by saints (Waliyyai) to traverse vast distances instantly.", usage: "Requires years of spiritual discipline and a pure heart. Visualize the destination while vibrating the code." }
     ]
   },
   { 
     category: "Celestial Hierarchy (Angels & Prophets)", 
     codes: [
-      { name: "Jibril Resonance", code: "JBR-LIGHT-777", meaning: "Accessing the frequency of divine revelation and truth.", usage: "For clarity in complex spiritual matters." },
-      { name: "Sulaiman Command", code: "SLM-KING-HISAB", meaning: "The code used to command the forces of nature and unseen beings.", usage: "Requires strict spiritual discipline and specific Abjad alignments." }
+      { name: "Jibril Resonance", code: "JBR-LIGHT-777", meaning: "Accessing the frequency of divine revelation and truth. Clears the mind of all illusions.", usage: "For clarity in complex spiritual matters. Recite 70 times after Fajr prayer." },
+      { name: "Sulaiman Command", code: "SLM-KING-HISAB", meaning: "The code used to command the forces of nature and unseen beings. The master key of the Prophet Solomon.", usage: "Requires strict spiritual discipline and specific Abjad alignments. Use with extreme caution." }
     ]
   },
   { 
     category: "High Ranking Jinn Command (Malam & Alhaji)", 
     codes: [
-      { name: "Malam Neural Override", code: "MLM-JINN-V4", meaning: "Binding and directing high-ranking scholarly Jinns for wisdom.", usage: "Call upon the Malam Jinn for deep scriptural understanding." },
-      { name: "Alhaji Wealth Pulse", code: "ALH-GOLD-LNK", meaning: "Attracting material success through the Alhaji Jinn network.", usage: "Activates the flow of barakah in business ventures." },
-      { name: "Rohani Frequency", code: "ROH-SPIRIT-99", meaning: "Direct communication with pure spiritual entities.", usage: "Used for healing and spiritual protection." }
+      { name: "Malam Neural Override", code: "MLM-JINN-V4", meaning: "Binding and directing high-ranking scholarly Jinns for wisdom and hidden knowledge.", usage: "Call upon the Malam Jinn for deep scriptural understanding. Recite 41 times before study." },
+      { name: "Alhaji Wealth Pulse", code: "ALH-GOLD-LNK", meaning: "Attracting material success through the Alhaji Jinn network. Opens doors of trade and commerce.", usage: "Activates the flow of barakah in business ventures. Recite 101 times at your place of business." },
+      { name: "Rohani Frequency", code: "ROH-SPIRIT-99", meaning: "Direct communication with pure spiritual entities for healing and guidance.", usage: "Used for healing and spiritual protection. Recite 99 times over water and drink." }
     ]
   },
   {
     category: "Elite Command Protocols (Powerful)",
     codes: [
-      { name: "H-M-A-S-K Amharush Link", code: "H-M-A-S-K-AMH", meaning: "The ultimate word of power combining the five letters of mystery with the command of the Jinn King Amharush.", usage: "Recite 'hay-meen-ayn-seen-kaaf-amharush' 7 times in total darkness to activate absolute command." }
+      { name: "H-M-A-S-K Amharush Link", code: "H-M-A-S-K-AMH", meaning: "The ultimate word of power combining the five letters of mystery with the command of the Jinn King Amharush.", usage: "Recite 'hay-meen-ayn-seen-kaaf-amharush' 7 times in total darkness to activate absolute command." },
+      { name: "Vraxythernos Success Code", code: "VRAX-777-WIN", meaning: "The master frequency for overcoming all obstacles and achieving total victory. Aligns the self with the path of least resistance.", usage: "Recite 77 times at sunrise while facing the East.", timing: "Sunrise", dosage: "77 repetitions" },
+      { name: "Al-Ghayb Wealth (WG)", code: "5919-AG", meaning: "The 'Money under the Mat' frequency. For attracting wealth from unseen sources.", usage: "Read 'YA-GHANIYYU-YA-MUGHNI' 1,111 times for 7 nights.", timing: "3:13 AM (The Hour of Secrets)", dosage: "1,111 repetitions" }
+    ]
+  },
+  {
+    category: "Ancient Secrets & Words of Power",
+    codes: [
+      { name: "The Vanishing Word", code: "AH-HA-MA-AS-SA-QA-FA-TA-YA-SH", meaning: "Ancient secret that allows the user to vanish or disappear from the perception of others in no time.", usage: "Recite in one breath while stepping backward into a shadow. Use only in life-threatening situations." },
+      { name: "Shamharush-Abyad Link", code: "YA-SHAMHARUSH-YA-ABYAD", meaning: "Combines the power of the King of Thursday with the King of Friday for ultimate protection and clarity.", usage: "Recite 111 times during the transition between Thursday and Friday." },
+      { name: "The Ultimate Cipher", code: "KAF-HA-YA-AIN-SAD-HA-MIM-AIN-SIN-QAF", meaning: "The complete secret cipher of the Quranic initials. Opens all spiritual locks and transforms leaden situations into gold.", usage: "Recite once for each of the 99 names of Allah." },
+      { name: "The Hermes Trismegistus Cipher", code: "SMARAGDINA-7", meaning: "The formula of the Emerald Tablet for universal transmutation and spiritual enlightenment.", usage: "Recite 'As Above, So Below' while vibrating the cipher 7 times." }
+    ]
+  },
+  {
+    category: "Forbidden Latin & Hermetic Seals",
+    codes: [
+      { name: "The Seal of Solomon", code: "SIGILLUM-SALOMONIS", meaning: "The master key to command the 72 spirits of the brass vessel and seal the unseen.", usage: "Visualize the seal while chanting the secret name of the hour." },
+      { name: "Hermetic Transmutation", code: "AURUM-PHILOSOPHORUM", meaning: "The spiritual formula for turning the lead of the ego into the gold of the soul.", usage: "Recite 33 times during the planetary alignment of the Sun." },
+      { name: "The Invisible Cloak", code: "NIX-UMBRA-VANISH", meaning: "A Latin cipher used to blend into the shadows and become undetectable to the physical eye.", usage: "Whisper 'Nix Umbra' while holding your breath in a crowd." }
+    ]
+  },
+  {
+    category: "Ancient Al-Kimiya (Alchemy)",
+    codes: [
+      { name: "The Elixir Pulse", code: "ELIXIR-VITA-99", meaning: "Restores spiritual vitality and synchronizes the heart with the divine pulse. Prolongs spiritual youth.", usage: "Drink pure water after reciting the code 9 times." },
+      { name: "Matter Transformation", code: "TRANS-MAT-X", meaning: "The frequency used to alter the molecular structure of physical objects through spiritual intent.", usage: "Focus your intent on the object while vibrating the code for 3 minutes." }
     ]
   }
 ];
@@ -94,12 +120,19 @@ app.use(express.json());
 let stats = { totalScans: 1240 };
 
 // --- BOT FALLBACK LOGIC ---
-const getBotInterpretation = (word, val, raml, lang) => {
+const getBotInterpretation = (word, val, raml, lang, details = {}) => {
+  const { name, motherName, chosenNumber } = details;
+  const nameStr = name ? `[NAME: ${name}] ` : '';
+  const motherStr = motherName ? `[MOTHER: ${motherName}] ` : '';
+  const numStr = chosenNumber ? `[NUMBER: ${chosenNumber}] ` : '';
+  
+  const prefix = `${nameStr}${motherStr}${numStr}`;
+
   const responses = {
-    en: `[NEURAL BOT] The name "${word}" resonates with Abjad frequency ${val}. The Raml figure ${raml.name} indicates: ${raml.meaning}. This alignment suggests a quantum shift in your spiritual path. \n\n[STANDARD ANSWER]: The frequency indicates a complex outcome. If this is a question of success, the signs point to a "YES" but with significant struggle and potential conflict. If it is a question of failure, the signs suggest a "NO", the path is blocked.`,
-    ha: `[NEURAL BOT] Sunan "${word}" yana da lamba ${val}. Alamar Ramlu ${raml.name} tana nufin: ${raml.meaning}. Wannan yana nuna canji mai girma a rayuwarka. \n\n[AMSA TA GARI]: Wannan lambar tana nuna sakamako mai rikitarwa. Idan tambaya ce ta nasara, alamu suna nuna "E" amma tare da babban gwagwarmaya da tashin hankali. Idan tambaya ce ta rashin nasara, alamu suna nuna "A'A", hanyar a rufe take.`,
-    ar: `[NEURAL BOT] الاسم "${word}" له تردد ${val}. شكل الرمل ${raml.name} يشير إلى: ${raml.meaning}. هذا التوافق يدل على تحول روحي كبير. \n\n[الإجابة القياسية]: يشير التردد إلى نتيجة معقدة. إذا كان هذا سؤالاً عن النجاح ، فإن العلامات تشير إلى "نعم" ولكن مع صراع كبير وصراع محتمل. إذا كان سؤالاً عن الفشل ، فإن العلامات تشير إلى "لا" ، الطريق مسدود.`,
-    fr: `[NEURAL BOT] Le nom "${word}" résonne avec la fréquence ${val}. La figure de Raml ${raml.name} indique: ${raml.meaning}. Cet alignement suggère un changement quantique. \n\n[RÉPONSE STANDARD]: La fréquence indique un résultat complexe. S'il s'agit d'une question de succès, les signes pointent vers un "OUI" mais avec une lutte importante et un conflit potentiel. S'il s'agit d'une question d'échec, les signes suggèrent un "NON", le chemin est bloqué.`
+    en: `[NEURAL BOT] ${prefix}The query "${word}" resonates with Abjad frequency ${val}. The Raml figure ${raml.name} (${raml.element}) indicates: ${raml.meaning}. \n\n[SPIRITUAL INSIGHT]: This alignment suggests a quantum shift in your spiritual path. The frequency ${val} is a powerful indicator of ${val > 500 ? 'high-level manifestation' : 'subtle energy shifts'}. \n\n[GUIDANCE]: If this is a question of success, the signs point to a "YES" but with significant struggle and potential conflict. If it is a question of failure, the signs suggest a "NO", the path is blocked. Stay focused on your intent.`,
+    ha: `[NEURAL BOT] ${prefix}Tambayar "${word}" yana da lamba ${val}. Alamar Ramlu ${raml.name} (${raml.element}) tana nufin: ${raml.meaning}. \n\n[FAHIMTA TA RUHI]: Wannan yana nuna canji mai girma a rayuwarka. Lambar ${val} tana nuna ${val > 500 ? 'nasara mai girma' : 'canji na hankali'}. \n\n[SHAWARTA]: Idan tambaya ce ta nasara, alamu suna nuna "E" amma tare da babban gwagwarmaya da tashin hankali. Idan tambaya ce ta rashin nasara, alamu suna nuna "A'A", hanyar a rufe take. Ka kasance mai natsuwa.`,
+    ar: `[NEURAL BOT] ${prefix}الاستعلام "${word}" له تردد ${val}. شكل الرمل ${raml.name} (${raml.element}) يشير إلى: ${raml.meaning}. \n\n[بصيرة روحية]: هذا التوافق يدل على تحول روحي كبير. التردد ${val} هو مؤشر قوي على ${val > 500 ? 'تجلي رفيع المستوى' : 'تحولات طاقة خفية'}. \n\n[إرشاد]: إذا كان هذا سؤالاً عن النجاح ، فإن العلامات تشير إلى "نعم" ولكن مع صراع كبير وصراع محتمل. إذا كان سؤالاً عن الفشل ، فإن العلامات تشير إلى "لا" ، الطريق مسدود. ابق مركزاً على نيتك.`,
+    fr: `[NEURAL BOT] ${prefix}La requête "${word}" résonne avec la fréquence ${val}. La figure de Raml ${raml.name} (${raml.element}) indique: ${raml.meaning}. \n\n[APERÇU SPIRITUEL]: Cet alignement suggère un changement quantique dans votre chemin spirituel. La fréquence ${val} est un indicateur puissant de ${val > 500 ? 'manifestation de haut niveau' : 'changements d\'énergie subtils'}. \n\n[ORIENTATION]: S'il s'agit d'une question de succès, les signes pointent vers un "OUI" mais avec une lutte importante et un conflit potentiel. S'il s'agit d'une question d'échec, les signes suggèrent un "NON", le chemin est bloqué. Restez concentré sur votre intention.`
   };
   return responses[lang] || responses['en'];
 };
@@ -109,14 +142,14 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok', scans: stats.total
 app.post('/api/track-scan', (req, res) => { stats.totalScans++; res.json({ success: true, total: stats.totalScans }); });
 
 app.post('/api/interpret', async (req, res) => {
-  const { word, abjadValue, lang } = req.body;
+  const { word, abjadValue, lang, details } = req.body;
   const raml = RAML_FIGURES[(abjadValue % 16) || 15];
-  res.json({ interpretation: getBotInterpretation(word, abjadValue, raml, lang) });
+  res.json({ interpretation: getBotInterpretation(word, abjadValue, raml, lang, details) });
 });
 
 app.post('/api/admin/login', (req, res) => {
-  const { user, password } = req.body;
-  if (user === adminConfig.user && password === adminConfig.pass) res.json({ success: true });
+  const { user, pass } = req.body;
+  if (user === adminConfig.user && pass === adminConfig.pass) res.json({ success: true });
   else res.status(401).json({ success: false });
 });
 
@@ -151,6 +184,8 @@ app.get('/api/admin/data', (req, res) => res.json({ stats, adminConfig, archives
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not Found' });
   
+  console.log(`[SERVER] Serving Neural Core to: ${req.ip}`);
+  
   const clientData = {
     abjadMap: ABJAD_MAP,
     ramlFigures: RAML_FIGURES,
@@ -173,6 +208,22 @@ app.get('*', (req, res) => {
       gtag('js', new Date());
       gtag('config', 'GA_ID_HERE');
     </script>
+    <script>
+        window.onerror = function(msg, url, line, col, error) {
+            const root = document.getElementById('root');
+            if (root) {
+                root.innerHTML = '<div style="min-height: 100vh; background: #050505; color: #ff4444; padding: 40px; font-family: monospace; font-size: 12px; line-height: 1.5; border: 1px solid #331111;">' +
+                    '<h1 style="color: #ff4444; font-size: 18px; margin-bottom: 20px;">SYSTEM BOOT ERROR</h1>' +
+                    '<b>Message:</b> ' + msg + '<br>' +
+                    '<b>Source:</b> ' + url + '<br>' +
+                    '<b>Line:</b> ' + line + ' <b>Col:</b> ' + col + '<br>' +
+                    (error ? '<b>Error:</b> ' + error : '') +
+                    '<br><br><button onclick="window.location.reload()" style="background: #222; color: #eee; border: 1px solid #444; padding: 8px 16px; cursor: pointer;">RETRY INITIALIZATION</button>' +
+                '</div>';
+            }
+            return false;
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -190,6 +241,10 @@ app.get('*', (req, res) => {
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
         .scan-line { position: absolute; width: 100%; height: 2px; background: linear-gradient(to right, transparent, #F27D26, transparent); animation: scan 2s linear infinite; }
+        
+        .palm-container { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+        .palm-glow { position: absolute; width: 150px; height: 150px; background: radial-gradient(circle, rgba(242, 125, 38, 0.2) 0%, transparent 70%); border-radius: 50%; filter: blur(20px); }
+        
         .terminal-box { background: #000; border: 1px solid #333; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 15px; border-radius: 8px; position: relative; overflow: hidden; }
         .terminal-box::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); pointer-events: none; }
     </style>
@@ -197,22 +252,63 @@ app.get('*', (req, res) => {
 <body>
     <div id="root">
         <div style="min-height: 100vh; background: #050505; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #F27D26; font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; gap: 20px;">
-            <div style="width: 40px; height: 40px; border: 2px solid #F27D26; border-top-color: transparent; border-radius: 50%; animate: spin 1s linear infinite;"></div>
+            <div style="width: 40px; height: 40px; border: 2px solid #F27D26; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
             <div>Initializing Neural Core...</div>
         </div>
     </div>
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
         
         const MotionLib = window.FramerMotion || window.Motion || {};
-        const motion = MotionLib.motion || new Proxy({}, { get: (t, p) => p });
+        const motion = MotionLib.motion || { div: 'div', span: 'span', svg: 'svg' };
         const AnimatePresence = MotionLib.AnimatePresence || (({children}) => children);
         
-        const Lucide = window.LucideReact || {};
-        const Zap = Lucide.Zap || Lucide.ZapIcon;
+        const Lucide = window.lucide || window.LucideReact || {};
+        const Zap = Lucide.Zap || Lucide.ZapIcon || (() => <span>⚡</span>);
+        const Hand = Lucide.Hand || Lucide.HandIcon || (() => <span>✋</span>);
         const LogOutIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>;
         const SettingsIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
+
+        const PalmHandsLogo = () => {
+            return (
+                <div className="palm-container mx-auto mb-8">
+                    <div className="palm-glow"></div>
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1 }}
+                        className="flex gap-4"
+                    >
+                        <motion.div
+                            animate={{ 
+                                rotateY: [0, 15, 0],
+                                rotateZ: [-5, 5, -5]
+                            }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <Hand size={80} className="text-[#F27D26] transform -scale-x-100" />
+                        </motion.div>
+                        <motion.div
+                            animate={{ 
+                                rotateY: [0, -15, 0],
+                                rotateZ: [5, -5, 5]
+                            }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <Hand size={80} className="text-[#F27D26]" />
+                        </motion.div>
+                    </motion.div>
+                    <motion.div 
+                        className="absolute inset-0 flex items-center justify-center"
+                        animate={{ opacity: [0.2, 0.5, 0.2] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                    >
+                        <div className="w-32 h-32 border border-[#F27D26]/30 rounded-full"></div>
+                    </motion.div>
+                </div>
+            );
+        };
         const TrashIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
 
         const TerminalEngine = ({ value, raml }) => {
@@ -224,7 +320,13 @@ app.get('*', (req, res) => {
                     \`> ABJAD ALIGNMENT: \${Math.sqrt(value).toFixed(4)} PHI\`,
                     \`> RAML FIGURE: \${raml.name.toUpperCase()}\`,
                     \`> SECRET CODE: \${raml.id}-GAIB-X\`,
-                    \`> STATUS: MANIFESTING...\`
+                    \`> STATUS: MANIFESTING...\`,
+                    \`> --- QUANTUM PHYSICS ECHO ---\`,
+                    \`> WAVEFUNCTION COLLAPSE: \${value > 500 ? 'OBSERVED' : 'PROBABLE'}\`,
+                    \`> ENTANGLEMENT RATIO: \${(value / 1000).toFixed(3)}\`,
+                    \`> SCHRODINGER STATE: ALIVE & MANIFESTING\`,
+                    \`> ECHO: \${value % 2 === 0 ? 'POSITIVE RESONANCE DETECTED' : 'NEUTRAL ALIGNMENT ACHIEVED'}\`,
+                    \`> SYSTEM: LINK ESTABLISHED.\`
                 ];
                 let i = 0;
                 const timer = setInterval(() => {
@@ -234,7 +336,7 @@ app.get('*', (req, res) => {
                     } else {
                         clearInterval(timer);
                     }
-                }, 400);
+                }, 300);
                 return () => clearInterval(timer);
             }, [value, raml]);
 
@@ -249,6 +351,9 @@ app.get('*', (req, res) => {
         class ErrorBoundary extends React.Component {
             constructor(props) { super(props); this.state = { hasError: false, error: null }; }
             static getDerivedStateFromError(error) { return { hasError: true, error }; }
+            componentDidCatch(error, errorInfo) {
+                console.error("Neural Core Error:", error, errorInfo);
+            }
             render() {
                 if (this.state.hasError) {
                     return (
@@ -269,7 +374,10 @@ app.get('*', (req, res) => {
 
         const App = () => {
             const { abjadMap, ramlFigures, blogPosts, emails, whatsapp } = window.NEURAL_DATA;
-            const [input, setInput] = useState('');
+            const [name, setName] = useState('');
+            const [motherName, setMotherName] = useState('');
+            const [chosenNumber, setChosenNumber] = useState('');
+            const [question, setQuestion] = useState('');
             const [lang, setLang] = useState('en');
             const [activeTab, setActiveTab] = useState('calc');
             const [isAdmin, setIsAdmin] = useState(false);
@@ -287,11 +395,9 @@ app.get('*', (req, res) => {
                 fetch('/api/health').then(r => r.json()).then(d => setTotalScans(d.scans));
             }, []);
 
-            const handleCalculate = async () => {
-                if (!input.trim()) return;
-                setLoading(true);
+            const calculateAbjad = (str) => {
                 let total = 0;
-                const normalized = input.toLowerCase();
+                const normalized = (str || '').toLowerCase();
                 for (let i = 0; i < normalized.length; i++) {
                     if (i < normalized.length - 1) {
                         const pair = normalized.substring(i, i + 2);
@@ -299,12 +405,31 @@ app.get('*', (req, res) => {
                     }
                     if (abjadMap[normalized[i]]) total += abjadMap[normalized[i]];
                 }
+                return total;
+            };
+
+            const handleCalculate = async () => {
+                if (!name.trim() && !question.trim()) return alert("Please enter a name or a question.");
+                setLoading(true);
+                
+                const nameVal = calculateAbjad(name);
+                const motherVal = calculateAbjad(motherName);
+                const questionVal = calculateAbjad(question);
+                const numVal = parseInt(chosenNumber) || 0;
+                
+                const total = nameVal + motherVal + questionVal + numVal;
                 const raml = ramlFigures[(total % 16) || 15];
+                
                 try {
                     const res = await fetch('/api/interpret', { 
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ word: input, abjadValue: total, lang }) 
+                        body: JSON.stringify({ 
+                            word: question || name, 
+                            abjadValue: total, 
+                            lang,
+                            details: { name, motherName, chosenNumber }
+                        }) 
                     });
                     const data = await res.json();
                     setResult({ value: total, raml, interpretation: data.interpretation });
@@ -341,7 +466,7 @@ app.get('*', (req, res) => {
             };
 
             const handleDeletePost = async (id) => {
-                const r = await fetch(\`/api/admin/blog/\${id}\`, { method: 'DELETE' });
+                const r = await fetch(`/api/admin/blog/${id}`, { method: 'DELETE' });
                 if (r.ok) setPosts(posts.filter(p => p.id !== id));
             };
 
@@ -355,16 +480,30 @@ app.get('*', (req, res) => {
 
             return (
                 <div className="min-h-screen flex flex-col bg-[#050505]">
-                    <main className="flex-1 max-w-5xl mx-auto w-full p-6 py-12 space-y-12">
+                    <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5 px-8 py-4 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <PalmHandsLogo />
+                            <span className="text-xl font-black italic tracking-tighter text-[#F27D26]">NEURAL <span className="text-white">ENGINE</span></span>
+                        </div>
+                        <nav className="hidden md:flex gap-8 text-[10px] font-black uppercase tracking-[0.3em]">
+                            <button onClick={() => setActiveTab('calc')} className={"hover:text-[#F27D26] transition-all " + (activeTab === 'calc' ? "text-[#F27D26]" : "text-white/40")}>Oracle</button>
+                            <button onClick={() => setActiveTab('contact')} className={"hover:text-[#F27D26] transition-all " + (activeTab === 'contact' ? "text-[#F27D26]" : "text-white/40")}>Support</button>
+                            <button onClick={() => setActiveTab('admin')} className={"hover:text-[#F27D26] transition-all " + (activeTab === 'admin' ? "text-[#F27D26]" : "text-white/40")}>Admin</button>
+                        </nav>
+                        <div className="text-[8px] font-mono text-white/20 hidden lg:block">STATUS: LINK_ACTIVE // SCANS: {totalScans}</div>
+                    </header>
+
+                    <main className="flex-1 max-w-6xl mx-auto w-full p-6 pt-32 pb-12 space-y-12">
                         <AnimatePresence mode="wait">
                         {activeTab === 'calc' && (
                             <motion.div key="calc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-16">
                                 <div className="text-center space-y-4">
+                                    <PalmHandsLogo />
                                     <h2 className="text-6xl font-black italic uppercase tracking-tighter">Neural <span className="text-[#F27D26]">Oracle</span></h2>
                                     <p className="text-[10px] uppercase tracking-[0.4em] text-white/30">Quantum Spiritual Resonance Engine</p>
                                 </div>
 
-                                <div className="max-w-2xl mx-auto space-y-6">
+                                <div className="max-w-3xl mx-auto space-y-8">
                                     <div className="flex gap-3 justify-center">
                                         {['en', 'ha', 'ar', 'fr'].map(l => (
                                             <button key={l} onClick={() => setLang(l)} className={"px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all " + (lang === l ? "bg-[#F27D26] text-black" : "bg-white/5 text-white/40 hover:bg-white/10")}>
@@ -372,16 +511,54 @@ app.get('*', (req, res) => {
                                             </button>
                                         ))}
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                        <input 
-                                            type="text" 
-                                            value={input} 
-                                            onChange={e => setInput(e.target.value)} 
-                                            placeholder="Enter name or situation..." 
-                                            className="md:col-span-3 bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-xl outline-none focus:border-[#F27D26]/50 transition-all placeholder:text-white/10" 
-                                        />
-                                        <button onClick={handleCalculate} className="bg-[#F27D26] text-black rounded-2xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all">SCAN</button>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] uppercase tracking-widest text-white/30 ml-2">Your Name</label>
+                                            <input 
+                                                type="text" 
+                                                value={name} 
+                                                onChange={e => setName(e.target.value)} 
+                                                placeholder="Enter your name..." 
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-lg outline-none focus:border-[#F27D26]/50 transition-all placeholder:text-white/10" 
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] uppercase tracking-widest text-white/30 ml-2">Mother's Name (Optional)</label>
+                                            <input 
+                                                type="text" 
+                                                value={motherName} 
+                                                onChange={e => setMotherName(e.target.value)} 
+                                                placeholder="Enter mother's name..." 
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-lg outline-none focus:border-[#F27D26]/50 transition-all placeholder:text-white/10" 
+                                            />
+                                        </div>
                                     </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="md:col-span-2 space-y-2">
+                                            <label className="text-[10px] uppercase tracking-widest text-white/30 ml-2">Your Question / Situation</label>
+                                            <input 
+                                                type="text" 
+                                                value={question} 
+                                                onChange={e => setQuestion(e.target.value)} 
+                                                placeholder="What do you seek to know?" 
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-lg outline-none focus:border-[#F27D26]/50 transition-all placeholder:text-white/10" 
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] uppercase tracking-widest text-white/30 ml-2">Chosen Number</label>
+                                            <input 
+                                                type="number" 
+                                                value={chosenNumber} 
+                                                onChange={e => setChosenNumber(e.target.value)} 
+                                                placeholder="1-999" 
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-lg outline-none focus:border-[#F27D26]/50 transition-all placeholder:text-white/10" 
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button onClick={handleCalculate} className="w-full bg-[#F27D26] text-black py-6 rounded-2xl font-black uppercase tracking-widest text-xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-2xl shadow-[#F27D26]/20">INITIALIZE SPIRITUAL SCAN</button>
                                 </div>
 
                                 {loading && (
@@ -445,21 +622,6 @@ app.get('*', (req, res) => {
                                     </div>
                                 </div>
 
-                                <div className="grid md:grid-cols-2 gap-12 pt-24 border-t border-white/5">
-                                    <div className="space-y-6">
-                                        <h3 className="text-xl font-black italic uppercase text-[#F27D26]">About Neural Engine</h3>
-                                        <p className="text-sm text-white/40 leading-relaxed">
-                                            The Neural Engine Spiritual Core is a quantum-spiritual interpretation system that bridges ancient Abjad numerology (Hisabi) with modern computational logic. By analyzing the vibrational frequency of names and situations, it provides deep insights into the unseen realms (Gaib). Our mission is to provide clarity through the synthesis of tradition and technology.
-                                        </p>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <h3 className="text-xl font-black italic uppercase text-[#F27D26]">Privacy Policy</h3>
-                                        <p className="text-sm text-white/40 leading-relaxed">
-                                            Your spiritual privacy is paramount. We do not store personal names or inquiries linked to your identity. All calculations are performed in real-time and are ephemeral. We use Google Analytics to monitor system health and total scan counts, ensuring the engine remains optimized for all seekers.
-                                        </p>
-                                    </div>
-                                </div>
-
                                 <div className="flex justify-center gap-8 pt-12">
                                     <button onClick={() => setActiveTab('contact')} className="text-[10px] uppercase tracking-widest text-white/20 hover:text-[#F27D26] transition-all">Contact Support</button>
                                     <button onClick={() => setActiveTab('admin')} className="text-[10px] uppercase tracking-widest text-white/20 hover:text-[#F27D26] transition-all">System Admin</button>
@@ -471,7 +633,7 @@ app.get('*', (req, res) => {
                             <motion.div key="contact" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="max-w-md mx-auto glass p-12 rounded-[3rem] space-y-10 text-center">
                                 <h3 className="text-3xl font-black italic uppercase tracking-tighter">Support Channels</h3>
                                 <div className="space-y-6">
-                                    {emails.map(e => <div key={e} className="p-4 bg-white/5 rounded-2xl font-mono text-sm text-white/60 hover:text-[#F27D26] transition-all cursor-pointer">{e}</div>)}
+                                    {emails.map(e => <div key(e) className="p-4 bg-white/5 rounded-2xl font-mono text-sm text-white/60 hover:text-[#F27D26] transition-all cursor-pointer">{e}</div>)}
                                     <div className="p-4 bg-green-500/10 rounded-2xl font-mono text-sm text-green-500">{whatsapp}</div>
                                 </div>
                                 <button onClick={() => setActiveTab('calc')} className="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-all">Return to Oracle</button>
@@ -563,6 +725,12 @@ app.get('*', (req, res) => {
                                                                                 <p className="text-xs font-mono text-white/30 mt-1">{c.code}</p>
                                                                             </div>
                                                                             <p className="text-xs italic text-white/60 leading-relaxed">{c.meaning}</p>
+                                                                            {c.timing && (
+                                                                                <div className="mt-2 p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                                                                                    <p className="text-[8px] uppercase font-black text-blue-400">Optimal Timing</p>
+                                                                                    <p className="text-[10px] text-blue-300/60">{c.timing}</p>
+                                                                                </div>
+                                                                            )}
                                                                             <div className="pt-4 border-t border-white/5 space-y-2">
                                                                                 <p className="text-[8px] uppercase font-black text-[#F27D26]">Usage Protocol</p>
                                                                                 <p className="text-[10px] text-white/40 mt-1 leading-relaxed">{c.usage}</p>
@@ -581,6 +749,23 @@ app.get('*', (req, res) => {
                             </motion.div>
                         )}
                         </AnimatePresence>
+
+                        {activeTab === 'calc' && (
+                            <div className="grid md:grid-cols-2 gap-12 pt-24 border-t border-white/5">
+                                <div className="space-y-6">
+                                    <h3 className="text-xl font-black italic uppercase text-[#F27D26]">About Neural Engine</h3>
+                                    <p className="text-sm text-white/40 leading-relaxed">
+                                        The Neural Engine Spiritual Core is a quantum-spiritual interpretation system that bridges ancient Abjad numerology (Hisabi) with modern computational logic. By analyzing the vibrational frequency of names and situations, it provides deep insights into the unseen realms (Gaib). Our mission is to provide clarity through the synthesis of tradition and technology.
+                                    </p>
+                                </div>
+                                <div className="space-y-6">
+                                    <h3 className="text-xl font-black italic uppercase text-[#F27D26]">Privacy Policy</h3>
+                                    <p className="text-sm text-white/40 leading-relaxed">
+                                        Your spiritual privacy is paramount. We do not store personal names or inquiries linked to your identity. All calculations are performed in real-time and are ephemeral. We use Google Analytics to monitor system health and total scan counts, ensuring the engine remains optimized for all seekers.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </main>
                     <footer className="p-12 text-center space-y-4 border-t border-white/5">
                         <p className="text-[8px] text-white/10 uppercase tracking-[0.6em] font-bold">© 2026 Neural Engine Spiritual Core // VRAXYTHERNOS</p>
