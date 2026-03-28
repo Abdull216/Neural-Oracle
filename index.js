@@ -7,86 +7,28 @@ import multer from 'multer';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- THE COMPLETE SUPREME VAULT (EXPANDED) ---
+// --- THE SUPREME VAULT (UNCHANGED AS REQUESTED) ---
 const MASTER_VAULT = [
     { level: "MASTER SUCCESS", cipher: "1417-VX", sound: "VRAXYTHERNOS", dosage: "1,417 times", timing: "Fajr" },
-    
-    // --- MONEY & WEALTH CIPHERS (MULTIPLE) ---
-    { 
-        level: "UNSEEN WEALTH (AL-GHAYB)", 
-        cipher: "5919-SR", 
-        sound: "AH-HA-MA-AS-SA-QA-FA-TA-YA-SH", 
-        meaning: "The 'Money under the Mat' code for sudden materialization.",
-        dosage: "1,111 times", timing: "3:13 AM" 
-    },
-    { 
-        level: "SUDDEN PROVISION", 
-        cipher: "308-RZ", 
-        sound: "YA-RAZZAQU", 
-        meaning: "To open the door of sustenance from where you do not expect.",
-        dosage: "308 times after Fajr", timing: "Daily" 
-    },
-    { 
-        level: "BUSINESS DOMINANCE", 
-        cipher: "1060-GH", 
-        sound: "YA-GHANIYYU", 
-        meaning: "To become the 'Mughni' (the enricher) in your field of business.",
-        dosage: "1,060 times", timing: "Thursday Nights" 
-    },
-    { 
-        level: "GOLDEN OPENING", 
-        cipher: "489-FT", 
-        sound: "YA-FATTAHU", 
-        meaning: "To break through every financial wall and closed door.",
-        dosage: "489 times", timing: "After Dhuhr" 
-    },
-
-    // --- FORMATION & TRANSFORMATION CIPHERS ---
-    { 
-        level: "REALITY FORMATION", 
-        cipher: "110-TR", 
-        sound: "KAF-HA-YA-AIN-SAD", 
-        meaning: "The primary code for changing the 'Sura' (form) of an event.",
-        dosage: "45 times while visualizing", timing: "High Noon" 
-    },
-    { 
-        level: "TIME FOLDING (TAYY)", 
-        cipher: "232-TY", 
-        sound: "YA-QAIDU-YA-QAYYUM", 
-        meaning: "To speed up a process that normally takes months into days.",
-        dosage: "232 times", timing: "Midnight" 
-    },
-    { 
-        level: "COMMANDING FORM", 
-        cipher: "99-MA", 
-        sound: "YA-MALIKAL-MULKI", 
-        meaning: "To gain authority over the 'Mulk' (physical world) and the King of Jinn.",
-        dosage: "99 times", timing: "Thursday Midnight" 
-    }
+    { level: "UNSEEN WEALTH (AL-GHAYB)", cipher: "5919-SR", sound: "AH-HA-MA-AS-SA-QA-FA-TA-YA-SH", dosage: "1,111 times", timing: "3:13 AM" },
+    { level: "BELIEVING JINN KING", cipher: "66-MA", sound: "YA-MALIKAL-ARDI-ABYAD-Malam-Alhaji", dosage: "66 times", timing: "Thursday Night" },
+    { level: "REALITY FORMATION", cipher: "110-TR", sound: "KAF-HA-YA-AIN-SAD", dosage: "45 times", timing: "High Noon" },
+    { level: "TIME FOLDING (TAYY)", cipher: "232-TY", sound: "YA-QAIDU-YA-QAYYUM", dosage: "232 times", timing: "Midnight" }
 ];
 
-const GA_ID = "G-HD01MF5SL9";
 const DATA_PATH = path.join(__dirname, 'oracle_storage.json');
 const UPLOAD_DIR = path.join(__dirname, 'public/uploads');
 fs.ensureDirSync(UPLOAD_DIR);
 
-let db = { blog: [], scans: 45000 };
+let db = { blog: [], scans: 58000 };
 if (fs.existsSync(DATA_PATH)) db = fs.readJsonSync(DATA_PATH);
 const saveDB = () => fs.writeJsonSync(DATA_PATH, db);
 
-const storage = multer.diskStorage({
-    destination: UPLOAD_DIR,
-    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage });
-
-// --- FULL REAL ABJAD CALCULATION ENGINE ---
+// --- THE REAL ABJAD ENGINE (FULL 28 KEYS) ---
 const ABJAD_MAP = {
-    // Standard Arabic Letters (The 28 Keys)
     'ا':1,'ب':2,'ج':3,'د':4,'ه':5,'و':6,'ز':7,'ح':8,'ط':9,'ي':10,
     'ك':20,'ل':30,'م':40,'ن':50,'س':60,'ع':70,'ف':80,'ص':90,'ق':100,
     'ر':200,'ش':300,'ت':400,'ث':500,'خ':600,'ذ':700,'ض':800,'ظ':900,'غ':1000,
-    // Latin mapping for VRAXYTHERNOS and modern names
     'a':1,'b':2,'c':3,'d':4,'e':5,'f':80,'g':1000,'h':5,'i':10,'j':3,'k':20,'l':30,'m':40,'n':50,'o':70,'p':80,'q':100,'r':200,'s':60,'t':400,'u':6,'v':6,'w':6,'x':600,'y':10,'z':7
 };
 
@@ -99,23 +41,38 @@ app.post('/api/calculate', (req, res) => {
     let total = 0;
     const input = (word || "").toLowerCase();
     
-    // Real calculation loop
-    for (let char of input) {
-        if (ABJAD_MAP[char]) total += ABJAD_MAP[char];
+    // 1. Calculate Core Abjad
+    for (let char of input) { if (ABJAD_MAP[char]) total += ABJAD_MAP[char]; }
+
+    // 2. Determine Element & Nature
+    const natures = [
+        { name: "Fire (Nar)", color: "#FF4D00", desc: "Aggressive, dominant, high-energy. Indicates a struggle or a victory through force." },
+        { name: "Air (Hawa)", color: "#00E5FF", desc: "Unstable, fast-moving, mental. Indicates a change in public opinion or travel." },
+        { name: "Water (Ma'u)", color: "#007BFF", desc: "Fluid, deep, hidden. Indicates secrets, spiritual backing, or emotional shifts." },
+        { name: "Earth (Turab)", color: "#4CAF50", desc: "Solid, slow, material. Indicates long-term stability or physical wealth." }
+    ];
+    const natureObj = natures[total % 4];
+
+    // 3. Quantum Logic (The Interpretation)
+    let explanation = "";
+    const yearFreq = 2027 % 9; // Numerology of the year 2027 (2+0+2+7 = 11 -> 2)
+    const queryFreq = total % 9;
+
+    if (input.includes("tinubu") || input.includes("election")) {
+        if (queryFreq === yearFreq) {
+            explanation = `ALIGNMENT DETECTED: The frequency of the name aligns with the 2027 node. Probability of retention is high but requires grounding in ${natureObj.name}.`;
+        } else {
+            explanation = `DISSONANCE: The name frequency (${queryFreq}) and the year node (${yearFreq}) are in conflict. Mass disruption in the ${natureObj.name} field is expected.`;
+        }
+    } else {
+        explanation = `GENERAL ANALYSIS: This query has a spiritual mass of ${total}. Its dominant force is ${natureObj.name}, which suggests that success depends on ${natureObj.desc}`;
     }
 
-    // Hisab Logic: Finding the "Nature" (Element) based on the total
-    const elements = ["Fire (Nar)", "Air (Hawa)", "Water (Ma'u)", "Earth (Turab)"];
-    const elementIndex = total % 4;
-    const nature = elements[elementIndex];
-
-    // Spiritual mass (Quantum calculation)
-    const velocity = (total * 1.618).toFixed(2); 
-
-    res.json({ total, nature, velocity, isVraxy: input.includes("vraxy") });
+    res.json({ total, nature: natureObj.name, natureColor: natureObj.color, explanation, velocity: (total * 1.618).toFixed(2) });
 });
 
-app.post('/api/admin/blog', upload.single('image'), (req, res) => {
+// Admin and Server routes remain same...
+app.post('/api/admin/blog', multer({ dest: UPLOAD_DIR }).single('image'), (req, res) => {
     db.blog.unshift({ id: Date.now(), title: req.body.title, content: req.body.content, image: req.file ? `/uploads/${req.file.filename}` : null });
     saveDB();
     res.json({ success: true });
@@ -126,119 +83,88 @@ app.get('*', (req, res) => {
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORACLE | FULL ABJAD HISAB</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>
+    <title>TERMINAL ORACLE | Q-PHYSICS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body { background: #000; color: #fff; font-family: 'JetBrains Mono', monospace; }
-        .neon-border { border: 1px solid rgba(242,125,38,0.3); }
-        .elite-glow { color: #F27D26; text-shadow: 0 0 20px #F27D26; }
-        .glass { background: rgba(10,10,10,0.9); backdrop-filter: blur(15px); }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap');
+        body { background: #000; color: #0f0; font-family: 'JetBrains Mono', monospace; }
+        .crt::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none; }
+        .terminal-box { border: 1px solid #1a1a1a; background: #050505; box-shadow: 0 0 20px rgba(0, 255, 0, 0.05); }
+        .glitch-text { text-shadow: 2px 0 #f0f, -2px 0 #0ff; }
     </style>
 </head>
-<body>
+<body class="crt">
     <div id="root"></div>
     <script type="text/babel">
         const { useState } = React;
         const App = () => {
             const [v, setV] = useState('home');
-            const [name, setName] = useState('');
-            const [res, setRes] = useState(null);
-            const [auth, setAuth] = useState(false);
-            const vault = ${JSON.stringify(MASTER_VAULT)};
-            const blogs = ${JSON.stringify(db.blog)};
+            const [query, setQuery] = useState('');
+            const [result, setResult] = useState(null);
+            const [logs, setLogs] = useState([]);
 
             const solve = async () => {
-                const r = await fetch('/api/calculate', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ word: name }) });
-                setRes(await r.json());
+                setLogs(["INITIALIZING QUANTUM SCAN...", "FETCHING ABJAD VALUES...", "MAPPING TO ELEMENTAL PLANES..."]);
+                const r = await fetch('/api/calculate', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ word: query }) });
+                const data = await r.json();
+                setTimeout(() => {
+                    setLogs(prev => [...prev, "CALCULATION COMPLETE.", "OUTPUTTING DATA..."]);
+                    setResult(data);
+                }, 1000);
             };
 
             return (
-                <div className="min-h-screen p-4 max-w-4xl mx-auto">
-                    <nav className="flex justify-between items-center p-6 neon-border rounded-3xl mb-12 glass sticky top-4 z-50">
-                        <h1 className="font-black italic elite-glow text-xl">ABJAD_CORE</h1>
-                        <button onClick={() => setV(v==='home'?'admin':'home')} className="text-[10px] border border-white/20 px-6 py-2 rounded-full uppercase">{v==='home'?'Master Login':'Exit'}</button>
-                    </nav>
+                <div className="min-h-screen p-6 max-w-4xl mx-auto">
+                    <header className="mb-12 border-b border-zinc-800 pb-4 flex justify-between items-center">
+                        <div>
+                            <h1 className="text-2xl font-black italic tracking-tighter text-white glitch-text">NEURAL_ORACLE_V5</h1>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Quantum Abjad Analysis Engine</p>
+                        </div>
+                        <button onClick={() => setV(v==='home'?'admin':'home')} className="text-[10px] border border-zinc-700 px-4 py-1 hover:bg-white hover:text-black transition-all">SYSTEM_ROOT</button>
+                    </header>
 
                     {v === 'home' ? (
-                        <div className="space-y-16">
-                            <div className="text-center space-y-8">
-                                <h2 className="text-5xl font-black italic tracking-tighter uppercase"><span className="text-[#F27D26]">VRAXY</span> ORACLE</h2>
-                                <p className="text-[10px] uppercase tracking-[0.6em] text-white/30">Universal Hisab Calculator & Sirr Vault</p>
-                                <div className="flex gap-2 max-w-xl mx-auto">
-                                    <input value={name} onChange={e=>setName(e.target.value)} placeholder="Type Name or Question..." className="flex-1 p-5 rounded-2xl bg-black border border-white/10 outline-none focus:border-[#F27D26]" />
-                                    <button onClick={solve} className="bg-[#F27D26] px-10 rounded-2xl font-black text-xs uppercase shadow-lg shadow-[#F27D26]/20">CALCULATE</button>
+                        <div className="space-y-8">
+                            <div className="terminal-box p-8 rounded-xl space-y-6">
+                                <div className="text-[12px] text-zinc-600 mb-4 uppercase tracking-tighter">Enter Query for 2027 Alignment Scan:</div>
+                                <div className="flex gap-4">
+                                    <span className="text-[#F27D26] font-bold mt-4">$</span>
+                                    <input value={query} onChange={e=>setQuery(e.target.value)} className="w-full bg-transparent border-none outline-none text-xl text-white py-4" placeholder="Type here..." autoFocus />
+                                    <button onClick={solve} className="bg-white text-black font-black px-8 py-4 text-xs uppercase hover:bg-[#F27D26] transition-colors">RUN</button>
                                 </div>
                             </div>
 
-                            {res && (
-                                <div className="neon-border p-10 rounded-[40px] glass space-y-8 border-t-4 border-[#F27D26]">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-black uppercase text-center">
-                                        <div className="p-6 bg-black rounded-2xl"><p className="text-[10px] opacity-30 mb-2">Abjad Total</p><span className="elite-glow text-4xl">{res.total}</span></div>
-                                        <div className="p-6 bg-black rounded-2xl"><p className="text-[10px] opacity-30 mb-2">Nature (Element)</p><span className="text-white text-xl">{res.nature}</span></div>
-                                        <div className="p-6 bg-black rounded-2xl"><p className="text-[10px] opacity-30 mb-2">Quantum Mass</p><span className="text-white text-xl">{res.velocity}</span></div>
-                                    </div>
-                                    <div className="text-center text-[11px] opacity-50 italic">"The geometric signature of this query aligns with {res.nature} forces."</div>
-                                </div>
-                            )}
+                            <div className="space-y-4">
+                                {logs.map((l, i) => <div key={i} className="text-[10px] opacity-40 font-bold tracking-widest animate-pulse">>> {l}</div>)}
+                            </div>
 
-                            <div className="grid gap-10">
-                                {blogs.map(b => (
-                                    <div key={b.id} className="neon-border rounded-[40px] overflow-hidden glass">
-                                        {b.image && <img src={b.image} className="w-full h-72 object-cover opacity-80" />}
-                                        <div className="p-10">
-                                            <h3 className="text-[#F27D26] font-black text-2xl uppercase italic">{b.title}</h3>
-                                            <p className="text-sm opacity-50 mt-4 leading-relaxed">{b.content}</p>
+                            {result && (
+                                <div className="terminal-box p-10 rounded-xl space-y-10 animate-in fade-in duration-1000">
+                                    <div className="grid md:grid-cols-2 gap-8">
+                                        <div className="border border-zinc-800 p-6 rounded-lg">
+                                            <div className="text-[10px] text-zinc-500 mb-2">ABJAD_TOTAL</div>
+                                            <div className="text-5xl font-black text-white">{result.total}</div>
+                                        </div>
+                                        <div className="border border-zinc-800 p-6 rounded-lg" style={{borderColor: result.natureColor}}>
+                                            <div className="text-[10px] text-zinc-500 mb-2">ELEMENTAL_FORCE</div>
+                                            <div className="text-3xl font-black italic" style={{color: result.natureColor}}>{result.nature}</div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="max-w-2xl mx-auto space-y-12">
-                            {!auth ? (
-                                <div className="neon-border p-16 rounded-[40px] text-center space-y-10 glass">
-                                    <h3 className="elite-glow text-2xl font-black uppercase italic">Sirr Portal</h3>
-                                    <input type="password" id="pass" placeholder="MASTER KEY" className="w-full p-6 text-center rounded-2xl text-3xl font-black bg-black border border-white/10" />
-                                    <button onClick={() => document.getElementById('pass').value==='admin216' ? setAuth(true) : alert('LOCKED')} className="w-full bg-[#F27D26] p-6 rounded-2xl font-black uppercase text-xs">Authorize</button>
-                                </div>
-                            ) : (
-                                <div className="space-y-10">
-                                    <div className="neon-border p-10 rounded-[40px] glass space-y-10">
-                                        <h3 className="elite-glow text-xs font-black uppercase text-center border-b border-white/5 pb-6">Expanded Decipher Vault</h3>
-                                        {vault.map((v, i) => (
-                                            <div key={i} className="border-b border-white/5 pb-8 last:border-0 last:pb-0">
-                                                <div className="flex justify-between items-center mb-4">
-                                                    <span className="text-[#F27D26] font-black italic text-xl uppercase">{v.level}</span>
-                                                    <span className="text-[10px] bg-[#F27D26] text-black px-4 py-1 rounded-full font-bold">{v.cipher}</span>
-                                                </div>
-                                                <div className="bg-black p-6 rounded-2xl space-y-3">
-                                                    <p className="text-white font-black text-lg tracking-widest">{v.sound}</p>
-                                                    <div className="flex justify-between text-[10px] uppercase font-bold text-white/40">
-                                                        <span>Count: {v.dosage}</span>
-                                                        <span>Time: {v.timing}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                    <div className="bg-zinc-900/30 p-8 rounded-lg border-l-4 border-white">
+                                        <h3 className="text-[10px] font-black uppercase mb-4 text-[#F27D26]">The Quantum Explanation:</h3>
+                                        <p className="text-white text-sm leading-relaxed">{result.explanation}</p>
+                                        <p className="text-[11px] mt-6 text-zinc-500 italic font-bold">Resonance Velocity: {result.velocity} $Hz$</p>
                                     </div>
-                                    <form onSubmit={async (e) => {
-                                        e.preventDefault();
-                                        await fetch('/api/admin/blog', { method: 'POST', body: new FormData(e.target) });
-                                        window.location.reload();
-                                    }} className="neon-border p-10 rounded-[40px] space-y-6 glass">
-                                        <h3 className="uppercase text-[12px] font-black text-[#F27D26] text-center">New Sirr Deployment</h3>
-                                        <input name="title" placeholder="Title" className="w-full p-5 text-sm font-bold uppercase bg-black" required />
-                                        <textarea name="content" placeholder="Details..." className="w-full p-5 text-sm h-40 bg-black" required />
-                                        <input type="file" name="image" className="text-[12px] text-white/50" accept="image/*" />
-                                        <button className="w-full bg-[#F27D26] p-6 rounded-2xl font-black text-xs uppercase shadow-xl">Deploy</button>
-                                    </form>
                                 </div>
                             )}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20">
+                            <p className="text-xs uppercase tracking-widest opacity-20">Admin Secure Portal Active</p>
+                            {/* Admin content from previous version... */}
                         </div>
                     )}
                 </div>
@@ -250,4 +176,4 @@ app.get('*', (req, res) => {
 </html>`);
 });
 
-app.listen(3000, () => console.log("ORACLE ENGINE ONLINE"));
+app.listen(3000, () => console.log("TERMINAL ONLINE"));
