@@ -130,7 +130,7 @@ const getBotInterpretation = (word, val, raml, lang, details = {}) => {
 
   const responses = {
     en: `[NEURAL BOT] ${prefix}The query "${word}" resonates with Abjad frequency ${val}. The Raml figure ${raml.name} (${raml.element}) indicates: ${raml.meaning}. \n\n[SPIRITUAL INSIGHT]: This alignment suggests a quantum shift in your spiritual path. The frequency ${val} is a powerful indicator of ${val > 500 ? 'high-level manifestation' : 'subtle energy shifts'}. \n\n[GUIDANCE]: If this is a question of success, the signs point to a "YES" but with significant struggle and potential conflict. If it is a question of failure, the signs suggest a "NO", the path is blocked. Stay focused on your intent.`,
-    ha: `[NEURAL BOT] ${prefix}Tambayar "${word}" yana da lamba ${val}. Alamar Ramlu ${raml.name} (${raml.element}) tana nufin: ${raml.meaning}. \n\n[FAHIMTA TA RUHI]: Wannan yana nuna canji mai girma a rayuwarka. Lambar ${val} tana nuna ${val > 500 ? 'nasara mai girma' : 'canji na hankali'}. \n\n[SHAWARTA]: Idan tambaya ce ta nasara, alamu suna nuna "E" amma tare da babban gwagwarmaya da tashin hankali. Idan tambaya ce ta rashin nasara, alamu suna nuna "A'A", hanyar a rufe take. Ka kasance mai natsuwa.`,
+    ha: `[NEURAL BOT] ${prefix}Tambayar "${word}" yana da lamba ${val}. Alamar Ramlu ${raml.name} (${raml.element}) tana nufin: ${raml.meaning}. \n\n[FAHIMTA TA RUHI]: Wannan yana nuna canji mai girma a rayuwarka. Lambar ${val} tana nuna ${val > 500 ? 'nasara mai girma' : 'canji na hankali'}. \n\n[SHAWARTA]: Idan tambaya ce ta nasara, alamu suna nuna "E" amma tare da babban gwagwarmaya da tashin hansali. Idan tambaya ce ta rashin nasara, alamu suna nuna "A'A", hanyar a rufe take. Ka kasance mai natsuwa.`,
     ar: `[NEURAL BOT] ${prefix}الاستعلام "${word}" له تردد ${val}. شكل الرمل ${raml.name} (${raml.element}) يشير إلى: ${raml.meaning}. \n\n[بصيرة روحية]: هذا التوافق يدل على تحول روحي كبير. التردد ${val} هو مؤشر قوي على ${val > 500 ? 'تجلي رفيع المستوى' : 'تحولات طاقة خفية'}. \n\n[إرشاد]: إذا كان هذا سؤالاً عن النجاح ، فإن العلامات تشير إلى "نعم" ولكن مع صراع كبير وصراع محتمل. إذا كان سؤالاً عن الفشل ، فإن العلامات تشير إلى "لا" ، الطريق مسدود. ابق مركزاً على نيتك.`,
     fr: `[NEURAL BOT] ${prefix}La requête "${word}" résonne avec la fréquence ${val}. La figure de Raml ${raml.name} (${raml.element}) indique: ${raml.meaning}. \n\n[APERÇU SPIRITUEL]: Cet alignement suggère un changement quantique dans votre chemin spirituel. La fréquence ${val} est un indicateur puissant de ${val > 500 ? 'manifestation de haut niveau' : 'changements d\'énergie subtils'}. \n\n[ORIENTATION]: S'il s'agit d'une question de succès, les signes pointent vers un "OUI" mais avec une lutte importante et un conflit potentiel. S'il s'agit d'une question d'échec, les signes suggèrent un "NON", le chemin est bloqué. Restez concentré sur votre intention.`
   };
@@ -315,18 +315,18 @@ app.get('*', (req, res) => {
             const [lines, setLines] = useState([]);
             useEffect(() => {
                 const baseLines = [
-                    \`> INITIALIZING QUANTUM SPIRITUAL LINK...\`,
-                    \`> FREQUENCY DETECTED: \${value} Hz\`,
-                    \`> ABJAD ALIGNMENT: \${Math.sqrt(value).toFixed(4)} PHI\`,
-                    \`> RAML FIGURE: \${raml.name.toUpperCase()}\`,
-                    \`> SECRET CODE: \${raml.id}-GAIB-X\`,
-                    \`> STATUS: MANIFESTING...\`,
-                    \`> --- QUANTUM PHYSICS ECHO ---\`,
-                    \`> WAVEFUNCTION COLLAPSE: \${value > 500 ? 'OBSERVED' : 'PROBABLE'}\`,
-                    \`> ENTANGLEMENT RATIO: \${(value / 1000).toFixed(3)}\`,
-                    \`> SCHRODINGER STATE: ALIVE & MANIFESTING\`,
-                    \`> ECHO: \${value % 2 === 0 ? 'POSITIVE RESONANCE DETECTED' : 'NEUTRAL ALIGNMENT ACHIEVED'}\`,
-                    \`> SYSTEM: LINK ESTABLISHED.\`
+                    '> INITIALIZING QUANTUM SPIRITUAL LINK...',
+                    '> FREQUENCY DETECTED: ' + value + ' Hz',
+                    '> ABJAD ALIGNMENT: ' + Math.sqrt(value).toFixed(4) + ' PHI',
+                    '> RAML FIGURE: ' + raml.name.toUpperCase(),
+                    '> SECRET CODE: ' + raml.id + '-GAIB-X',
+                    '> STATUS: MANIFESTING...',
+                    '> --- QUANTUM PHYSICS ECHO ---',
+                    '> WAVEFUNCTION COLLAPSE: ' + (value > 500 ? 'OBSERVED' : 'PROBABLE'),
+                    '> ENTANGLEMENT RATIO: ' + (value / 1000).toFixed(3),
+                    '> SCHRODINGER STATE: ALIVE & MANIFESTING',
+                    '> ECHO: ' + (value % 2 === 0 ? 'POSITIVE RESONANCE DETECTED' : 'NEUTRAL ALIGNMENT ACHIEVED'),
+                    '> SYSTEM: LINK ESTABLISHED.'
                 ];
                 let i = 0;
                 const timer = setInterval(() => {
@@ -466,7 +466,7 @@ app.get('*', (req, res) => {
             };
 
             const handleDeletePost = async (id) => {
-                const r = await fetch(`/api/admin/blog/${id}`, { method: 'DELETE' });
+                const r = await fetch('/api/admin/blog/' + id, { method: 'DELETE' });
                 if (r.ok) setPosts(posts.filter(p => p.id !== id));
             };
 
@@ -633,7 +633,7 @@ app.get('*', (req, res) => {
                             <motion.div key="contact" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="max-w-md mx-auto glass p-12 rounded-[3rem] space-y-10 text-center">
                                 <h3 className="text-3xl font-black italic uppercase tracking-tighter">Support Channels</h3>
                                 <div className="space-y-6">
-                                    {emails.map(e => <div key(e) className="p-4 bg-white/5 rounded-2xl font-mono text-sm text-white/60 hover:text-[#F27D26] transition-all cursor-pointer">{e}</div>)}
+                                    {emails.map(e => <div key={e} className="p-4 bg-white/5 rounded-2xl font-mono text-sm text-white/60 hover:text-[#F27D26] transition-all cursor-pointer">{e}</div>)}
                                     <div className="p-4 bg-green-500/10 rounded-2xl font-mono text-sm text-green-500">{whatsapp}</div>
                                 </div>
                                 <button onClick={() => setActiveTab('calc')} className="text-[10px] uppercase tracking-widest text-white/20 hover:text-white transition-all">Return to Oracle</button>
