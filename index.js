@@ -10,15 +10,19 @@ const __dirname = path.dirname(__filename);
 const CONFIG_PATH = path.join(__dirname, 'neural_config.json');
 const BLOG_PATH = path.join(__dirname, 'neural_blog.json');
 const STORIES_PATH = path.join(__dirname, 'neural_stories.json');
+const STATS_PATH = path.join(__dirname, 'neural_stats.json');
+const ARCHIVES_PATH = path.join(__dirname, 'neural_archives.json');
 
 let adminConfig = { user: 'admin216', pass: 'admin216', globalCommand: 'KUN FAYAKUN: THE GATES OF WEALTH ARE OPEN.' };
 let blogPosts = [];
 let userStories = [];
+let stats = { totalScans: 0, inquiries: { success: 0, magic: 0, evil_eye: 0, jinn: 0, illness: 0 } };
 
 const initData = () => {
     if (fs.existsSync(CONFIG_PATH)) adminConfig = { ...adminConfig, ...fs.readJsonSync(CONFIG_PATH) };
     if (fs.existsSync(BLOG_PATH)) blogPosts = fs.readJsonSync(BLOG_PATH);
     if (fs.existsSync(STORIES_PATH)) userStories = fs.readJsonSync(STORIES_PATH);
+    if (fs.existsSync(STATS_PATH)) stats = fs.readJsonSync(STATS_PATH);
 };
 initData();
 
@@ -30,66 +34,54 @@ const ABJAD_MAP = {
 };
 
 const BURUJ = [
-    { name: "Hamal (Aries)", element: "Fire", nature: "Hot & Dry" }, { name: "Thaur (Taurus)", element: "Earth", nature: "Cold & Dry" },
-    { name: "Jauza (Gemini)", element: "Air", nature: "Hot & Moist" }, { name: "Saratan (Cancer)", element: "Water", nature: "Cold & Moist" },
-    { name: "Asad (Leo)", element: "Fire", nature: "Hot & Dry" }, { name: "Sunbulah (Virgo)", element: "Earth", nature: "Cold & Dry" },
-    { name: "Mizan (Libra)", element: "Air", nature: "Hot & Moist" }, { name: "Aqrab (Scorpio)", element: "Water", nature: "Cold & Moist" },
-    { name: "Qaus (Sagittarius)", element: "Fire", nature: "Hot & Dry" }, { name: "Jadiy (Capricorn)", element: "Earth", nature: "Cold & Dry" },
-    { name: "Dalwu (Aquarius)", element: "Air", nature: "Hot & Moist" }, { name: "Hut (Pisces)", element: "Water", nature: "Cold & Moist" }
+    { name: "Hamal (Aries)", element: "Fire", nature: "Hot & Dry", remedy_type: "Burning/Heat" },
+    { name: "Thaur (Taurus)", element: "Earth", nature: "Cold & Dry", remedy_type: "Burying/Grounding" },
+    { name: "Jauza (Gemini)", element: "Air", nature: "Hot & Moist", remedy_type: "Hanging/Wind" },
+    { name: "Saratan (Cancer)", element: "Water", nature: "Cold & Moist", remedy_type: "Drinking/Washing" },
+    { name: "Asad (Leo)", element: "Fire", nature: "Hot & Dry", remedy_type: "Burning/Heat" },
+    { name: "Sunbulah (Virgo)", element: "Earth", nature: "Cold & Dry", remedy_type: "Burying/Grounding" },
+    { name: "Mizan (Libra)", element: "Air", nature: "Hot & Moist", remedy_type: "Hanging/Wind" },
+    { name: "Aqrab (Scorpio)", element: "Water", nature: "Cold & Moist", remedy_type: "Drinking/Washing" },
+    { name: "Qaus (Sagittarius)", element: "Fire", nature: "Hot & Dry", remedy_type: "Burning/Heat" },
+    { name: "Jadiy (Capricorn)", element: "Earth", nature: "Cold & Dry", remedy_type: "Burying/Grounding" },
+    { name: "Dalwu (Aquarius)", element: "Air", nature: "Hot & Moist", remedy_type: "Hanging/Wind" },
+    { name: "Hut (Pisces)", element: "Water", nature: "Cold & Moist", remedy_type: "Drinking/Washing" }
 ];
 
 const PLANETS = [
-    { name: "Sun (Shams)", day: "Sunday", angel: "Rufa'il", jinn: "Mazhab" },
-    { name: "Moon (Qamar)", day: "Monday", angel: "Jibril", jinn: "Murrah" },
-    { name: "Mars (Marikh)", day: "Tuesday", angel: "Samsama'il", jinn: "Al-Ahmar" },
-    { name: "Mercury (Utarid)", day: "Wednesday", angel: "Mika'il", jinn: "Burqan" },
-    { name: "Jupiter (Mushtari)", day: "Thursday", angel: "Sarfaya'il", jinn: "Shamharush" },
-    { name: "Venus (Zuhra)", day: "Friday", angel: "Anaya'il", jinn: "Zawba'a" },
-    { name: "Saturn (Zuhal)", day: "Saturday", angel: "Kasfaya'il", jinn: "Maymun" }
+    { name: "Sun (Shams)", day: "Sunday", angel: "Rufa'il", jinn: "Mazhab", attribute: "Authority" },
+    { name: "Moon (Qamar)", day: "Monday", angel: "Jibril", jinn: "Murrah", attribute: "Emotions" },
+    { name: "Mars (Marikh)", day: "Tuesday", angel: "Samsama'il", jinn: "Al-Ahmar", attribute: "Power" },
+    { name: "Mercury (Utarid)", day: "Wednesday", angel: "Mika'il", jinn: "Burqan", attribute: "Intelligence" },
+    { name: "Jupiter (Mushtari)", day: "Thursday", angel: "Sarfaya'il", jinn: "Shamharush", attribute: "Wealth" },
+    { name: "Venus (Zuhra)", day: "Friday", angel: "Anaya'il", jinn: "Zawba'a", attribute: "Love" },
+    { name: "Saturn (Zuhal)", day: "Saturday", angel: "Kasfaya'il", jinn: "Maymun", attribute: "Protection" }
 ];
 
-const RAML_FIGURES = [
-    { id: 1, name: "Dariqee", element: "Fire", meaning: "Movement and quick results. Saurin biyan bukata." },
-    { id: 2, name: "Jama'a", element: "Air", meaning: "Success in gatherings. Nasara a taro." },
-    { id: 3, name: "Uqba", element: "Water", meaning: "Patience required. Bukatar hakuri." },
-    { id: 4, name: "Kausaji", element: "Earth", meaning: "Hidden enemies. Boyayyen makiya." },
-    { id: 5, name: "Dhahika", element: "Fire", meaning: "Unexpected joy. Farin ciki ba tsammani." },
-    { id: 6, name: "Qabla Kharija", element: "Air", meaning: "Outward energy. Kudi zai fita." },
-    { id: 7, name: "Humra", element: "Fire", meaning: "Power and conflict. Iko da fada." },
-    { id: 8, name: "Inkees", element: "Earth", meaning: "Reversal of affairs. Juyewar al'amura." },
-    { id: 9, name: "Bayaad", element: "Water", meaning: "Spiritual purity. Tsarki da nasara." },
-    { id: 10, name: "Nusra Kharija", element: "Fire", meaning: "External victory. Nasara akan makiya." },
-    { id: 11, name: "Nusra Dakhila", element: "Earth", meaning: "Home victory. Nasara a gida." },
-    { id: 12, name: "Qabla Dakhila", element: "Water", meaning: "Incoming wealth. Arziki na tafe." },
-    { id: 13, name: "Ijtima", element: "Air", meaning: "Union and help. Haduwa da taimako." },
-    { id: 14, name: "Uqla", element: "Earth", meaning: "Spiritual blockages. Akwai kulli." },
-    { id: 15, name: "Kabid Kharija", element: "Fire", meaning: "Loss of property. Asarar dukiya." },
-    { id: 16, name: "Kabid Dakhila", element: "Water", meaning: "Gathering wealth. Tara dukiya." }
-];
-
-const SECRET_ARCHIVES = [
+const INITIAL_ARCHIVES = [
     {
-        category: "The 7 Jinn Kings (Sarakunan Aljanu Bakwai)",
+        category: "Siri na Waliyyai (Saint Secrets)",
         codes: [
-            { name: "Shamharush (Thursday)", code: "يا شمهروش", meaning: "The King of the 4th day. Rules over justice, spiritual secrets, and Thursday's wealth.", usage: "Recite 45 times at noon on Thursday. (Karanta sau 45 ranar Alhamis)." },
-            { name: "Zawba'a (Friday)", code: "يا زوبعة", meaning: "The King of the 5th day. Rules over love, beauty, and Friday's abundance.", usage: "Recite 66 times after Jumu'ah prayer. (Karanta sau 66 bayan sallar Jumu'ah)." },
-            { name: "Maymun (Saturday)", code: "يا ميمون", meaning: "The King of the 6th day. Rules over protection, heavy tasks, and Saturday's resolve.", usage: "Recite 77 times on Saturday night. (Karanta sau 77 daren Asabar)." },
-            { name: "Al-Ahmar (Tuesday)", code: "يا أحمر", meaning: "The King of the 2nd day. Rules over power, conflict, and Tuesday's energy.", usage: "Recite 313 times for absolute protection. (Karanta sau 313 don tsaro)." }
+            { name: "Cipher of Al-Khidr", code: "KHIDR-99-OPEN-X", meaning: "Sudden spiritual openings and meeting hidden masters.", usage: "Recite 99 times at a river bank." },
+            { name: "Seal of 7 Planets", code: "KT-PLNT-ALL-7", meaning: "Total dominance over environment and career.", usage: "Recite 7 times every morning." },
+            { name: "Blink-Shift Master Key", code: "TAYY-ARD-00-GAIB", meaning: "Physical teleportation frequency.", usage: "Requires 40 days seclusion." },
+            { name: "Wealth of 4 Angels", code: "ANGEL-4-GOLD-MANIFEST", meaning: "Material manifestation frequency.", usage: "Recite 111 times after midnight." }
         ]
     },
     {
-        category: "Elite Wealth Protocols (Siri na Arziki)",
+        category: "Jinn King Protocols (Sarakunan Aljanu)",
         codes: [
-            { name: "The Al-Kimiya Gold Cipher", code: "أهـم سقك حلع يص", meaning: "The 11-letter secret cipher for the urgent attraction of massive wealth and gold.", usage: "Recite 111 times after midnight. (Karanta sau 111 bayan tsakar dare)." },
-            { name: "The Binary Wealth Cipher", code: "0101-GOLD-1101", meaning: "A modern spiritual code for attracting wealth specifically through technology and web creation.", usage: "Visualize your bank balance growing while reciting 33 times. (Yi tunanin kudin ka na karuwa yayin karanta sau 33)." },
-            { name: "Kun Fayakun Manifest", code: "KUN-369-MANIFEST", meaning: "The frequency of instant manifestation and divine command.", usage: "Vibrate 369 times in a quiet room. (Karanta sau 369 a daki shiru)." }
+            { name: "Shamharush (Thursday)", code: "يا شمهروش", meaning: "King of the 4th day. Rules justice and secrets.", usage: "Recite 45 times at noon on Thursday." },
+            { name: "Maymun (Saturday)", code: "يا ميمون", meaning: "King of the 6th day. Rules protection and heavy tasks.", usage: "Recite 77 times on Saturday night." },
+            { name: "Zawba'a (Friday)", code: "يا زوبعة", meaning: "King of the 5th day. Rules love and abundance.", usage: "Recite 66 times after Jumu'ah." }
         ]
     },
     {
-        category: "The Solomon Shield (Garkuwar Sulaiman)",
+        category: "Wealth & Tech Command",
         codes: [
-            { name: "Jinn Master Key", code: "انه من سليمان", meaning: "The master key used by Prophet Solomon to command the forces of nature.", usage: "Recite 313 times over a silver ring. (Karanta sau 313 akan zoben azurfa)." },
-            { name: "The Vanishing Word", code: "وجعلنا من بين أيديهم سدا", meaning: "Ancient secret for absolute protection and invisibility to enemies.", usage: "Recite in one breath while stepping backward. (Karanta da numfashi daya yayin komawa baya)." }
+            { name: "Al-Kimiya Gold Cipher", code: "أهـم سقك حلع يص", meaning: "Urgent attraction of massive wealth.", usage: "Recite 111 times after midnight." },
+            { name: "Binary Wealth Cipher", code: "0101-GOLD-1101", meaning: "Spiritual code for tech-based wealth.", usage: "Recite 33 times while visualizing bank growth." },
+            { name: "Algorithm Mastery", code: "ALG-FAVOR-01-KUN", meaning: "Aligns web projects with success.", usage: "Recite 70 times before deploying code." }
         ]
     }
 ];
@@ -98,10 +90,15 @@ const SECRET_ARCHIVES = [
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok', scans: 1240 }));
+app.get('/api/health', (req, res) => res.json({ status: 'ok', scans: stats.totalScans }));
 app.get('/api/blog', (req, res) => res.json(blogPosts));
 app.get('/api/stories', (req, res) => res.json(userStories));
 app.get('/api/config', (req, res) => res.json({ globalCommand: adminConfig.globalCommand }));
+app.get('/api/admin/stats', (req, res) => res.json(stats));
+app.get('/api/admin/archives', (req, res) => {
+    const archives = fs.existsSync(ARCHIVES_PATH) ? fs.readJsonSync(ARCHIVES_PATH) : INITIAL_ARCHIVES;
+    res.json(archives);
+});
 
 app.post('/api/admin/login', (req, res) => {
     const { user, pass } = req.body;
@@ -118,6 +115,11 @@ app.post('/api/admin/update', async (req, res) => {
     res.json({ success: true });
 });
 
+app.post('/api/admin/archives', async (req, res) => {
+    await fs.writeJson(ARCHIVES_PATH, req.body);
+    res.json({ success: true });
+});
+
 app.post('/api/admin/blog', async (req, res) => {
     const newPost = { ...req.body, id: Date.now(), date: new Date().toISOString() };
     blogPosts.unshift(newPost);
@@ -131,6 +133,14 @@ app.delete('/api/admin/stories/:id', async (req, res) => {
     res.json({ success: true });
 });
 
+app.post('/api/scan', async (req, res) => {
+    const { type } = req.body;
+    stats.totalScans++;
+    if (stats.inquiries[type] !== undefined) stats.inquiries[type]++;
+    await fs.writeJson(STATS_PATH, stats);
+    res.json({ success: true });
+});
+
 app.post('/api/stories', async (req, res) => {
     const newStory = { ...req.body, id: Date.now(), date: new Date().toISOString() };
     userStories.unshift(newStory);
@@ -141,10 +151,8 @@ app.post('/api/stories', async (req, res) => {
 app.get('*', (req, res) => {
     const clientData = {
         abjadMap: ABJAD_MAP,
-        ramlFigures: RAML_FIGURES,
         buruj: BURUJ,
         planets: PLANETS,
-        archives: SECRET_ARCHIVES,
         gaId: "G-HD01MF5SL9",
         emails: ["allarbaa.cloud@yahoo.com", "abdullahharuna216@gmail.com"],
         whatsapp: "+234808033353"
@@ -179,6 +187,8 @@ app.get('*', (req, res) => {
         .marquee { white-space: nowrap; overflow: hidden; position: relative; background: #F27D26; color: black; font-weight: 900; font-size: 10px; padding: 4px 0; text-transform: uppercase; font-style: italic; }
         .marquee-content { display: inline-block; padding-left: 100%; animation: marquee 30s linear infinite; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        .wafq-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #333; border: 2px solid #F27D26; width: 150px; height: 150px; }
+        .wafq-cell { background: #000; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 900; color: #F27D26; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
@@ -193,44 +203,34 @@ app.get('*', (req, res) => {
         </div>
     </div>
     <script type="text/babel">
-        window.onerror = function(msg, url, line, col, error) {
-            console.error(msg, error);
-            const root = document.getElementById('root');
-            if (root) {
-                root.innerHTML = '<div style="color:#F27D26; padding:40px; font-family:monospace; background:#000; height:100vh;">' +
-                    '<h2 style="font-size:24px; font-weight:900; font-style:italic; text-transform:uppercase;">Neural Engine Error</h2>' +
-                    '<p style="opacity:0.6; margin-top:20px;">The spiritual frequency was interrupted.</p>' +
-                    '<p style="font-size:12px; margin-top:10px; color:red;">' + msg + '</p>' +
-                    '<p style="font-size:10px; opacity:0.4;">Line: ' + line + '</p>' +
-                    '<button onclick="location.reload()" style="margin-top:20px; background:#F27D26; color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">RETRY LINK</button>' +
-                    '</div>';
-            }
-            return false;
-        };
-
         const { useState, useEffect, useRef } = React;
-        
         const FM = window.Motion || window.FramerMotion || {};
         const motion = FM.motion || { div: (props) => <div {...props} />, span: (props) => <span {...props} /> };
         const AnimatePresence = FM.AnimatePresence || (({children}) => children);
-        
         const L = window.Lucide || window.lucide || {};
         const getIcon = (name) => L[name] || (() => <span className="inline-block w-4 h-4 border border-current rounded-full opacity-20"></span>);
         
         const Zap = getIcon('Zap');
-        const Hand = getIcon('Hand');
-        const Settings = getIcon('Settings');
-        const LogOut = getIcon('LogOut');
-        const BookOpen = getIcon('BookOpen');
-        const MessageSquare = getIcon('MessageSquare');
-        const Send = getIcon('Send');
-        const Upload = getIcon('Upload');
         const Shield = getIcon('Shield');
         const Eye = getIcon('Eye');
         const Star = getIcon('Star');
         const Sun = getIcon('Sun');
         const Trash2 = getIcon('Trash2');
         const Clock = getIcon('Clock');
+        const Send = getIcon('Send');
+        const Upload = getIcon('Upload');
+        const AlertCircle = getIcon('AlertCircle');
+        const Globe = getIcon('Globe');
+        const Moon = getIcon('Moon');
+        const BarChart3 = getIcon('BarChart3');
+        const Settings = getIcon('Settings');
+
+        const TRANSLATIONS = {
+            en: { oracle: "Oracle", feed: "Feed", admin: "Admin", inquiry: "Select Inquiry Type", name: "Full Name", mother: "Mother's Name", dob: "Year of Birth", pob: "Place of Birth", num: "Chosen Number", init: "Initialize Hisab", diagnosis: "Spiritual Diagnosis", remedy: "Remedy & Protocol", frequency: "Divine Frequency", vault: "System Vault", unlock: "Unlock Vault" },
+            ar: { oracle: "أوراكل", feed: "تغذية", admin: "مسؤول", inquiry: "اختر نوع الاستفسار", name: "الاسم الكامل", mother: "اسم الأم", dob: "سنة الميلاد", pob: "مكان الميلاد", num: "الرقم المختار", init: "بدء الحساب", diagnosis: "التشخيص الروحي", remedy: "العلاج والبروتوكول", frequency: "التردد الإلهي", vault: "قبو النظام", unlock: "فتح القبو" },
+            ha: { oracle: "Bincike", feed: "Labarai", admin: "Shugaba", inquiry: "Zabi Abinda Kake So", name: "Cikakken Suna", mother: "Sunan Mahaifiya", dob: "Shekarar Haihuwa", pob: "Wajen Haihuwa", num: "Zababben Lamba", init: "Fara Hisabi", diagnosis: "Binciken Matsala", remedy: "Magani da Ka'ida", frequency: "Ismullah al-A'zam", vault: "Ma'ajiyar Sirri", unlock: "Bude Ma'ajiya" },
+            fr: { oracle: "Oracle", feed: "Flux", admin: "Admin", inquiry: "Type de Demande", name: "Nom Complet", mother: "Nom de la Mère", dob: "Année de Naissance", pob: "Lieu de Naissance", num: "Nombre Choisi", init: "Initialiser Hisab", diagnosis: "Diagnostic Spirituel", remedy: "Remède et Protocole", frequency: "Fréquence Divine", vault: "Voûte Système", unlock: "Déverrouiller" }
+        };
 
         const GrandPalmLogo = () => (
             <div className="relative w-48 h-48 mx-auto mb-12 flex items-center justify-center">
@@ -248,26 +248,24 @@ app.get('*', (req, res) => {
             </div>
         );
 
-        const TerminalEngine = ({ value, raml, buruj, planet, question }) => {
+        const TerminalEngine = ({ value, buruj, planet, inquiryType }) => {
             const [lines, setLines] = useState([]);
             const scrollRef = useRef(null);
 
             useEffect(() => {
                 const baseLines = [
                     '> INITIALIZING QUANTUM SPIRITUAL LINK...',
-                    '> SCANNING INTENT: "' + (question || 'GENERAL INQUIRY') + '"',
-                    '> CALCULATING ABJAD DARUT VALUES...',
-                    '> FREQUENCY DETECTED: ' + value + ' Hz',
-                    '> WAVEFUNCTION COLLAPSE: OBSERVED',
-                    '> BURUJ (ZODIAC): ' + buruj.name.toUpperCase() + ' (' + buruj.element + ')',
-                    '> PLANET RULER: ' + planet.name.toUpperCase() + ' (Angel: ' + planet.angel + ')',
-                    '> JINN KING: ' + planet.jinn.toUpperCase(),
-                    '> RAML FIGURE: ' + raml.name.toUpperCase(),
+                    '> SCANNING FREQUENCY: ' + value + ' Hz',
+                    '> ABJAD DARUT CALCULATION: COMPLETE',
+                    '> BURUJ (ZODIAC): ' + buruj.name.toUpperCase(),
+                    '> ELEMENT: ' + buruj.element.toUpperCase(),
+                    '> PLANET RULER: ' + planet.name.toUpperCase(),
+                    '> INQUIRY TARGET: ' + inquiryType.toUpperCase(),
+                    '> STATUS: WAVEFUNCTION COLLAPSE OBSERVED',
                     '> --- QUANTUM PHYSICS ECHO ---',
                     '> ENTANGLEMENT RATIO: ' + (value / 1000).toFixed(3),
                     '> BINARY WEALTH STREAM: 0101-GOLD-1101',
-                    '> SCHRODINGER STATE: RESOLVED',
-                    '> SYSTEM: SPIRITUAL LINK ESTABLISHED.'
+                    '> SYSTEM: DIAGNOSIS READY.'
                 ];
                 let i = 0;
                 const timer = setInterval(() => {
@@ -277,7 +275,7 @@ app.get('*', (req, res) => {
                     } else clearInterval(timer);
                 }, 80);
                 return () => clearInterval(timer);
-            }, [value, raml, buruj, planet, question]);
+            }, [value, buruj, planet, inquiryType]);
 
             useEffect(() => {
                 if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -291,69 +289,114 @@ app.get('*', (req, res) => {
             );
         };
 
+        const WafqVisualizer = ({ total }) => {
+            const base = Math.floor((total - 12) / 3);
+            const cells = [base+5, base, base+7, base+2, base+4, base+6, base+3, base+8, base+1];
+            return (
+                <div className="space-y-4">
+                    <p className="text-[10px] uppercase font-black text-[#F27D26]">Personal Wafq (Magic Square)</p>
+                    <div className="wafq-grid">
+                        {cells.map((c, i) => <div key={i} className="wafq-cell">{c}</div>)}
+                    </div>
+                </div>
+            );
+        };
+
         const App = () => {
+            const [lang, setLang] = useState('en');
             const [activeTab, setActiveTab] = useState('calc');
             const [name, setName] = useState('');
             const [mother, setMother] = useState('');
-            const [age, setAge] = useState('');
             const [dob, setDob] = useState('');
+            const [pob, setPob] = useState('');
             const [chosenNum, setChosenNum] = useState('');
-            const [question, setQuestion] = useState('');
-            const [story, setStory] = useState('');
+            const [inquiryType, setInquiryType] = useState('success');
             const [result, setResult] = useState(null);
             const [isAdmin, setIsAdmin] = useState(false);
             const [posts, setPosts] = useState([]);
             const [stories, setStories] = useState([]);
+            const [archives, setArchives] = useState([]);
+            const [adminStats, setAdminStats] = useState(null);
             const [globalCommand, setGlobalCommand] = useState('');
             const [loginForm, setLoginForm] = useState({ user: '', pass: '' });
             const [newPost, setNewPost] = useState({ title: '', content: '', image: '' });
             const [newAdmin, setNewAdmin] = useState({ user: '', pass: '', globalCommand: '' });
 
-            const { abjadMap, ramlFigures, buruj, planets, archives, emails, whatsapp } = ${JSON.stringify(clientData)};
+            const t = TRANSLATIONS[lang];
+            const { abjadMap, buruj, planets, emails, whatsapp } = ${JSON.stringify(clientData)};
 
             useEffect(() => {
                 fetch('/api/blog').then(r => r.json()).then(setPosts);
                 fetch('/api/stories').then(r => r.json()).then(setStories);
-                fetch('/api/config').then(r => r.json()).then(d => setGlobalCommand(d.globalCommand));
+                fetch('/api/config').then(r => r.json()).then(d => { setGlobalCommand(d.globalCommand); setNewAdmin(prev => ({...prev, globalCommand: d.globalCommand})); });
             }, []);
 
             const calculateAbjad = (str) => {
                 let total = 0;
                 const normalized = (str || '').toLowerCase();
-                for (let char of normalized) {
-                    total += abjadMap[char] || 0;
-                }
+                for (let char of normalized) total += abjadMap[char] || 0;
                 return total;
             };
 
-            const handleCalculate = () => {
-                if (!name) return alert("Please enter a name.");
+            const handleCalculate = async () => {
+                if (!name || !mother) return alert("Please enter Name and Mother's Name.");
                 
                 const nVal = calculateAbjad(name);
                 const mVal = calculateAbjad(mother);
-                const qVal = calculateAbjad(question);
-                const aVal = parseInt(age) || 0;
+                const pVal = calculateAbjad(pob);
                 const dVal = calculateAbjad(dob);
                 const cVal = parseInt(chosenNum) || 0;
 
-                const grandTotal = nVal + mVal + qVal + aVal + dVal + cVal;
-                
-                const burujIndex = (grandTotal % 12) === 0 ? 11 : (grandTotal % 12) - 1;
-                const planetIndex = (grandTotal % 7) === 0 ? 6 : (grandTotal % 7) - 1;
-                const ramlIndex = (grandTotal % 16) === 0 ? 15 : (grandTotal % 16) - 1;
+                const grandTotal = nVal + mVal + pVal + dVal + cVal;
+                const burujIdx = (grandTotal % 12) === 0 ? 11 : (grandTotal % 12) - 1;
+                const planetIdx = (grandTotal % 7) === 0 ? 6 : (grandTotal % 7) - 1;
+
+                const userBuruj = buruj[burujIdx];
+                const userPlanet = planets[planetIdx];
+
+                await fetch('/api/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: inquiryType }) });
+
+                let diagnosis = "";
+                let remedy = "";
+                let timing = "";
+
+                if (inquiryType === 'evil_eye') {
+                    diagnosis = lang === 'ha' ? "An gano: Shishigi daga idon makiya." : "Detected: High vibrational interference from external envy.";
+                    remedy = lang === 'ha' ? "Karanta Falaqi da Nasi sau 11 akan ruwa." : "Recite Surah Al-Falaq and An-Nas 11 times over water.";
+                    timing = "Sunset (Maghrib)";
+                } else if (inquiryType === 'magic') {
+                    diagnosis = "Detected: Spiritual binding (Sihr) affecting your " + userPlanet.attribute + ".";
+                    remedy = "Recite Ayatul Kursi 313 times.";
+                    timing = "Midnight (Tahajjud)";
+                } else if (inquiryType === 'success') {
+                    diagnosis = "Detected: Blockage in your path to wealth.";
+                    remedy = "Recite 'Ya Fattahu Ya Razzaqu' 489 times. Give charity.";
+                    timing = "Thursday Noon";
+                } else if (inquiryType === 'illness') {
+                    const isSpiritual = grandTotal % 2 !== 0;
+                    diagnosis = isSpiritual ? "Diagnosis: Spiritual ailment." : "Diagnosis: Physical ailment. Visit a Hospital.";
+                    remedy = isSpiritual ? "Recite 'Ya Shafi' 1000 times." : "Combine medicine with 'Ya Salam' 131 times.";
+                    timing = "Morning";
+                }
 
                 setResult({
                     total: grandTotal,
-                    raml: ramlFigures[ramlIndex],
-                    star: buruj[burujIndex],
-                    planet: planets[planetIndex],
-                    question: question
+                    buruj: userBuruj,
+                    planet: userPlanet,
+                    diagnosis,
+                    remedy,
+                    timing,
+                    ism: "YA " + (userBuruj.element === 'Fire' ? 'QAHHAR' : userBuruj.element === 'Water' ? 'LATIF' : userBuruj.element === 'Air' ? 'RAFIU' : 'RAZZAQ')
                 });
             };
 
             const handleLogin = async () => {
                 const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(loginForm) });
-                if (r.ok) { setIsAdmin(true); setNewAdmin({ ...loginForm, globalCommand }); }
+                if (r.ok) { 
+                    setIsAdmin(true); 
+                    fetch('/api/admin/stats').then(r => r.json()).then(setAdminStats);
+                    fetch('/api/admin/archives').then(r => r.json()).then(setArchives);
+                }
                 else alert("Access Denied");
             };
 
@@ -362,15 +405,14 @@ app.get('*', (req, res) => {
                 if (r.ok) { alert("System Updated"); setGlobalCommand(newAdmin.globalCommand); }
             };
 
+            const handleCreateBlog = async () => {
+                const r = await fetch('/api/admin/blog', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newPost) });
+                if (r.ok) { const data = await r.json(); setPosts([data, ...posts]); setNewPost({ title: '', content: '', image: '' }); alert("Blog Published"); }
+            };
+
             const handleDeleteStory = async (id) => {
                 const r = await fetch('/api/admin/stories/' + id, { method: 'DELETE' });
                 if (r.ok) setStories(stories.filter(s => s.id !== id));
-            };
-
-            const handleSubmitStory = async () => {
-                if (!story) return;
-                const r = await fetch('/api/stories', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: story, author: name || 'Seeker' }) });
-                if (r.ok) { const data = await r.json(); setStories([data, ...stories]); setStory(''); alert("Broadcasted to Feed"); }
             };
 
             const handleImageUpload = (e) => {
@@ -380,15 +422,10 @@ app.get('*', (req, res) => {
                 reader.readAsDataURL(file);
             };
 
-            const handleCreateBlog = async () => {
-                const r = await fetch('/api/admin/blog', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newPost) });
-                if (r.ok) { const data = await r.json(); setPosts([data, ...posts]); setNewPost({ title: '', content: '', image: '' }); alert("Blog Published"); }
-            };
-
             return (
                 <div className="min-h-screen flex flex-col">
                     <div className="marquee">
-                        <div className="marquee-content">{globalCommand} // {globalCommand} // {globalCommand}</div>
+                        <div className="marquee-content">{globalCommand} // {globalCommand}</div>
                     </div>
                     
                     <header className="p-6 glass flex justify-between items-center sticky top-0 z-50">
@@ -396,11 +433,18 @@ app.get('*', (req, res) => {
                             <div className="w-10 h-10 bg-[#F27D26] rounded-full flex items-center justify-center font-black italic text-black">N</div>
                             <span className="font-black italic uppercase tracking-tighter text-xl">Neural Engine</span>
                         </div>
-                        <nav className="flex gap-6 text-[10px] uppercase font-bold text-white/40">
-                            <button onClick={() => setActiveTab('calc')} className={activeTab === 'calc' ? 'text-[#F27D26]' : ''}>Oracle</button>
-                            <button onClick={() => setActiveTab('feed')} className={activeTab === 'feed' ? 'text-[#F27D26]' : ''}>Feed</button>
-                            <button onClick={() => setActiveTab('admin')} className={activeTab === 'admin' ? 'text-[#F27D26]' : ''}>Admin</button>
-                        </nav>
+                        <div className="flex items-center gap-6">
+                            <div className="flex gap-2">
+                                {['en', 'ar', 'ha', 'fr'].map(l => (
+                                    <button key={l} onClick={() => setLang(l)} className={`w-6 h-6 rounded-full text-[8px] font-black uppercase border ${lang === l ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'border-white/20 text-white/40'}`}>{l}</button>
+                                ))}
+                            </div>
+                            <nav className="flex gap-6 text-[10px] uppercase font-bold text-white/40">
+                                <button onClick={() => setActiveTab('calc')} className={activeTab === 'calc' ? 'text-[#F27D26]' : ''}>{t.oracle}</button>
+                                <button onClick={() => setActiveTab('feed')} className={activeTab === 'feed' ? 'text-[#F27D26]' : ''}>{t.feed}</button>
+                                <button onClick={() => setActiveTab('admin')} className={activeTab === 'admin' ? 'text-[#F27D26]' : ''}>{t.admin}</button>
+                            </nav>
+                        </div>
                     </header>
 
                     <main className="flex-1 max-w-6xl mx-auto w-full p-6 py-12">
@@ -409,64 +453,76 @@ app.get('*', (req, res) => {
                                 <motion.div key="calc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid lg:grid-cols-2 gap-12">
                                     <div className="space-y-8">
                                         <GrandPalmLogo />
-                                        <h2 className="text-7xl font-black italic uppercase tracking-tighter leading-none">Spiritual<br/><span className="text-[#F27D26]">Oracle</span></h2>
                                         
-                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
-                                            <Clock size={20} className="text-[#F27D26]" />
-                                            <div>
-                                                <p className="text-[8px] uppercase font-bold text-white/30">Current Planetary Hour</p>
-                                                <p className="text-xs font-black uppercase text-[#F27D26]">{planets[new Date().getDay()].name} // Angel: {planets[new Date().getDay()].angel}</p>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
+                                                <Moon size={20} className="text-[#F27D26]" />
+                                                <div>
+                                                    <p className="text-[8px] uppercase font-bold text-white/30">Moon Phase</p>
+                                                    <p className="text-xs font-black uppercase">Waxing Crescent</p>
+                                                </div>
+                                            </div>
+                                            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
+                                                <Star size={20} className="text-[#F27D26]" />
+                                                <div>
+                                                    <p className="text-[8px] uppercase font-bold text-white/30">Wealth Alignment</p>
+                                                    <p className="text-xs font-black uppercase text-green-500">High Frequency</p>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div className="space-y-4">
-                                            <p className="text-[10px] uppercase font-black text-[#F27D26]">The Inquiry Protocol</p>
-                                            <textarea value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask your question here (Past, Future, Intent)..." className="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/10 h-24" />
+                                            <p className="text-[10px] uppercase font-black text-[#F27D26]">{t.inquiry}</p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {['success', 'magic', 'evil_eye', 'jinn', 'illness'].map(type => (
+                                                    <button key={type} onClick={() => setInquiryType(type)} className={`p-3 rounded-xl text-[9px] uppercase font-bold border transition-all ${inquiryType === type ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'bg-white/5 border-white/10 text-white/40'}`}>
+                                                        {type.replace('_', ' ')}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
-                                            <input value={name} onChange={e => setName(e.target.value)} placeholder="Name / Suna" className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
-                                            <input value={mother} onChange={e => setMother(e.target.value)} placeholder="Mother's Name" className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
-                                            <input value={age} onChange={e => setAge(e.target.value)} type="number" placeholder="Age / Shekaru" className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
-                                            <input value={dob} onChange={e => setDob(e.target.value)} placeholder="DOB (e.g. 1990)" className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
+                                            <input value={name} onChange={e => setName(e.target.value)} placeholder={t.name} className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
+                                            <input value={mother} onChange={e => setMother(e.target.value)} placeholder={t.mother} className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
+                                            <input value={dob} onChange={e => setDob(e.target.value)} placeholder={t.dob} className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
+                                            <input value={pob} onChange={e => setPob(e.target.value)} placeholder={t.pob} className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
                                         </div>
-                                        <input value={chosenNum} onChange={e => setChosenNum(e.target.value)} type="number" placeholder="Chosen Number (1-999)" className="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
+                                        <input value={chosenNum} onChange={e => setChosenNum(e.target.value)} type="number" placeholder={t.num} className="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
                                         
-                                        <button onClick={handleCalculate} className="w-full bg-[#F27D26] text-black py-5 rounded-2xl font-black uppercase italic text-xl shadow-xl shadow-[#F27D26]/20">Initialize Hisab</button>
+                                        <button onClick={handleCalculate} className="w-full bg-[#F27D26] text-black py-5 rounded-2xl font-black uppercase italic text-xl shadow-xl shadow-[#F27D26]/20">{t.init}</button>
                                         
-                                        {result && <TerminalEngine value={result.total} raml={result.raml} buruj={result.star} planet={result.planet} question={result.question} />}
+                                        {result && <TerminalEngine value={result.total} buruj={result.buruj} planet={result.planet} inquiryType={inquiryType} />}
                                     </div>
 
                                     <div className="space-y-8">
                                         {result ? (
                                             <div className="glass p-10 rounded-[3rem] space-y-6 border-t-4 border-[#F27D26]">
-                                                <div className="grid grid-cols-2 gap-8 items-end">
+                                                <div className="flex justify-between items-end">
                                                     <div>
                                                         <p className="text-[10px] uppercase font-bold text-[#F27D26]">Abjad Value</p>
-                                                        <h3 className="text-7xl font-black italic">{result.total}</h3>
+                                                        <h3 className="text-6xl font-black italic">{result.total}</h3>
                                                     </div>
-                                                    <div className="text-right">
-                                                        <p className="text-[10px] uppercase font-bold text-white/40">Buruj (Star)</p>
-                                                        <h4 className="text-2xl font-black italic text-[#F27D26]">{result.star.name}</h4>
-                                                        <p className="text-[10px] uppercase text-white/20">{result.star.nature}</p>
+                                                    <WafqVisualizer total={result.total} />
+                                                </div>
+
+                                                <div className="p-6 bg-white/5 rounded-2xl border border-white/10 space-y-4">
+                                                    <div className="flex items-center gap-3 text-[#F27D26]">
+                                                        <AlertCircle size={18} />
+                                                        <span className="text-xs font-black uppercase">{t.diagnosis}</span>
                                                     </div>
+                                                    <p className="text-sm text-white/80 italic leading-relaxed">{result.diagnosis}</p>
+                                                </div>
+
+                                                <div className="p-6 bg-[#F27D26]/5 rounded-2xl border border-[#F27D26]/20 space-y-4">
+                                                    <span className="text-[#F27D26] font-black uppercase text-[10px] block">{t.remedy}</span>
+                                                    <p className="text-lg font-bold italic">{result.remedy}</p>
+                                                    <div className="text-[10px] text-white/40 uppercase font-black">Method: {result.buruj.remedy_type} // {result.timing}</div>
                                                 </div>
 
                                                 <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                                                    <p className="text-[10px] uppercase font-bold text-white/30 mb-2">Planet Ruler & Jinn King</p>
-                                                    <div className="text-xl font-black uppercase text-[#F27D26]">{result.planet.name}</div>
-                                                    <div className="text-[10px] text-white/40">Angel: {result.planet.angel} // Jinn: {result.planet.jinn}</div>
-                                                </div>
-
-                                                <div className="p-6 bg-[#F27D26]/5 rounded-2xl italic text-lg border border-[#F27D26]/20">
-                                                    <span className="text-[#F27D26] font-black uppercase text-[10px] block not-italic mb-2">Raml Interpretation</span>
-                                                    {result.raml.meaning}
-                                                </div>
-
-                                                <div className="pt-6 border-t border-white/5">
-                                                    <h5 className="text-xs font-black uppercase text-[#F27D26] mb-4">Submit Affair for Neural Feed</h5>
-                                                    <textarea value={story} onChange={e => setStory(e.target.value)} placeholder="Write your story or affair here..." className="w-full bg-black/40 p-4 rounded-xl h-32 outline-none border border-white/5" />
-                                                    <button onClick={handleSubmitStory} className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#F27D26] hover:text-white transition-all"><Send size={14}/> Broadcast to Feed</button>
+                                                    <p className="text-[10px] uppercase font-bold text-white/30 mb-2">{t.frequency}</p>
+                                                    <div className="text-xl font-black uppercase text-[#F27D26]">{result.ism}</div>
                                                 </div>
                                             </div>
                                         ) : (
@@ -505,31 +561,39 @@ app.get('*', (req, res) => {
                             )}
 
                             {activeTab === 'admin' && (
-                                <motion.div key="admin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto">
+                                <motion.div key="admin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto pb-24">
                                     {!isAdmin ? (
                                         <div className="glass p-12 rounded-[3rem] max-w-md mx-auto space-y-6">
-                                            <h3 className="text-2xl font-black italic uppercase text-center">System Access</h3>
+                                            <h3 className="text-2xl font-black italic uppercase text-center">{t.vault}</h3>
                                             <input type="text" placeholder="Username" className="w-full bg-white/5 p-4 rounded-xl outline-none" onChange={e => setLoginForm({...loginForm, user: e.target.value})} />
                                             <input type="password" placeholder="Password" className="w-full bg-white/5 p-4 rounded-xl outline-none" onChange={e => setLoginForm({...loginForm, pass: e.target.value})} />
-                                            <button onClick={handleLogin} className="w-full bg-[#F27D26] text-black py-4 rounded-xl font-black uppercase italic">Unlock</button>
+                                            <button onClick={handleLogin} className="w-full bg-[#F27D26] text-black py-4 rounded-xl font-black uppercase italic">{t.unlock}</button>
                                         </div>
                                     ) : (
                                         <div className="space-y-12">
-                                            <div className="glass p-10 rounded-[3rem] space-y-6 border-b-4 border-[#F27D26]">
-                                                <div className="flex items-center gap-3">
-                                                    <Shield size={20} className="text-[#F27D26]" />
-                                                    <h3 className="text-2xl font-black italic uppercase text-[#F27D26]">System Settings</h3>
+                                            <div className="grid md:grid-cols-2 gap-6">
+                                                <div className="glass p-8 rounded-[2rem] space-y-4">
+                                                    <div className="flex items-center gap-3 text-[#F27D26]">
+                                                        <BarChart3 size={20} />
+                                                        <h4 className="font-black uppercase text-xs">Neural Analytics</h4>
+                                                    </div>
+                                                    <div className="text-4xl font-black italic">{adminStats?.totalScans} <span className="text-[10px] uppercase font-bold text-white/20">Total Scans</span></div>
+                                                    <div className="grid grid-cols-2 gap-2 text-[8px] uppercase font-bold text-white/40">
+                                                        {Object.entries(adminStats?.inquiries || {}).map(([k, v]) => <div key={k}>{k}: {v}</div>)}
+                                                    </div>
                                                 </div>
-                                                <div className="grid md:grid-cols-2 gap-4">
-                                                    <input value={newAdmin.user} onChange={e => setNewAdmin({...newAdmin, user: e.target.value})} placeholder="New User" className="w-full bg-white/5 p-4 rounded-xl outline-none border border-white/5" />
-                                                    <input type="password" value={newAdmin.pass} onChange={e => setNewAdmin({...newAdmin, pass: e.target.value})} placeholder="New Pass" className="w-full bg-white/5 p-4 rounded-xl outline-none border border-white/5" />
+                                                <div className="glass p-8 rounded-[2rem] space-y-4">
+                                                    <div className="flex items-center gap-3 text-[#F27D26]">
+                                                        <Settings size={20} />
+                                                        <h4 className="font-black uppercase text-xs">Quick Settings</h4>
+                                                    </div>
+                                                    <input value={newAdmin.globalCommand} onChange={e => setNewAdmin({...newAdmin, globalCommand: e.target.value})} placeholder="Marquee Message" className="w-full bg-white/5 p-3 rounded-xl text-xs outline-none" />
+                                                    <button onClick={handleUpdateAdmin} className="w-full bg-white/10 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">Update System</button>
                                                 </div>
-                                                <input value={newAdmin.globalCommand} onChange={e => setNewAdmin({...newAdmin, globalCommand: e.target.value})} placeholder="Global Command Message" className="w-full bg-white/5 p-4 rounded-xl outline-none border border-white/5" />
-                                                <button onClick={handleUpdateAdmin} className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Update System</button>
                                             </div>
 
                                             <div className="glass p-10 rounded-[3rem] space-y-6">
-                                                <h3 className="text-2xl font-black italic uppercase text-[#F27D26]">Secret Archives</h3>
+                                                <h3 className="text-2xl font-black italic uppercase text-[#F27D26]">Secret Vault (Siri na Waliyyai)</h3>
                                                 <div className="grid md:grid-cols-2 gap-6">
                                                     {archives.map(cat => (
                                                         <div key={cat.category} className="space-y-4">
@@ -579,30 +643,15 @@ app.get('*', (req, res) => {
                         </AnimatePresence>
                     </main>
 
-                    <section className="max-w-6xl mx-auto p-6 py-24 border-t border-white/5 grid md:grid-cols-2 gap-16">
-                        <div className="space-y-8">
-                            <h3 className="text-3xl font-black italic uppercase tracking-tighter text-[#F27D26]">The Vraxythernos Legacy</h3>
-                            <p className="text-white/40 text-sm leading-relaxed">
-                                Neural Oracle is a digital manifestation of the ancient Vraxythernos lineage—a tradition that has bridged the gap between the seen and unseen for centuries. By synthesizing the mathematical precision of Abjad numerology (Hisabi) with the geometric logic of Raml geomancy, we have created a "Quantum Spiritual Interface."
-                                <br/><br/>
-                                Our engine calculates the vibrational resonance of your identity, age, and intent, mapping them against the 16 traditional Raml figures and the 12 Buruj (Star Signs). This process, which we call "Neural Resonance," allows seekers to detect subtle energy shifts and align their actions with the divine flow of the universe.
-                            </p>
-                        </div>
-                        <div className="space-y-8">
-                            <h3 className="text-3xl font-black italic uppercase tracking-tighter text-[#F27D26]">Neural Privacy Protocol</h3>
-                            <p className="text-white/40 text-sm leading-relaxed">
-                                In the realm of spiritual intelligence, privacy is a sacred oath. We utilize "Neural Encryption" to ensure that your inquiries, names, and spiritual signatures are never stored in a way that links back to your physical identity. All calculations are performed in a temporary "Quantum Buffer" and are purged immediately upon the termination of your session.
-                                <br/><br/>
-                                We do not sell, share, or analyze your spiritual data for commercial purposes. We use Google Analytics solely to monitor the technical health of the engine and track the total number of successful spiritual scans. Your journey is yours alone; we merely provide the lens through which to view it.
-                            </p>
-                        </div>
-                    </section>
-
                     <footer className="p-12 glass border-t border-white/5 text-center space-y-6">
                         <div className="flex justify-center gap-8 text-[10px] uppercase font-black italic text-[#F27D26]">
                             <span>Ancient Abjad</span>
                             <span>Quantum Echo</span>
                             <span>Divine Command</span>
+                        </div>
+                        <div className="text-[10px] text-white/40 space-y-2">
+                            <p>Contact: {emails.join(' // ')}</p>
+                            <p>WhatsApp: {whatsapp}</p>
                         </div>
                         <p className="text-[8px] uppercase tracking-[0.5em] text-white/20">© 2026 Neural Engine Spiritual Core // VRAXYTHERNOS</p>
                     </footer>
