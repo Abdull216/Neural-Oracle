@@ -174,11 +174,52 @@ app.get('*', (req, res) => {
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div style="color:#F27D26; padding:40px; font-family:monospace; background:#000; height:100vh; display:flex; align-items:center; justify-content:center;">
+            <div style="text-align:center;">
+                <h2 style="font-size:24px; font-weight:900; font-style:italic; text-transform:uppercase; animation:pulse 2s infinite;">Initializing Neural Engine...</h2>
+                <p style="opacity:0.4; margin-top:10px; font-size:10px;">Connecting to Spiritual Frequency</p>
+            </div>
+        </div>
+    </div>
     <script type="text/babel">
+        window.onerror = function(msg, url, line, col, error) {
+            console.error(msg, error);
+            const root = document.getElementById('root');
+            if (root) {
+                root.innerHTML = '<div style="color:#F27D26; padding:40px; font-family:monospace; background:#000; height:100vh;">' +
+                    '<h2 style="font-size:24px; font-weight:900; font-style:italic; text-transform:uppercase;">Neural Engine Error</h2>' +
+                    '<p style="opacity:0.6; margin-top:20px;">The spiritual frequency was interrupted.</p>' +
+                    '<p style="font-size:12px; margin-top:10px; color:red;">' + msg + '</p>' +
+                    '<p style="font-size:10px; opacity:0.4;">Line: ' + line + '</p>' +
+                    '<button onclick="location.reload()" style="margin-top:20px; background:#F27D26; color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">RETRY LINK</button>' +
+                    '</div>';
+            }
+            return false;
+        };
+
         const { useState, useEffect } = React;
-        const { motion, AnimatePresence } = window.Motion || window.FramerMotion || {};
-        const { Zap, Hand, Settings, LogOut, BookOpen, MessageSquare, Send, Upload, Shield, Eye, Star, Sun } = window.Lucide || window.lucide || {};
+        
+        // Robust library detection
+        const FM = window.Motion || window.FramerMotion || {};
+        const motion = FM.motion || { div: (props) => <div {...props} />, span: (props) => <span {...props} /> };
+        const AnimatePresence = FM.AnimatePresence || (({children}) => children);
+        
+        const L = window.Lucide || window.lucide || {};
+        const getIcon = (name) => L[name] || (() => <span className="inline-block w-4 h-4 border border-current rounded-full opacity-20"></span>);
+        
+        const Zap = getIcon('Zap');
+        const Hand = getIcon('Hand');
+        const Settings = getIcon('Settings');
+        const LogOut = getIcon('LogOut');
+        const BookOpen = getIcon('BookOpen');
+        const MessageSquare = getIcon('MessageSquare');
+        const Send = getIcon('Send');
+        const Upload = getIcon('Upload');
+        const Shield = getIcon('Shield');
+        const Eye = getIcon('Eye');
+        const Star = getIcon('Star');
+        const Sun = getIcon('Sun');
 
         const GrandPalmLogo = () => (
             <div className="relative w-48 h-48 mx-auto mb-12 flex items-center justify-center">
