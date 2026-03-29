@@ -1,16 +1,22 @@
 {
-  "name": "neural-engine-spiritual-core",
-  "version": "3.1.0",
-  "type": "module",
+  "name": "neural-oracle",
+  "version": "4.0.0",
+  "description": "Ghazali-Powered AI Oracle & Sovereign Ad Network",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node index.js",
-    "build": "echo 'No build step needed'",
-    "lint": "node --check index.js"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "fs-extra": "^11.3.4"
-  }
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0",
+    "path": "^0.12.7",
+    "url": "^0.11.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "author": "Abdullah Haruna",
+  "license": "ISC"
 }
