@@ -65,7 +65,8 @@ const INITIAL_ARCHIVES = [
             { name: "Cipher of Al-Khidr", code: "KHIDR-99-OPEN-X", meaning: "Sudden spiritual openings and meeting hidden masters.", usage: "Recite 99 times at a river bank." },
             { name: "Seal of 7 Planets", code: "KT-PLNT-ALL-7", meaning: "Total dominance over environment and career.", usage: "Recite 7 times every morning." },
             { name: "Blink-Shift Master Key", code: "TAYY-ARD-00-GAIB", meaning: "Physical teleportation frequency.", usage: "Requires 40 days seclusion." },
-            { name: "Wealth of 4 Angels", code: "ANGEL-4-GOLD-MANIFEST", meaning: "Material manifestation frequency.", usage: "Recite 111 times after midnight." }
+            { name: "Wealth of 4 Angels", code: "ANGEL-4-GOLD-MANIFEST", meaning: "Material manifestation frequency.", usage: "Recite 111 times after midnight." },
+            { name: "Metatron Cube Frequency", code: "METATRON-333-CUBE", meaning: "Access to the blueprint of reality.", usage: "Visualize the cube while reciting 333 times." }
         ]
     },
     {
@@ -73,7 +74,8 @@ const INITIAL_ARCHIVES = [
         codes: [
             { name: "Shamharush (Thursday)", code: "يا شمهروش", meaning: "King of the 4th day. Rules justice and secrets.", usage: "Recite 45 times at noon on Thursday." },
             { name: "Maymun (Saturday)", code: "يا ميمون", meaning: "King of the 6th day. Rules protection and heavy tasks.", usage: "Recite 77 times on Saturday night." },
-            { name: "Zawba'a (Friday)", code: "يا زوبعة", meaning: "King of the 5th day. Rules love and abundance.", usage: "Recite 66 times after Jumu'ah." }
+            { name: "Zawba'a (Friday)", code: "يا زوبعة", meaning: "King of the 5th day. Rules love and abundance.", usage: "Recite 66 times after Jumu'ah." },
+            { name: "Al-Ahmar (Tuesday)", code: "يا أحمر", meaning: "King of the 2nd day. Rules power and strength.", usage: "Recite 22 times on Tuesday midnight." }
         ]
     },
     {
@@ -81,7 +83,17 @@ const INITIAL_ARCHIVES = [
         codes: [
             { name: "Al-Kimiya Gold Cipher", code: "أهـم سقك حلع يص", meaning: "Urgent attraction of massive wealth.", usage: "Recite 111 times after midnight." },
             { name: "Binary Wealth Cipher", code: "0101-GOLD-1101", meaning: "Spiritual code for tech-based wealth.", usage: "Recite 33 times while visualizing bank growth." },
-            { name: "Algorithm Mastery", code: "ALG-FAVOR-01-KUN", meaning: "Aligns web projects with success.", usage: "Recite 70 times before deploying code." }
+            { name: "Algorithm Mastery", code: "ALG-FAVOR-01-KUN", meaning: "Aligns web projects with success.", usage: "Recite 70 times before deploying code." },
+            { name: "Quantum Entanglement of Souls", code: "ENTANGLE-SOUL-777", meaning: "Deep spiritual connection with someone.", usage: "Recite 77 times while holding their name." }
+        ]
+    },
+    {
+        category: "Elite Hiding Secrets (The Forbidden)",
+        codes: [
+            { name: "The 7 Seals of Solomon", code: "SEAL-SOLOMON-7-X", meaning: "Absolute control over all spiritual entities.", usage: "Requires 7 days of fasting and 777 recitations." },
+            { name: "The 99th Name of the Void", code: "VOID-99-NAME-NULL", meaning: "Erasure of all negative karma and blockages.", usage: "Recite 99 times in total darkness." },
+            { name: "The Hidden 13th Zodiac", code: "ZODIAC-13-OPH-00", meaning: "Access to the lost frequency of time.", usage: "Recite 13 times at the stroke of midnight." },
+            { name: "Jibril Resonance", code: "JIBRIL-RESONANCE-19", meaning: "Direct communication with the divine messenger.", usage: "Recite 19 times after Fajr." }
         ]
     }
 ];
@@ -264,7 +276,11 @@ app.get('*', (req, res) => {
                     '> STATUS: WAVEFUNCTION COLLAPSE OBSERVED',
                     '> --- QUANTUM PHYSICS ECHO ---',
                     '> ENTANGLEMENT RATIO: ' + (value / 1000).toFixed(3),
+                    '> SCHRODINGER STATE: RESOLVED',
+                    '> HEISENBERG UNCERTAINTY: MINIMIZED',
+                    '> FREQUENCY DETECTED: ' + (value * 1.618).toFixed(2) + ' Hz',
                     '> BINARY WEALTH STREAM: 0101-GOLD-1101',
+                    '> SPIRITUAL RESONANCE: ESTABLISHED',
                     '> SYSTEM: DIAGNOSIS READY.'
                 ];
                 let i = 0;
@@ -346,8 +362,11 @@ app.get('*', (req, res) => {
                 const pVal = calculateAbjad(pob);
                 const dVal = calculateAbjad(dob);
                 const cVal = parseInt(chosenNum) || 0;
+                
+                // Add current day's spiritual frequency (0-6)
+                const dayFreq = new Date().getDay();
 
-                const grandTotal = nVal + mVal + pVal + dVal + cVal;
+                const grandTotal = nVal + mVal + pVal + dVal + cVal + dayFreq;
                 const burujIdx = (grandTotal % 12) === 0 ? 11 : (grandTotal % 12) - 1;
                 const planetIdx = (grandTotal % 7) === 0 ? 6 : (grandTotal % 7) - 1;
 
@@ -361,22 +380,26 @@ app.get('*', (req, res) => {
                 let timing = "";
 
                 if (inquiryType === 'evil_eye') {
-                    diagnosis = lang === 'ha' ? "An gano: Shishigi daga idon makiya." : "Detected: High vibrational interference from external envy.";
-                    remedy = lang === 'ha' ? "Karanta Falaqi da Nasi sau 11 akan ruwa." : "Recite Surah Al-Falaq and An-Nas 11 times over water.";
+                    diagnosis = lang === 'ha' ? "An gano: Shishigi daga idon makiya." : "Detected: High vibrational interference from external envy (Hasad).";
+                    remedy = lang === 'ha' ? "Karanta Falaqi da Nasi sau 11 akan ruwa." : "Recite Surah Al-Falaq and An-Nas 11 times over water and wash your face.";
                     timing = "Sunset (Maghrib)";
                 } else if (inquiryType === 'magic') {
-                    diagnosis = "Detected: Spiritual binding (Sihr) affecting your " + userPlanet.attribute + ".";
-                    remedy = "Recite Ayatul Kursi 313 times.";
+                    diagnosis = "Detected: Spiritual binding (Sihr) affecting your " + userPlanet.attribute + ". The frequency is tied to " + userBuruj.element + ".";
+                    remedy = "Recite Ayatul Kursi 313 times and Surah Al-Baqarah (last 2 verses) 7 times.";
                     timing = "Midnight (Tahajjud)";
                 } else if (inquiryType === 'success') {
-                    diagnosis = "Detected: Blockage in your path to wealth.";
-                    remedy = "Recite 'Ya Fattahu Ya Razzaqu' 489 times. Give charity.";
+                    diagnosis = "Detected: Blockage in your path to wealth. Your star " + userBuruj.name + " is currently eclipsed.";
+                    remedy = "Recite 'Ya Fattahu Ya Razzaqu' 489 times. Give charity to 7 poor people.";
                     timing = "Thursday Noon";
+                } else if (inquiryType === 'jinn') {
+                    diagnosis = "Detected: Presence of a " + (grandTotal % 2 === 0 ? 'Maimun' : 'Shamharush') + " class entity in your proximity.";
+                    remedy = "Recite Surah Al-Jinn once and 'A'udhu bi-kalimatillah' 100 times.";
+                    timing = "After Isha";
                 } else if (inquiryType === 'illness') {
                     const isSpiritual = grandTotal % 2 !== 0;
-                    diagnosis = isSpiritual ? "Diagnosis: Spiritual ailment." : "Diagnosis: Physical ailment. Visit a Hospital.";
-                    remedy = isSpiritual ? "Recite 'Ya Shafi' 1000 times." : "Combine medicine with 'Ya Salam' 131 times.";
-                    timing = "Morning";
+                    diagnosis = isSpiritual ? "Diagnosis: Spiritual ailment (As-Sihr al-Marad)." : "Diagnosis: Physical ailment. Visit a Hospital immediately.";
+                    remedy = isSpiritual ? "Recite 'Ya Shafi' 1000 times and Surah Al-Fatihah 7 times over honey." : "Combine medicine with 'Ya Salam' 131 times.";
+                    timing = "Morning (Fajr)";
                 }
 
                 setResult({
@@ -436,7 +459,7 @@ app.get('*', (req, res) => {
                         <div className="flex items-center gap-6">
                             <div className="flex gap-2">
                                 {['en', 'ar', 'ha', 'fr'].map(l => (
-                                    <button key={l} onClick={() => setLang(l)} className={`w-6 h-6 rounded-full text-[8px] font-black uppercase border ${lang === l ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'border-white/20 text-white/40'}`}>{l}</button>
+                                    <button key={l} onClick={() => setLang(l)} className={'w-6 h-6 rounded-full text-[8px] font-black uppercase border ' + (lang === l ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'border-white/20 text-white/40')}>{l}</button>
                                 ))}
                             </div>
                             <nav className="flex gap-6 text-[10px] uppercase font-bold text-white/40">
@@ -475,7 +498,7 @@ app.get('*', (req, res) => {
                                             <p className="text-[10px] uppercase font-black text-[#F27D26]">{t.inquiry}</p>
                                             <div className="grid grid-cols-3 gap-2">
                                                 {['success', 'magic', 'evil_eye', 'jinn', 'illness'].map(type => (
-                                                    <button key={type} onClick={() => setInquiryType(type)} className={`p-3 rounded-xl text-[9px] uppercase font-bold border transition-all ${inquiryType === type ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'bg-white/5 border-white/10 text-white/40'}`}>
+                                                    <button key={type} onClick={() => setInquiryType(type)} className={'p-3 rounded-xl text-[9px] uppercase font-bold border transition-all ' + (inquiryType === type ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'bg-white/5 border-white/10 text-white/40')}>
                                                         {type.replace('_', ' ')}
                                                     </button>
                                                 ))}
@@ -589,6 +612,22 @@ app.get('*', (req, res) => {
                                                     </div>
                                                     <input value={newAdmin.globalCommand} onChange={e => setNewAdmin({...newAdmin, globalCommand: e.target.value})} placeholder="Marquee Message" className="w-full bg-white/5 p-3 rounded-xl text-xs outline-none" />
                                                     <button onClick={handleUpdateAdmin} className="w-full bg-white/10 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">Update System</button>
+                                                </div>
+                                            </div>
+
+                                            <div className="glass p-10 rounded-[3rem] space-y-6">
+                                                <h3 className="text-2xl font-black italic uppercase text-[#F27D26]">Neural Terminal (Echo Mode)</h3>
+                                                <div className="terminal-box text-[#00FF00] opacity-80 h-48">
+                                                    <div>> SYSTEM STATUS: ONLINE</div>
+                                                    <div>> QUANTUM LINK: STABLE</div>
+                                                    <div>> FREQUENCY: 2.791 GHz</div>
+                                                    <div>> ECHO: {globalCommand}</div>
+                                                    <div>> LOG: ADMIN ACCESS GRANTED AT {new Date().toLocaleTimeString()}</div>
+                                                    <div className="animate-pulse inline-block w-2 h-3 bg-[#00FF00] ml-1"></div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <input placeholder="Enter Echo Command..." className="flex-1 bg-white/5 p-3 rounded-xl text-xs outline-none border border-white/10" />
+                                                    <button className="bg-[#F27D26] text-black px-6 py-3 rounded-xl font-black uppercase text-[10px]">Execute</button>
                                                 </div>
                                             </div>
 
