@@ -16,7 +16,7 @@ const ARCHIVES_PATH = path.join(__dirname, 'neural_archives.json');
 let adminConfig = { user: 'admin216', pass: 'admin216', globalCommand: 'KUN FAYAKUN: THE GATES OF WEALTH ARE OPEN.' };
 let blogPosts = [];
 let userStories = [];
-let stats = { totalScans: 0, inquiries: { success: 0, magic: 0, evil_eye: 0, jinn: 0, illness: 0 } };
+let stats = { totalScans: 0, inquiries: { success: 0, magic: 0, evil_eye: 0, jinn: 0, illness: 0, past: 0, future: 0 } };
 
 const initData = () => {
     if (fs.existsSync(CONFIG_PATH)) adminConfig = { ...adminConfig, ...fs.readJsonSync(CONFIG_PATH) };
@@ -238,10 +238,10 @@ app.get('*', (req, res) => {
         const Settings = getIcon('Settings');
 
         const TRANSLATIONS = {
-            en: { oracle: "Oracle", feed: "Feed", admin: "Admin", inquiry: "Select Inquiry Type", name: "Full Name", mother: "Mother's Name", dob: "Year of Birth", pob: "Place of Birth", num: "Chosen Number", init: "Initialize Hisab", diagnosis: "Spiritual Diagnosis", remedy: "Remedy & Protocol", frequency: "Divine Frequency", vault: "System Vault", unlock: "Unlock Vault" },
-            ar: { oracle: "أوراكل", feed: "تغذية", admin: "مسؤول", inquiry: "اختر نوع الاستفسار", name: "الاسم الكامل", mother: "اسم الأم", dob: "سنة الميلاد", pob: "مكان الميلاد", num: "الرقم المختار", init: "بدء الحساب", diagnosis: "التشخيص الروحي", remedy: "العلاج والبروتوكول", frequency: "التردد الإلهي", vault: "قبو النظام", unlock: "فتح القبو" },
-            ha: { oracle: "Bincike", feed: "Labarai", admin: "Shugaba", inquiry: "Zabi Abinda Kake So", name: "Cikakken Suna", mother: "Sunan Mahaifiya", dob: "Shekarar Haihuwa", pob: "Wajen Haihuwa", num: "Zababben Lamba", init: "Fara Hisabi", diagnosis: "Binciken Matsala", remedy: "Magani da Ka'ida", frequency: "Ismullah al-A'zam", vault: "Ma'ajiyar Sirri", unlock: "Bude Ma'ajiya" },
-            fr: { oracle: "Oracle", feed: "Flux", admin: "Admin", inquiry: "Type de Demande", name: "Nom Complet", mother: "Nom de la Mère", dob: "Année de Naissance", pob: "Lieu de Naissance", num: "Nombre Choisi", init: "Initialiser Hisab", diagnosis: "Diagnostic Spirituel", remedy: "Remède et Protocole", frequency: "Fréquence Divine", vault: "Voûte Système", unlock: "Déverrouiller" }
+            en: { oracle: "Oracle", feed: "Feed", admin: "Admin", about: "About", inquiry: "Select Inquiry Type", name: "Full Name", mother: "Mother's Name", dob: "Year of Birth", pob: "Place of Birth", question: "Your Question", num: "Chosen Number", init: "Initialize Hisab", diagnosis: "Spiritual Diagnosis", remedy: "Remedy & Protocol", frequency: "Divine Frequency", vault: "System Vault", unlock: "Unlock Vault" },
+            ar: { oracle: "أوراكل", feed: "تغذية", admin: "مسؤول", about: "حول", inquiry: "اختر نوع الاستفسار", name: "الاسم الكامل", mother: "اسم الأم", dob: "سنة الميلاد", pob: "مكان الميلاد", question: "سؤالك", num: "الرقم المختار", init: "بدء الحساب", diagnosis: "التشخيص الروحي", remedy: "العلاج والبروتوكول", frequency: "التردد الإلهي", vault: "قبو النظام", unlock: "فتح القبو" },
+            ha: { oracle: "Bincike", feed: "Labarai", admin: "Shugaba", about: "Game da Mu", inquiry: "Zabi Abinda Kake So", name: "Cikakken Suna", mother: "Sunan Mahaifiya", dob: "Shekarar Haihuwa", pob: "Wajen Haihuwa", question: "Tambayarka", num: "Zababben Lamba", init: "Fara Hisabi", diagnosis: "Binciken Matsala", remedy: "Magani da Ka'ida", frequency: "Ismullah al-A'zam", vault: "Ma'ajiyar Sirri", unlock: "Bude Ma'ajiya" },
+            fr: { oracle: "Oracle", feed: "Flux", admin: "Admin", about: "À Propos", inquiry: "Type de Demande", name: "Nom Complet", mother: "Nom de la Mère", dob: "Année de Naissance", pob: "Lieu de Naissance", question: "Votre Question", num: "Nombre Choisi", init: "Initialiser Hisab", diagnosis: "Diagnostic Spirituel", remedy: "Remède et Protocole", frequency: "Fréquence Divine", vault: "Voûte Système", unlock: "Déverrouiller" }
         };
 
         const GrandPalmLogo = () => (
@@ -325,6 +325,7 @@ app.get('*', (req, res) => {
             const [mother, setMother] = useState('');
             const [dob, setDob] = useState('');
             const [pob, setPob] = useState('');
+            const [question, setQuestion] = useState('');
             const [chosenNum, setChosenNum] = useState('');
             const [inquiryType, setInquiryType] = useState('success');
             const [result, setResult] = useState(null);
@@ -340,6 +341,25 @@ app.get('*', (req, res) => {
 
             const t = TRANSLATIONS[lang];
             const { abjadMap, buruj, planets, emails, whatsapp } = ${JSON.stringify(clientData)};
+
+            const RAMLI_FIGURES = [
+                { name: "Al-Jama'a (The Congregation)", meaning: "Unity, gathering, and collective strength. Success through others.", advice: "Seek counsel and work in groups." },
+                { name: "Al-Farah (Joy)", meaning: "Happiness, celebration, and positive news. A period of ease.", advice: "Be grateful and share your happiness." },
+                { name: "Al-Uqla (The Bond)", meaning: "Restriction, binding, and delays. Things are held back.", advice: "Be patient; wait for the knot to untie." },
+                { name: "Al-Ankis (The Reverse)", meaning: "Reversal of fortune, downward movement, or introspection.", advice: "Look inward and correct your mistakes." },
+                { name: "Al-Humra (Redness)", meaning: "Passion, conflict, blood, and intensity. High energy.", advice: "Control your anger and avoid rash decisions." },
+                { name: "Al-Bayad (Whiteness)", meaning: "Purity, peace, wisdom, and clarity. A clean slate.", advice: "Proceed with a pure heart and clear mind." },
+                { name: "Nasr al-Kharij (Outward Success)", meaning: "Victory in the external world, fame, and public gain.", advice: "Take bold steps in public affairs." },
+                { name: "Nasr al-Dakhil (Inward Success)", meaning: "Internal victory, spiritual growth, and hidden gains.", advice: "Focus on your home and inner self." },
+                { name: "Al-Utba al-Kharija (The Outer Threshold)", meaning: "Exiting a situation, moving away, or loss.", advice: "Let go of what no longer serves you." },
+                { name: "Al-Utba al-Dakhila (The Inner Threshold)", meaning: "Entering a new phase, arrival, or gain.", advice: "Prepare for a new beginning." },
+                { name: "Al-Ijtima (The Gathering)", meaning: "Union, marriage, or a meeting of minds.", advice: "Focus on partnerships and contracts." },
+                { name: "Al-Tariq (The Path)", meaning: "Journey, movement, and continuous change.", advice: "Keep moving; do not stay stagnant." },
+                { name: "Al-Qabd al-Kharij (Outward Seizure)", meaning: "Taking control, winning a battle, or acquisition.", advice: "Be firm and decisive." },
+                { name: "Al-Qabd al-Dakhil (Inward Seizure)", meaning: "Internal control, self-mastery, or spiritual capture.", advice: "Master your desires and ego." },
+                { name: "Al-Kousaj (The Beardless)", meaning: "Youthful energy, quick results, but lack of depth.", advice: "Don't be fooled by surface appearances." },
+                { name: "Al-Ahyan (The Times)", meaning: "Timing, cycles, and destiny. Everything has its season.", advice: "Watch the signs of the times carefully." }
+            ];
 
             useEffect(() => {
                 fetch('/api/blog').then(r => r.json()).then(setPosts);
@@ -361,17 +381,19 @@ app.get('*', (req, res) => {
                 const mVal = calculateAbjad(mother);
                 const pVal = calculateAbjad(pob);
                 const dVal = calculateAbjad(dob);
+                const qVal = calculateAbjad(question);
                 const cVal = parseInt(chosenNum) || 0;
                 
-                // Add current day's spiritual frequency (0-6)
                 const dayFreq = new Date().getDay();
 
-                const grandTotal = nVal + mVal + pVal + dVal + cVal + dayFreq;
+                const grandTotal = nVal + mVal + pVal + dVal + qVal + cVal + dayFreq;
                 const burujIdx = (grandTotal % 12) === 0 ? 11 : (grandTotal % 12) - 1;
                 const planetIdx = (grandTotal % 7) === 0 ? 6 : (grandTotal % 7) - 1;
+                const ramliIdx = grandTotal % 16;
 
                 const userBuruj = buruj[burujIdx];
                 const userPlanet = planets[planetIdx];
+                const userRamli = RAMLI_FIGURES[ramliIdx];
 
                 await fetch('/api/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: inquiryType }) });
 
@@ -379,26 +401,35 @@ app.get('*', (req, res) => {
                 let remedy = "";
                 let timing = "";
 
-                if (inquiryType === 'evil_eye') {
-                    diagnosis = lang === 'ha' ? "An gano: Shishigi daga idon makiya." : "Detected: High vibrational interference from external envy (Hasad).";
-                    remedy = lang === 'ha' ? "Karanta Falaqi da Nasi sau 11 akan ruwa." : "Recite Surah Al-Falaq and An-Nas 11 times over water and wash your face.";
+                // Dynamic Response Logic based on Ramli and Inquiry Type
+                if (inquiryType === 'past') {
+                    diagnosis = "Insight into the Past: " + userRamli.meaning + ". The roots of your query lie in " + userPlanet.attribute + " issues.";
+                    remedy = "To resolve past shadows, " + userRamli.advice;
+                    timing = "Past Cycle Resolution";
+                } else if (inquiryType === 'future') {
+                    diagnosis = "Insight into the Future: " + userRamli.name + " indicates " + userRamli.meaning + ".";
+                    remedy = "To align with the best future, " + userRamli.advice;
+                    timing = "Upcoming Cycle";
+                } else if (inquiryType === 'evil_eye') {
+                    diagnosis = "Detected: High vibrational interference from external envy (Hasad). " + userRamli.name + " suggests this is affecting your " + userPlanet.attribute + ".";
+                    remedy = "Recite Surah Al-Falaq and An-Nas 11 times over water. " + userRamli.advice;
                     timing = "Sunset (Maghrib)";
                 } else if (inquiryType === 'magic') {
-                    diagnosis = "Detected: Spiritual binding (Sihr) affecting your " + userPlanet.attribute + ". The frequency is tied to " + userBuruj.element + ".";
-                    remedy = "Recite Ayatul Kursi 313 times and Surah Al-Baqarah (last 2 verses) 7 times.";
+                    diagnosis = "Detected: Spiritual binding (Sihr) affecting your " + userPlanet.attribute + ". " + userRamli.name + " confirms a deep-seated " + userBuruj.element + " connection.";
+                    remedy = "Recite Ayatul Kursi 313 times. " + userRamli.advice;
                     timing = "Midnight (Tahajjud)";
                 } else if (inquiryType === 'success') {
-                    diagnosis = "Detected: Blockage in your path to wealth. Your star " + userBuruj.name + " is currently eclipsed.";
-                    remedy = "Recite 'Ya Fattahu Ya Razzaqu' 489 times. Give charity to 7 poor people.";
+                    diagnosis = "Detected: Path to wealth is influenced by " + userRamli.name + ". " + userRamli.meaning;
+                    remedy = "Recite 'Ya Fattahu Ya Razzaqu' 489 times. " + userRamli.advice;
                     timing = "Thursday Noon";
                 } else if (inquiryType === 'jinn') {
-                    diagnosis = "Detected: Presence of a " + (grandTotal % 2 === 0 ? 'Maimun' : 'Shamharush') + " class entity in your proximity.";
-                    remedy = "Recite Surah Al-Jinn once and 'A'udhu bi-kalimatillah' 100 times.";
+                    diagnosis = "Detected: Presence of a spiritual entity. " + userRamli.name + " indicates the nature is " + userRamli.meaning;
+                    remedy = "Recite Surah Al-Jinn once. " + userRamli.advice;
                     timing = "After Isha";
                 } else if (inquiryType === 'illness') {
                     const isSpiritual = grandTotal % 2 !== 0;
-                    diagnosis = isSpiritual ? "Diagnosis: Spiritual ailment (As-Sihr al-Marad)." : "Diagnosis: Physical ailment. Visit a Hospital immediately.";
-                    remedy = isSpiritual ? "Recite 'Ya Shafi' 1000 times and Surah Al-Fatihah 7 times over honey." : "Combine medicine with 'Ya Salam' 131 times.";
+                    diagnosis = isSpiritual ? "Diagnosis: Spiritual ailment. " + userRamli.name + " suggests " + userRamli.meaning : "Diagnosis: Physical ailment. Visit a Hospital. " + userRamli.name + " suggests " + userRamli.advice;
+                    remedy = isSpiritual ? "Recite 'Ya Shafi' 1000 times. " + userRamli.advice : "Combine medicine with 'Ya Salam' 131 times.";
                     timing = "Morning (Fajr)";
                 }
 
@@ -406,6 +437,7 @@ app.get('*', (req, res) => {
                     total: grandTotal,
                     buruj: userBuruj,
                     planet: userPlanet,
+                    ramli: userRamli,
                     diagnosis,
                     remedy,
                     timing,
@@ -466,6 +498,7 @@ app.get('*', (req, res) => {
                                 <button onClick={() => setActiveTab('calc')} className={activeTab === 'calc' ? 'text-[#F27D26]' : ''}>{t.oracle}</button>
                                 <button onClick={() => setActiveTab('feed')} className={activeTab === 'feed' ? 'text-[#F27D26]' : ''}>{t.feed}</button>
                                 <button onClick={() => setActiveTab('admin')} className={activeTab === 'admin' ? 'text-[#F27D26]' : ''}>{t.admin}</button>
+                                <button onClick={() => setActiveTab('about')} className={activeTab === 'about' ? 'text-[#F27D26]' : ''}>{t.about}</button>
                             </nav>
                         </div>
                     </header>
@@ -497,7 +530,7 @@ app.get('*', (req, res) => {
                                         <div className="space-y-4">
                                             <p className="text-[10px] uppercase font-black text-[#F27D26]">{t.inquiry}</p>
                                             <div className="grid grid-cols-3 gap-2">
-                                                {['success', 'magic', 'evil_eye', 'jinn', 'illness'].map(type => (
+                                                {['success', 'magic', 'evil_eye', 'jinn', 'illness', 'past', 'future'].map(type => (
                                                     <button key={type} onClick={() => setInquiryType(type)} className={'p-3 rounded-xl text-[9px] uppercase font-bold border transition-all ' + (inquiryType === type ? 'bg-[#F27D26] text-black border-[#F27D26]' : 'bg-white/5 border-white/10 text-white/40')}>
                                                         {type.replace('_', ' ')}
                                                     </button>
@@ -511,6 +544,7 @@ app.get('*', (req, res) => {
                                             <input value={dob} onChange={e => setDob(e.target.value)} placeholder={t.dob} className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
                                             <input value={pob} onChange={e => setPob(e.target.value)} placeholder={t.pob} className="bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
                                         </div>
+                                        <input value={question} onChange={e => setQuestion(e.target.value)} placeholder={t.question} className="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
                                         <input value={chosenNum} onChange={e => setChosenNum(e.target.value)} type="number" placeholder={t.num} className="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/10" />
                                         
                                         <button onClick={handleCalculate} className="w-full bg-[#F27D26] text-black py-5 rounded-2xl font-black uppercase italic text-xl shadow-xl shadow-[#F27D26]/20">{t.init}</button>
@@ -677,6 +711,48 @@ app.get('*', (req, res) => {
                                             </div>
                                         </div>
                                     )}
+                                </motion.div>
+                            )}
+                            {activeTab === 'about' && (
+                                <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto space-y-12 pb-24">
+                                    <div className="glass p-10 rounded-[3rem] space-y-8">
+                                        <h2 className="text-4xl font-black italic uppercase text-[#F27D26]">About Neural Engine</h2>
+                                        <p className="text-white/70 leading-relaxed">
+                                            The Neural Engine Spiritual Core is an advanced computational platform that bridges the gap between ancient spiritual sciences and modern quantum physics. 
+                                            By utilizing the Abjad Darut system, Hisab, and Ramli (Geomancy), the engine calculates the unique vibrational frequency of an individual based on their 
+                                            celestial data and specific inquiries.
+                                        </p>
+                                        <p className="text-white/70 leading-relaxed">
+                                            Our mission is to provide clarity and guidance through the lens of spiritual mathematics. Whether you are seeking insight into your past, 
+                                            future, or current spiritual state, the Neural Engine processes thousands of variables to deliver a diagnosis and protocol tailored to your energy.
+                                        </p>
+                                    </div>
+
+                                    <div className="glass p-10 rounded-[3rem] space-y-8">
+                                        <h2 className="text-4xl font-black italic uppercase text-[#F27D26]">Privacy Policy</h2>
+                                        <p className="text-white/70 leading-relaxed">
+                                            Your privacy is our highest priority. The Neural Engine does not store your personal names, mother's names, or specific questions in a way that 
+                                            can be linked back to your physical identity. All calculations are performed in real-time and the data is used solely for the purpose of 
+                                            generating your spiritual report.
+                                        </p>
+                                        <ul className="list-disc list-inside text-white/60 space-y-2">
+                                            <li>No personal data is sold or shared with third parties.</li>
+                                            <li>Encryption protocols are used to protect the integrity of the spiritual link.</li>
+                                            <li>Users remain anonymous throughout the calculation process.</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="glass p-10 rounded-[3rem] space-y-8">
+                                        <h2 className="text-4xl font-black italic uppercase text-[#F27D26]">Terms & Conditions</h2>
+                                        <p className="text-white/70 leading-relaxed">
+                                            By using the Neural Engine, you acknowledge that the insights provided are for spiritual guidance and educational purposes only. 
+                                            We do not claim to replace professional medical, legal, or financial advice.
+                                        </p>
+                                        <p className="text-white/70 leading-relaxed">
+                                            The "Real Answers" generated are based on mathematical interpretations of spiritual systems. Results may vary based on the 
+                                            accuracy of the data provided and the current cosmic alignment.
+                                        </p>
+                                    </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
