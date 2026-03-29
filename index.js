@@ -11,12 +11,12 @@ const CONFIG_PATH = path.join(__dirname, 'neural_config.json');
 const BLOG_PATH = path.join(__dirname, 'neural_blog.json');
 const STORIES_PATH = path.join(__dirname, 'neural_stories.json');
 
-let adminConfig = { user: 'admin216', pass: 'admin216' };
+let adminConfig = { user: 'admin216', pass: 'admin216', globalCommand: 'KUN FAYAKUN: THE GATES OF WEALTH ARE OPEN.' };
 let blogPosts = [];
 let userStories = [];
 
 const initData = () => {
-    if (fs.existsSync(CONFIG_PATH)) adminConfig = fs.readJsonSync(CONFIG_PATH);
+    if (fs.existsSync(CONFIG_PATH)) adminConfig = { ...adminConfig, ...fs.readJsonSync(CONFIG_PATH) };
     if (fs.existsSync(BLOG_PATH)) blogPosts = fs.readJsonSync(BLOG_PATH);
     if (fs.existsSync(STORIES_PATH)) userStories = fs.readJsonSync(STORIES_PATH);
 };
@@ -30,15 +30,23 @@ const ABJAD_MAP = {
 };
 
 const BURUJ = [
-    { name: "Hamal (Aries)", element: "Fire" }, { name: "Thaur (Taurus)", element: "Earth" },
-    { name: "Jauza (Gemini)", element: "Air" }, { name: "Saratan (Cancer)", element: "Water" },
-    { name: "Asad (Leo)", element: "Fire" }, { name: "Sunbulah (Virgo)", element: "Earth" },
-    { name: "Mizan (Libra)", element: "Air" }, { name: "Aqrab (Scorpio)", element: "Water" },
-    { name: "Qaus (Sagittarius)", element: "Fire" }, { name: "Jadiy (Capricorn)", element: "Earth" },
-    { name: "Dalwu (Aquarius)", element: "Air" }, { name: "Hut (Pisces)", element: "Water" }
+    { name: "Hamal (Aries)", element: "Fire", nature: "Hot & Dry" }, { name: "Thaur (Taurus)", element: "Earth", nature: "Cold & Dry" },
+    { name: "Jauza (Gemini)", element: "Air", nature: "Hot & Moist" }, { name: "Saratan (Cancer)", element: "Water", nature: "Cold & Moist" },
+    { name: "Asad (Leo)", element: "Fire", nature: "Hot & Dry" }, { name: "Sunbulah (Virgo)", element: "Earth", nature: "Cold & Dry" },
+    { name: "Mizan (Libra)", element: "Air", nature: "Hot & Moist" }, { name: "Aqrab (Scorpio)", element: "Water", nature: "Cold & Moist" },
+    { name: "Qaus (Sagittarius)", element: "Fire", nature: "Hot & Dry" }, { name: "Jadiy (Capricorn)", element: "Earth", nature: "Cold & Dry" },
+    { name: "Dalwu (Aquarius)", element: "Air", nature: "Hot & Moist" }, { name: "Hut (Pisces)", element: "Water", nature: "Cold & Moist" }
 ];
 
-const PLANETS = ["Sun (Shams)", "Moon (Qamar)", "Mars (Marikh)", "Mercury (Utarid)", "Jupiter (Mushtari)", "Venus (Zuhra)", "Saturn (Zuhal)"];
+const PLANETS = [
+    { name: "Sun (Shams)", day: "Sunday", angel: "Rufa'il", jinn: "Mazhab" },
+    { name: "Moon (Qamar)", day: "Monday", angel: "Jibril", jinn: "Murrah" },
+    { name: "Mars (Marikh)", day: "Tuesday", angel: "Samsama'il", jinn: "Al-Ahmar" },
+    { name: "Mercury (Utarid)", day: "Wednesday", angel: "Mika'il", jinn: "Burqan" },
+    { name: "Jupiter (Mushtari)", day: "Thursday", angel: "Sarfaya'il", jinn: "Shamharush" },
+    { name: "Venus (Zuhra)", day: "Friday", angel: "Anaya'il", jinn: "Zawba'a" },
+    { name: "Saturn (Zuhal)", day: "Saturday", angel: "Kasfaya'il", jinn: "Maymun" }
+];
 
 const RAML_FIGURES = [
     { id: 1, name: "Dariqee", element: "Fire", meaning: "Movement and quick results. Saurin biyan bukata." },
@@ -61,39 +69,27 @@ const RAML_FIGURES = [
 
 const SECRET_ARCHIVES = [
     {
-        category: "The Waliyyai Wealth Ciphers (Siri na Waliyyai)",
+        category: "The 7 Jinn Kings (Sarakunan Aljanu Bakwai)",
         codes: [
-            { name: "The Al-Kimiya Gold Cipher", code: "أهـم سقك حلع يص", meaning: "The 11-letter secret cipher used by ancient alchemists and saints for the urgent attraction of massive wealth and gold.", usage: "Recite 111 times after midnight while holding a piece of gold or your wallet. (Karanta sau 111 bayan tsakar dare yayin rike da zinare ko walet)." },
-            { name: "The Ismu al-A'zam Frequency", code: "5919-AG-GOLD-X", meaning: "The hidden numerical frequency that triggers the manifestation of material wealth from the unseen (Kudin boye).", usage: "Vibrate the code 1,111 times for 7 nights. (Karanta sau 1,111 na tsawon dare bakwai)." },
-            { name: "The Urgent Provision Key", code: "يا من ترزق من تشاء بغير حساب", meaning: "The secret word of power for those in desperate need of financial opening.", usage: "Recite 313 times before sunrise. (Karanta sau 313 kafin fitowar rana)." }
+            { name: "Shamharush (Thursday)", code: "يا شمهروش", meaning: "The King of the 4th day. Rules over justice, spiritual secrets, and Thursday's wealth.", usage: "Recite 45 times at noon on Thursday. (Karanta sau 45 ranar Alhamis)." },
+            { name: "Zawba'a (Friday)", code: "يا زوبعة", meaning: "The King of the 5th day. Rules over love, beauty, and Friday's abundance.", usage: "Recite 66 times after Jumu'ah prayer. (Karanta sau 66 bayan sallar Jumu'ah)." },
+            { name: "Maymun (Saturday)", code: "يا ميمون", meaning: "The King of the 6th day. Rules over protection, heavy tasks, and Saturday's resolve.", usage: "Recite 77 times on Saturday night. (Karanta sau 77 daren Asabar)." },
+            { name: "Al-Ahmar (Tuesday)", code: "يا أحمر", meaning: "The King of the 2nd day. Rules over power, conflict, and Tuesday's energy.", usage: "Recite 313 times for absolute protection. (Karanta sau 313 don tsaro)." }
         ]
     },
     {
-        category: "Teleportation & Blink-Shift (Tayy al-Ard)",
+        category: "Elite Wealth Protocols (Siri na Arziki)",
         codes: [
-            { name: "The Blink-Shift Word", code: "يا من لا يشغله شأن عن شأن", meaning: "The secret phrase used by high-ranking saints to traverse vast distances in the blink of an eye.", usage: "Requires 40 days of Khalwa (seclusion) and a pure heart. (Yana bukatar kwanaki 40 na kebewa da tsarkin zuciya)." },
-            { name: "Blink-Shift Protocol", code: "BSP-001-GAIB", meaning: "The modern quantum-spiritual code for shifting energy across dimensions instantly.", usage: "Visualize the destination while vibrating the code 7 times. (Yi tunanin inda kake so kaje yayin karanta sau 7)." }
+            { name: "The Al-Kimiya Gold Cipher", code: "أهـم سقك حلع يص", meaning: "The 11-letter secret cipher for the urgent attraction of massive wealth and gold.", usage: "Recite 111 times after midnight. (Karanta sau 111 bayan tsakar dare)." },
+            { name: "The Binary Wealth Cipher", code: "0101-GOLD-1101", meaning: "A modern spiritual code for attracting wealth specifically through technology and web creation.", usage: "Visualize your bank balance growing while reciting 33 times. (Yi tunanin kudin ka na karuwa yayin karanta sau 33)." },
+            { name: "Kun Fayakun Manifest", code: "KUN-369-MANIFEST", meaning: "The frequency of instant manifestation and divine command.", usage: "Vibrate 369 times in a quiet room. (Karanta sau 369 a daki shiru)." }
         ]
     },
     {
-        category: "The Sulaimanic Command (Ikon Sulaiman)",
+        category: "The Solomon Shield (Garkuwar Sulaiman)",
         codes: [
-            { name: "The Jinn Master Key", code: "انه من سليمان وانه بسم الله الرحمن الرحيم", meaning: "The master key used by Prophet Solomon to command the forces of nature, unseen treasures, and the Kings of Jinn.", usage: "Recite 313 times over a silver ring. (Karanta sau 313 akan zoben azurfa)." },
-            { name: "The Vanishing Word", code: "وجعلنا من بين أيديهم سدا", meaning: "Ancient secret for absolute protection and becoming invisible to the perception of enemies or danger.", usage: "Recite in one breath while stepping backward into a shadow. (Karanta da numfashi daya yayin komawa baya)." }
-        ]
-    },
-    {
-        category: "Quantum Web & Developer Command",
-        codes: [
-            { name: "Algorithm Mastery", code: "ALG-FAVOR-01-KUN", meaning: "Aligns your web development projects with the digital flow of success, attracting high-paying clients and viral traffic.", usage: "Recite 70 times before deploying your code. (Karanta sau 70 kafin kaddamar da aikin ka)." },
-            { name: "The Binary Wealth Cipher", code: "0101-GOLD-1101", meaning: "A modern spiritual code for attracting wealth specifically through technology and web creation.", usage: "Visualize your bank balance growing while reciting 33 times. (Yi tunanin kudin ka na karuwa yayin karanta sau 33)." }
-        ]
-    },
-    {
-        category: "Celestial Hierarchy (Angelic Ciphers)",
-        codes: [
-            { name: "Jibril Resonance", code: "JBR-LIGHT-777", meaning: "Accessing the frequency of divine revelation, truth, and absolute mental clarity.", usage: "Recite 70 times after Fajr prayer. (Karanta sau 70 bayan sallar asuba)." },
-            { name: "Metatron Cube Frequency", code: "MTTRN-CUBE-X", meaning: "The geometric code for structuring reality and commanding the elements of the universe.", usage: "Visualize the cube while vibrating the code 33 times. (Yi tunanin cube din yayin karanta sau 33)." }
+            { name: "Jinn Master Key", code: "انه من سليمان", meaning: "The master key used by Prophet Solomon to command the forces of nature.", usage: "Recite 313 times over a silver ring. (Karanta sau 313 akan zoben azurfa)." },
+            { name: "The Vanishing Word", code: "وجعلنا من بين أيديهم سدا", meaning: "Ancient secret for absolute protection and invisibility to enemies.", usage: "Recite in one breath while stepping backward. (Karanta da numfashi daya yayin komawa baya)." }
         ]
     }
 ];
@@ -105,6 +101,7 @@ app.use(express.json({ limit: '10mb' }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', scans: 1240 }));
 app.get('/api/blog', (req, res) => res.json(blogPosts));
 app.get('/api/stories', (req, res) => res.json(userStories));
+app.get('/api/config', (req, res) => res.json({ globalCommand: adminConfig.globalCommand }));
 
 app.post('/api/admin/login', (req, res) => {
     const { user, pass } = req.body;
@@ -113,8 +110,10 @@ app.post('/api/admin/login', (req, res) => {
 });
 
 app.post('/api/admin/update', async (req, res) => {
-    const { user, pass } = req.body;
-    adminConfig = { user, pass };
+    const { user, pass, globalCommand } = req.body;
+    if (user) adminConfig.user = user;
+    if (pass) adminConfig.pass = pass;
+    if (globalCommand) adminConfig.globalCommand = globalCommand;
     await fs.writeJson(CONFIG_PATH, adminConfig);
     res.json({ success: true });
 });
@@ -124,6 +123,12 @@ app.post('/api/admin/blog', async (req, res) => {
     blogPosts.unshift(newPost);
     await fs.writeJson(BLOG_PATH, blogPosts);
     res.json(newPost);
+});
+
+app.delete('/api/admin/stories/:id', async (req, res) => {
+    userStories = userStories.filter(s => s.id !== parseInt(req.params.id));
+    await fs.writeJson(STORIES_PATH, userStories);
+    res.json({ success: true });
 });
 
 app.post('/api/stories', async (req, res) => {
@@ -168,9 +173,14 @@ app.get('*', (req, res) => {
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;900&family=JetBrains+Mono&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; overflow-x: hidden; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .terminal-box { background: #000; border: 1px solid #333; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 15px; border-radius: 12px; }
+        .terminal-box { background: #000; border: 1px solid #333; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 15px; border-radius: 12px; height: 350px; overflow-y: auto; }
         .energy-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); } 100% { opacity: 0.3; transform: scale(1); } }
+        .marquee { white-space: nowrap; overflow: hidden; position: relative; background: #F27D26; color: black; font-weight: 900; font-size: 10px; padding: 4px 0; text-transform: uppercase; font-style: italic; }
+        .marquee-content { display: inline-block; padding-left: 100%; animation: marquee 30s linear infinite; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -198,9 +208,8 @@ app.get('*', (req, res) => {
             return false;
         };
 
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
         
-        // Robust library detection
         const FM = window.Motion || window.FramerMotion || {};
         const motion = FM.motion || { div: (props) => <div {...props} />, span: (props) => <span {...props} /> };
         const AnimatePresence = FM.AnimatePresence || (({children}) => children);
@@ -220,6 +229,8 @@ app.get('*', (req, res) => {
         const Eye = getIcon('Eye');
         const Star = getIcon('Star');
         const Sun = getIcon('Sun');
+        const Trash2 = getIcon('Trash2');
+        const Clock = getIcon('Clock');
 
         const GrandPalmLogo = () => (
             <div className="relative w-48 h-48 mx-auto mb-12 flex items-center justify-center">
@@ -237,20 +248,26 @@ app.get('*', (req, res) => {
             </div>
         );
 
-        const TerminalEngine = ({ value, raml, buruj }) => {
+        const TerminalEngine = ({ value, raml, buruj, planet, question }) => {
             const [lines, setLines] = useState([]);
+            const scrollRef = useRef(null);
+
             useEffect(() => {
                 const baseLines = [
                     '> INITIALIZING QUANTUM SPIRITUAL LINK...',
+                    '> SCANNING INTENT: "' + (question || 'GENERAL INQUIRY') + '"',
+                    '> CALCULATING ABJAD DARUT VALUES...',
                     '> FREQUENCY DETECTED: ' + value + ' Hz',
-                    '> ABJAD ALIGNMENT: ' + Math.sqrt(value).toFixed(4) + ' PHI',
-                    '> RAML FIGURE: ' + raml.name.toUpperCase(),
-                    '> BURUJ (STAR): ' + buruj.name.toUpperCase(),
-                    '> ELEMENT: ' + buruj.element.toUpperCase(),
-                    '> --- QUANTUM PHYSICS ECHO ---',
                     '> WAVEFUNCTION COLLAPSE: OBSERVED',
+                    '> BURUJ (ZODIAC): ' + buruj.name.toUpperCase() + ' (' + buruj.element + ')',
+                    '> PLANET RULER: ' + planet.name.toUpperCase() + ' (Angel: ' + planet.angel + ')',
+                    '> JINN KING: ' + planet.jinn.toUpperCase(),
+                    '> RAML FIGURE: ' + raml.name.toUpperCase(),
+                    '> --- QUANTUM PHYSICS ECHO ---',
                     '> ENTANGLEMENT RATIO: ' + (value / 1000).toFixed(3),
-                    '> SYSTEM: LINK ESTABLISHED.'
+                    '> BINARY WEALTH STREAM: 0101-GOLD-1101',
+                    '> SCHRODINGER STATE: RESOLVED',
+                    '> SYSTEM: SPIRITUAL LINK ESTABLISHED.'
                 ];
                 let i = 0;
                 const timer = setInterval(() => {
@@ -258,12 +275,16 @@ app.get('*', (req, res) => {
                         setLines(prev => [...prev, baseLines[i]]);
                         i++;
                     } else clearInterval(timer);
-                }, 150);
+                }, 80);
                 return () => clearInterval(timer);
-            }, [value, raml, buruj]);
+            }, [value, raml, buruj, planet, question]);
+
+            useEffect(() => {
+                if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+            }, [lines]);
 
             return (
-                <div className="terminal-box mt-6 text-[#00FF00] opacity-80">
+                <div ref={scrollRef} className="terminal-box mt-6 text-[#00FF00] opacity-80">
                     {lines.map((l, idx) => <div key={idx} className="mb-1">{l}</div>)}
                     <div className="animate-pulse inline-block w-2 h-3 bg-[#00FF00] ml-1"></div>
                 </div>
@@ -277,69 +298,73 @@ app.get('*', (req, res) => {
             const [age, setAge] = useState('');
             const [dob, setDob] = useState('');
             const [chosenNum, setChosenNum] = useState('');
+            const [question, setQuestion] = useState('');
             const [story, setStory] = useState('');
             const [result, setResult] = useState(null);
             const [isAdmin, setIsAdmin] = useState(false);
             const [posts, setPosts] = useState([]);
             const [stories, setStories] = useState([]);
+            const [globalCommand, setGlobalCommand] = useState('');
             const [loginForm, setLoginForm] = useState({ user: '', pass: '' });
             const [newPost, setNewPost] = useState({ title: '', content: '', image: '' });
-            const [newAdmin, setNewAdmin] = useState({ user: '', pass: '' });
+            const [newAdmin, setNewAdmin] = useState({ user: '', pass: '', globalCommand: '' });
 
             const { abjadMap, ramlFigures, buruj, planets, archives, emails, whatsapp } = ${JSON.stringify(clientData)};
 
             useEffect(() => {
                 fetch('/api/blog').then(r => r.json()).then(setPosts);
                 fetch('/api/stories').then(r => r.json()).then(setStories);
+                fetch('/api/config').then(r => r.json()).then(d => setGlobalCommand(d.globalCommand));
             }, []);
 
             const calculateAbjad = (str) => {
                 let total = 0;
-                let breakdown = [];
                 const normalized = (str || '').toLowerCase();
-                for (let i = 0; i < normalized.length; i++) {
-                    if (i < normalized.length - 1) {
-                        const pair = normalized.substring(i, i + 2);
-                        if (abjadMap[pair]) { 
-                            total += abjadMap[pair]; 
-                            breakdown.push({ char: pair, val: abjadMap[pair] });
-                            i++; 
-                            continue; 
-                        }
-                    }
-                    const val = abjadMap[normalized[i]] || 0;
-                    if (val > 0) {
-                        total += val;
-                        breakdown.push({ char: normalized[i], val });
-                    }
+                for (let char of normalized) {
+                    total += abjadMap[char] || 0;
                 }
-                return { total, breakdown };
+                return total;
             };
 
             const handleCalculate = () => {
                 if (!name) return alert("Please enter a name.");
-                const n = calculateAbjad(name);
-                const m = calculateAbjad(mother);
+                
+                const nVal = calculateAbjad(name);
+                const mVal = calculateAbjad(mother);
+                const qVal = calculateAbjad(question);
                 const aVal = parseInt(age) || 0;
-                const d = calculateAbjad(dob);
+                const dVal = calculateAbjad(dob);
                 const cVal = parseInt(chosenNum) || 0;
 
-                const total = n.total + m.total + aVal + d.total + cVal;
-                const raml = ramlFigures[total % 16];
-                const star = buruj[total % 12];
+                const grandTotal = nVal + mVal + qVal + aVal + dVal + cVal;
                 
-                setResult({ total, raml, star, breakdown: [...n.breakdown, ...m.breakdown] });
+                const burujIndex = (grandTotal % 12) === 0 ? 11 : (grandTotal % 12) - 1;
+                const planetIndex = (grandTotal % 7) === 0 ? 6 : (grandTotal % 7) - 1;
+                const ramlIndex = (grandTotal % 16) === 0 ? 15 : (grandTotal % 16) - 1;
+
+                setResult({
+                    total: grandTotal,
+                    raml: ramlFigures[ramlIndex],
+                    star: buruj[burujIndex],
+                    planet: planets[planetIndex],
+                    question: question
+                });
             };
 
             const handleLogin = async () => {
                 const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(loginForm) });
-                if (r.ok) { setIsAdmin(true); setNewAdmin(loginForm); }
+                if (r.ok) { setIsAdmin(true); setNewAdmin({ ...loginForm, globalCommand }); }
                 else alert("Access Denied");
             };
 
             const handleUpdateAdmin = async () => {
                 const r = await fetch('/api/admin/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newAdmin) });
-                if (r.ok) alert("Admin Credentials Updated");
+                if (r.ok) { alert("System Updated"); setGlobalCommand(newAdmin.globalCommand); }
+            };
+
+            const handleDeleteStory = async (id) => {
+                const r = await fetch('/api/admin/stories/' + id, { method: 'DELETE' });
+                if (r.ok) setStories(stories.filter(s => s.id !== id));
             };
 
             const handleSubmitStory = async () => {
@@ -362,6 +387,10 @@ app.get('*', (req, res) => {
 
             return (
                 <div className="min-h-screen flex flex-col">
+                    <div className="marquee">
+                        <div className="marquee-content">{globalCommand} // {globalCommand} // {globalCommand}</div>
+                    </div>
+                    
                     <header className="p-6 glass flex justify-between items-center sticky top-0 z-50">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-[#F27D26] rounded-full flex items-center justify-center font-black italic text-black">N</div>
@@ -383,11 +412,16 @@ app.get('*', (req, res) => {
                                         <h2 className="text-7xl font-black italic uppercase tracking-tighter leading-none">Spiritual<br/><span className="text-[#F27D26]">Oracle</span></h2>
                                         
                                         <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
-                                            <Sun size={20} className="text-[#F27D26]" />
+                                            <Clock size={20} className="text-[#F27D26]" />
                                             <div>
-                                                <p className="text-[8px] uppercase font-bold text-white/30">Current Spiritual Ruler</p>
-                                                <p className="text-xs font-black uppercase">{planets[new Date().getDay()]}</p>
+                                                <p className="text-[8px] uppercase font-bold text-white/30">Current Planetary Hour</p>
+                                                <p className="text-xs font-black uppercase text-[#F27D26]">{planets[new Date().getDay()].name} // Angel: {planets[new Date().getDay()].angel}</p>
                                             </div>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <p className="text-[10px] uppercase font-black text-[#F27D26]">The Inquiry Protocol</p>
+                                            <textarea value={question} onChange={e => setQuestion(e.target.value)} placeholder="Ask your question here (Past, Future, Intent)..." className="w-full bg-white/5 p-4 rounded-2xl outline-none border border-white/10 h-24" />
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
@@ -400,7 +434,7 @@ app.get('*', (req, res) => {
                                         
                                         <button onClick={handleCalculate} className="w-full bg-[#F27D26] text-black py-5 rounded-2xl font-black uppercase italic text-xl shadow-xl shadow-[#F27D26]/20">Initialize Hisab</button>
                                         
-                                        {result && <TerminalEngine value={result.total} raml={result.raml} buruj={result.star} />}
+                                        {result && <TerminalEngine value={result.total} raml={result.raml} buruj={result.star} planet={result.planet} question={result.question} />}
                                     </div>
 
                                     <div className="space-y-8">
@@ -414,19 +448,14 @@ app.get('*', (req, res) => {
                                                     <div className="text-right">
                                                         <p className="text-[10px] uppercase font-bold text-white/40">Buruj (Star)</p>
                                                         <h4 className="text-2xl font-black italic text-[#F27D26]">{result.star.name}</h4>
-                                                        <p className="text-[10px] uppercase text-white/20">{result.star.element} Element</p>
+                                                        <p className="text-[10px] uppercase text-white/20">{result.star.nature}</p>
                                                     </div>
                                                 </div>
 
                                                 <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                                                    <p className="text-[10px] uppercase font-bold text-white/30 mb-4">Neural Letter Breakdown</p>
-                                                    <div className="flex flex-wrap gap-2">
-                                                        {result.breakdown.map((b, i) => (
-                                                            <div key={i} className="px-3 py-1 bg-black/40 rounded-lg border border-white/5 text-xs font-mono">
-                                                                <span className="text-[#F27D26]">{b.char}</span>: {b.val}
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                                    <p className="text-[10px] uppercase font-bold text-white/30 mb-2">Planet Ruler & Jinn King</p>
+                                                    <div className="text-xl font-black uppercase text-[#F27D26]">{result.planet.name}</div>
+                                                    <div className="text-[10px] text-white/40">Angel: {result.planet.angel} // Jinn: {result.planet.jinn}</div>
                                                 </div>
 
                                                 <div className="p-6 bg-[#F27D26]/5 rounded-2xl italic text-lg border border-[#F27D26]/20">
@@ -495,7 +524,8 @@ app.get('*', (req, res) => {
                                                     <input value={newAdmin.user} onChange={e => setNewAdmin({...newAdmin, user: e.target.value})} placeholder="New User" className="w-full bg-white/5 p-4 rounded-xl outline-none border border-white/5" />
                                                     <input type="password" value={newAdmin.pass} onChange={e => setNewAdmin({...newAdmin, pass: e.target.value})} placeholder="New Pass" className="w-full bg-white/5 p-4 rounded-xl outline-none border border-white/5" />
                                                 </div>
-                                                <button onClick={handleUpdateAdmin} className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Update Credentials</button>
+                                                <input value={newAdmin.globalCommand} onChange={e => setNewAdmin({...newAdmin, globalCommand: e.target.value})} placeholder="Global Command Message" className="w-full bg-white/5 p-4 rounded-xl outline-none border border-white/5" />
+                                                <button onClick={handleUpdateAdmin} className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Update System</button>
                                             </div>
 
                                             <div className="glass p-10 rounded-[3rem] space-y-6">
@@ -514,6 +544,18 @@ app.get('*', (req, res) => {
                                                                     <div className="text-[9px] bg-[#F27D26]/10 p-3 rounded-lg text-[#F27D26] font-bold">Usage: {c.usage}</div>
                                                                 </div>
                                                             ))}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="glass p-10 rounded-[3rem] space-y-6">
+                                                <h3 className="text-2xl font-black italic uppercase text-[#F27D26]">Moderate Seeker Stories</h3>
+                                                <div className="space-y-4">
+                                                    {stories.map(s => (
+                                                        <div key={s.id} className="flex justify-between items-center bg-white/5 p-4 rounded-xl">
+                                                            <p className="text-xs italic truncate max-w-[70%]">"{s.content}"</p>
+                                                            <button onClick={() => handleDeleteStory(s.id)} className="text-red-500 hover:text-red-400"><Trash2 size={16}/></button>
                                                         </div>
                                                     ))}
                                                 </div>
