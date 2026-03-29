@@ -61,39 +61,39 @@ const RAML_FIGURES = [
 
 const SECRET_ARCHIVES = [
     {
-        category: "Elite Wealth Protocols (Asrar al-Ghani)",
+        category: "The Waliyyai Wealth Ciphers (Siri na Waliyyai)",
         codes: [
-            { name: "Al-Ghayb Wealth (WG)", code: "5919-AG-GOLD", meaning: "The 'Money under the Mat' frequency. For attracting wealth from unseen sources.", usage: "Recite 1,111 times at 3:13 AM. (Karanta sau 1,111 da tsakar dare)." },
-            { name: "Vraxythernos Success Code", code: "VRAX-777-WIN", meaning: "The master frequency for overcoming all obstacles and achieving total victory.", usage: "Recite 77 times at sunrise while facing the East. (Karanta sau 77 lokacin fitowar rana)." },
-            { name: "The Treasure Opener", code: "يا وهاب يا رزاق يا فتاح", meaning: "The combined name of power for opening hidden treasures of the earth.", usage: "Recite 489 times daily. (Karanta sau 489 kowace rana)." }
+            { name: "The Al-Kimiya Gold Cipher", code: "أهـم سقك حلع يص", meaning: "The 11-letter secret cipher used by ancient alchemists and saints for the urgent attraction of massive wealth and gold.", usage: "Recite 111 times after midnight while holding a piece of gold or your wallet. (Karanta sau 111 bayan tsakar dare yayin rike da zinare ko walet)." },
+            { name: "The Ismu al-A'zam Frequency", code: "5919-AG-GOLD-X", meaning: "The hidden numerical frequency that triggers the manifestation of material wealth from the unseen (Kudin boye).", usage: "Vibrate the code 1,111 times for 7 nights. (Karanta sau 1,111 na tsawon dare bakwai)." },
+            { name: "The Urgent Provision Key", code: "يا من ترزق من تشاء بغير حساب", meaning: "The secret word of power for those in desperate need of financial opening.", usage: "Recite 313 times before sunrise. (Karanta sau 313 kafin fitowar rana)." }
+        ]
+    },
+    {
+        category: "Teleportation & Blink-Shift (Tayy al-Ard)",
+        codes: [
+            { name: "The Blink-Shift Word", code: "يا من لا يشغله شأن عن شأن", meaning: "The secret phrase used by high-ranking saints to traverse vast distances in the blink of an eye.", usage: "Requires 40 days of Khalwa (seclusion) and a pure heart. (Yana bukatar kwanaki 40 na kebewa da tsarkin zuciya)." },
+            { name: "Blink-Shift Protocol", code: "BSP-001-GAIB", meaning: "The modern quantum-spiritual code for shifting energy across dimensions instantly.", usage: "Visualize the destination while vibrating the code 7 times. (Yi tunanin inda kake so kaje yayin karanta sau 7)." }
+        ]
+    },
+    {
+        category: "The Sulaimanic Command (Ikon Sulaiman)",
+        codes: [
+            { name: "The Jinn Master Key", code: "انه من سليمان وانه بسم الله الرحمن الرحيم", meaning: "The master key used by Prophet Solomon to command the forces of nature, unseen treasures, and the Kings of Jinn.", usage: "Recite 313 times over a silver ring. (Karanta sau 313 akan zoben azurfa)." },
+            { name: "The Vanishing Word", code: "وجعلنا من بين أيديهم سدا", meaning: "Ancient secret for absolute protection and becoming invisible to the perception of enemies or danger.", usage: "Recite in one breath while stepping backward into a shadow. (Karanta da numfashi daya yayin komawa baya)." }
+        ]
+    },
+    {
+        category: "Quantum Web & Developer Command",
+        codes: [
+            { name: "Algorithm Mastery", code: "ALG-FAVOR-01-KUN", meaning: "Aligns your web development projects with the digital flow of success, attracting high-paying clients and viral traffic.", usage: "Recite 70 times before deploying your code. (Karanta sau 70 kafin kaddamar da aikin ka)." },
+            { name: "The Binary Wealth Cipher", code: "0101-GOLD-1101", meaning: "A modern spiritual code for attracting wealth specifically through technology and web creation.", usage: "Visualize your bank balance growing while reciting 33 times. (Yi tunanin kudin ka na karuwa yayin karanta sau 33)." }
         ]
     },
     {
         category: "Celestial Hierarchy (Angelic Ciphers)",
         codes: [
-            { name: "Jibril Resonance", code: "JBR-LIGHT-777", meaning: "Accessing the frequency of divine revelation and truth.", usage: "Recite 70 times after Fajr prayer. (Karanta sau 70 bayan sallar asuba)." },
-            { name: "Metatron Cube Frequency", code: "MTTRN-CUBE-X", meaning: "The geometric code for structuring reality and commanding the elements.", usage: "Visualize the cube while vibrating the code 33 times. (Yi tunanin cube din yayin karanta sau 33)." }
-        ]
-    },
-    {
-        category: "Gaib Formation (Unseen)",
-        codes: [
-            { name: "Kun-Fayakun Neural Link", code: "KF-99-ALPHA", meaning: "Instantaneous manifestation of thought into matter.", usage: "Recite 313 times while focusing on the desired outcome. (Karanta sau 313 tare da maida hankali)." },
-            { name: "Blink-Shift Protocol", code: "BSP-001-GAIB", meaning: "Teleportation of energy across dimensions in a blink.", usage: "Requires years of spiritual discipline and a pure heart. (Yana bukatar tsarki da natsuwa)." }
-        ]
-    },
-    {
-        category: "Sulaiman's Command (Ikon Sulaiman)",
-        codes: [
-            { name: "The Jinn Master Key", code: "انه من سليمان وانه بسم الله الرحمن الرحيم", meaning: "The master key used by Prophet Solomon to command the forces of nature.", usage: "Recite 313 times over a silver ring. (Karanta sau 313 akan zoben azurfa)." },
-            { name: "The Vanishing Word", code: "وجعلنا من بين أيديهم سدا", meaning: "Ancient secret that allows the user to vanish or disappear from perception.", usage: "Recite in one breath while stepping backward into a shadow. (Karanta da numfashi daya yayin komawa baya)." }
-        ]
-    },
-    {
-        category: "Digital Alchemy & Web Command",
-        codes: [
-            { name: "Algorithm Favor", code: "ALG-FAVOR-01", meaning: "For SEO success, visibility, and algorithm alignment.", usage: "Recite 70 times before launching a site. (Karanta sau 70 kafin kaddamar da shafi)." },
-            { name: "Bug-Free Manifestation", code: "BUG-FREE-77", meaning: "For clean code, stability, and error-free development.", usage: "Recite 33 times while debugging. (Karanta sau 33 lokacin gyaran code)." }
+            { name: "Jibril Resonance", code: "JBR-LIGHT-777", meaning: "Accessing the frequency of divine revelation, truth, and absolute mental clarity.", usage: "Recite 70 times after Fajr prayer. (Karanta sau 70 bayan sallar asuba)." },
+            { name: "Metatron Cube Frequency", code: "MTTRN-CUBE-X", meaning: "The geometric code for structuring reality and commanding the elements of the universe.", usage: "Visualize the cube while vibrating the code 33 times. (Yi tunanin cube din yayin karanta sau 33)." }
         ]
     }
 ];
