@@ -1,22 +1,14 @@
 {
   "name": "neural-oracle",
-  "version": "4.0.0",
-  "description": "Ghazali-Powered AI Oracle & Sovereign Ad Network",
-  "main": "index.js",
+  "version": "4.1.0",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
     "path": "^0.12.7",
     "url": "^0.11.3"
-  },
-  "engines": {
-    "node": ">=22.0.0"
-  },
-  "author": "Abdullah Haruna",
-  "license": "ISC"
+  }
 }
